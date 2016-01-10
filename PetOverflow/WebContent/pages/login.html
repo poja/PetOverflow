@@ -1,0 +1,33 @@
+<main class="container-fluid">
+	<div class="row">
+		<div class="col-md-1"></div>
+		<form 
+			ng-controller="LoginController as loginCtrl"
+			name="loginCtrl.loginForm"
+			ng-submit="loginCtrl.login(loginCtrl.loginForm.$valid)"
+			novalidate 
+			class="col-md-4 col-sm-6 col-xs-12">
+
+			<h1><img src="./img/logo.png" alt="Pet Overflow"></h1>
+			
+			<label for="username">Username:</label>
+			<input 	type="text" name="username" class="form-control"
+					ng-model="loginCtrl.username" placeholder="username" required />	
+		
+		
+			<label for="password">Password:</label>
+			<input 	type="password" name="password" class="form-control"
+						ng-model="loginCtrl.password" placeholder="password" required />
+			
+			<p class="message-error">{{ loginCtrl.errMessage }}</p>
+			
+			<div class="row">
+				<input type="submit" class="btn" value="Log In" />		
+			</div>
+			
+			
+
+		</form>		
+	</div>
+	
+</main>

@@ -1,0 +1,25 @@
+package authentication;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
+import dao.UserDao;
+import dao.UserDaoMock;
+
+public class Authenticator {
+
+	public static boolean isAuthenticated(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		String username, password;
+		for (Cookie c : cookies) {
+			if (c.getName().equals("username"))
+				username = c.getValue();
+			else if (c.getName().equals("password"))
+				password = c.getValue();
+		}
+		
+		UserDao dao = new UserDaoMock();
+		if (dao.authenticate(, password))
+	}
+	
+}

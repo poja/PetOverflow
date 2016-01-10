@@ -1,0 +1,10 @@
+package dto;
+
+public class AuthenticationDto {
+	
+	private boolean success;
+	private String message;
+	
+	private static String BAD_PASS_MESSAGE = "The username and password do not match.";
+
+}

@@ -1,0 +1,8 @@
+package dao;
+
+public interface UserDao {
+	
+	public boolean authenticate(String username, String password);
+	
+	
+}

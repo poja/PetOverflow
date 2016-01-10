@@ -1,0 +1,27 @@
+package _main;
+
+import javax.servlet.http.HttpServlet;
+
+import dao.UserDaoDerby;
+
+/**
+ * This class is used to initiate multiple things.
+ * 
+ * It is a servlet. The <code>init</code> method is called on Tomcat startup,
+ * using web.xml configuration.
+ *
+ */
+public class Main extends implements ServletContextListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public void init() {
+		UserDaoDerby.init();
+	}
+
+
+
+}

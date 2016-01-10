@@ -1,0 +1,15 @@
+package authentication;
+
+import javax.servlet.http.HttpServletRequest;
+
+import dao.UserDao;
+import dao.UserDaoMock;
+
+public class Authenticator {
+
+	public static boolean isAuthenticated(HttpServletRequest request) {
+		UserDao dao = new UserDaoMock();
+		
+	}
+	
+}

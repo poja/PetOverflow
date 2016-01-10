@@ -1,0 +1,14 @@
+package dao;
+
+import java.sql.SQLException;
+
+public class DerbyUtils {
+
+	
+	public static boolean tableAlreadyExists(SQLException e) {
+		if (e.getSQLState().equals("XOY32"))
+			return true;
+		else 
+			return false;
+	}
+}

@@ -1,0 +1,10 @@
+package dto;
+
+public class RecentQuestionsDto {
+
+	private String question;
+	
+	public getQuestion() {
+		return question;
+	}
+}

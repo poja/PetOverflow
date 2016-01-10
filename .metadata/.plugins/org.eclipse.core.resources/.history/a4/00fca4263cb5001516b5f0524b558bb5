@@ -1,0 +1,11 @@
+package dao;
+
+public class UserDaoMock extends UserDao {
+
+	@Override
+	boolean authenticate(String username, String password) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}

@@ -1,0 +1,17 @@
+package authentication;
+
+public class DataValidator {
+	
+	public boolean isValidUsername(String username) {
+		
+	}
+	
+	public boolean isValidPassword(String password) {
+		
+	}
+	
+	private isLetter(char c) {
+		return c >= 'a' && c <= 'Z';
+	}
+
+}

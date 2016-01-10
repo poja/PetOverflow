@@ -1,0 +1,13 @@
+package dao;
+
+public class QuestionDaoMock implements QuestionDao {
+
+	@Override
+	public String[] getNewestQuestions(int number) {
+		return [
+		        "What is a good name for a pet turtle?",
+		        "Why is my dog eat everything?"
+		];
+	}
+
+}

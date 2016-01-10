@@ -1,0 +1,7 @@
+package _main;
+
+public class Config {
+	
+	static String dbName = "PetOvDb";
+
+}

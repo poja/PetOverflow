@@ -1,0 +1,11 @@
+DELEGATES_PREFERENCE=delegateValidatorList
+USER_BUILD_PREFERENCE=enabledBuildValidatorListorg.eclipse.jst.j2ee.internal.classpathdep.ClasspathDependencyValidator;
+USER_MANUAL_PREFERENCE=enabledManualValidatorListorg.eclipse.jst.j2ee.internal.classpathdep.ClasspathDependencyValidator;
+USER_PREFERENCE=overrideGlobalPreferencesfalse
+eclipse.preferences.version=1
+override=false
+suspend=false
+vals/org.eclipse.jst.jsf.facelet.ui.FaceletHTMLValidator/global=FF01
+vals/org.eclipse.wst.html.core.HTMLValidator/global=FF01
+vals/org.eclipse.wst.jsdt.web.core.JsBatchValidator/global=TT01
+vf.version=3

@@ -1,0 +1,9 @@
+package dao;
+
+public class DerbyUtils {
+
+	
+	public static boolean tableAlreadyExists(SQLException e) {
+		
+	}
+}

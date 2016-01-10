@@ -1,0 +1,8 @@
+package _main;
+
+public class Config {
+	
+	static String dbName = "PetOvDb";
+	static String tableCreation = "create table location(num int, addr varchar(40))";
+
+}

@@ -1,0 +1,15 @@
+package _main;
+
+public class Config {
+	
+	static String dbName = "PetOvDb";
+	static String userTableCreation = "CREATE TABLE user ("
+			+ "username VARCHAR(10), "
+			+ "password VARCHAR(8), "
+			+ "nickname VARCHAR(20), "
+			+ "description LONG VARCHAR, "
+			+ "photo LONG VARCHAR, "
+			+ "phone VARCHAR(20) )";
+	
+
+}

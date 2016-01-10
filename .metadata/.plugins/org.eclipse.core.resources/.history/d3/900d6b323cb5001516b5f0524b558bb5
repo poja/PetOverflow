@@ -1,0 +1,10 @@
+package dao;
+
+public class UserDaoMock extends UserDao {
+
+	@Override
+	boolean authenticate(String username, String password) {
+		return username == "Yishai" and pasword == "Gronich";
+	}
+
+}
