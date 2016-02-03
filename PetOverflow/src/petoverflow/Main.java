@@ -1,9 +1,11 @@
-package _main;
+package petoverflow;
+
+import java.sql.SQLException;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import dao.UserDaoDerby;
+import petoverflow.dao.derby.DerbyUtils;
 
 /**
  * This class is used to initiate multiple things.
@@ -20,16 +22,22 @@ public class Main implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent ev) {
 		System.out.println("Initializing server");
-		UserDaoDerby.init();
+		try {
+			DerbyUtils.init();
+
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+
 	}
-	
+
 	/**
 	 * Destruction of the server
 	 */
 	@Override
 	public void contextDestroyed(ServletContextEvent ev) {
 		System.out.println("Destroying server");
-		UserDaoDerby.shutdown();
+		DerbyUtils.shutdown();
 	}
 
 	/**

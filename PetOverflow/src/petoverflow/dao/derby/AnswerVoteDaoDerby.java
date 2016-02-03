@@ -1,0 +1,96 @@
+package petoverflow.dao.derby;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import petoverflow.dao.AnswerVoteDao;
+import petoverflow.dao.Vote;
+import petoverflow.dao.Vote.VoteType;
+import petoverflow.dao.exception.DerbyNotInitialized;
+
+/**
+ * The AnswerVoteDaoDerby class implements the AnswerVoteDao interface with
+ * derby data base.
+ */
+public class AnswerVoteDaoDerby implements AnswerVoteDao {
+
+	/**
+	 * The single instance of this class
+	 */
+	private static AnswerVoteDaoDerby m_instance;
+
+	/**
+	 * Get the single instance of this class
+	 * 
+	 * @return the single instance of this class
+	 */
+	public static AnswerVoteDaoDerby getInstance() {
+		if (m_instance == null) {
+			throw new DerbyNotInitialized();
+		}
+		return m_instance;
+	}
+
+	/**
+	 * Initialize this derby DAO
+	 * 
+	 * @throws ClassNotFoundException
+	 *             if derby is not installed
+	 * @throws SQLException
+	 *             if failed to created this DAO tables
+	 */
+	public static void init() throws ClassNotFoundException, SQLException {
+		System.out.println("Initiating answers votes database connection");
+		DerbyUtils.initTable(DerbyConfig.ANSWER_VOTE_TABLE_NAME, DerbyConfig.ANSWER_VOTE_TABLE_CREATE);
+		m_instance = new AnswerVoteDaoDerby();
+	}
+
+	/**
+	 * Constructor (Private)
+	 * 
+	 * Used once to create the single instance of this DAO
+	 */
+	private AnswerVoteDaoDerby() {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see petoverflow.dao.AnswerVoteDao#getAnswerVotes(int)
+	 */
+	@Override
+	public List<Vote> getAnswerVotes(int answerId) throws SQLException {
+		Connection conn = DerbyUtils.getConnection(DerbyConfig.ANSWER_VOTE_TABLE_CREATE);
+		ArrayList<Statement> statements = new ArrayList<Statement>();
+		ResultSet rs = null;
+
+		try {
+			PreparedStatement s = conn.prepareStatement(
+					"SELECT * FROM " + DerbyConfig.ANSWER_VOTE_TABLE_NAME + " WHERE " + DerbyConfig.ANSWER_ID + " = ?");
+			statements.add(s);
+			s.setInt(1, answerId);
+			rs = s.executeQuery();
+
+			List<Vote> votes = new ArrayList<Vote>();
+			while (rs.next()) {
+				int voterId = rs.getInt(DerbyConfig.VOTER_ID);
+				boolean voteTypeFlag = rs.getBoolean(DerbyConfig.VOTE_TYPE);
+				VoteType voteType = voteTypeFlag ? VoteType.Up : VoteType.Down;
+				votes.add(new Vote(voterId, voteType));
+			}
+			return votes;
+
+		} catch (SQLException e) {
+			DerbyUtils.printSQLException(e);
+			throw e;
+		} finally {
+			DerbyUtils.cleanUp(rs, statements, conn);
+		}
+	}
+
+}
