@@ -1,0 +1,317 @@
+/******************/
+/**** General *****/
+/******************/
+
+$c-font-gray: #505050;
+$c-font-gray-light: #C0C0C0;
+
+$c-bg-gray: #E0E0E0;
+$u-bg-gray: '../img/bg-gray.jpg';
+
+$default-radius: 5px;
+
+
+
+// Utilities
+
+a.u-cleanLinks,
+.u-cleanLinks a {
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: none;		
+	}
+}
+
+.u-center {
+	text-align: center;
+}
+
+.u-bold {
+	font-weight: bold;
+}
+
+// Defaults
+
+html, body {
+	min-height: 100%;
+	height: 100%;
+}
+div[ng-view], main {
+	min-height: 100vh;
+}
+
+main {
+	padding: 0;
+
+	background: url($u-bg-gray);
+}
+
+h2 {
+	font-size: 2rem;
+}
+
+ul {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+li {
+	padding: 0;
+	margin: 0;
+}
+
+textarea {
+	resize: none;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="tel"] { 
+	max-width: 20rem; 
+}
+
+/***************************/
+/**** Shared Components ****/
+/***************************/
+
+$c-bg-navbar: #3D3961;
+$c-navbar-bottom: white;
+$c-font-navbar: $c-font-gray-light;
+$c-font-navbar-hover: white;
+
+.NavBar {
+	@extend .u-cleanLinks;
+
+	padding: 1rem;
+
+	background-color: $c-bg-navbar;
+	font-size: 2rem;
+	border-bottom: 3px solid $c-navbar-bottom;
+}
+.NavBar-brand {
+	font-size: 1.2em;
+	margin: 0;
+	padding: 0;
+	a { color: $c-font-navbar-hover; }
+}
+.NavBar-dropdown {
+	display: inline;
+	position: relative;
+
+	.Menu {
+		position: absolute;
+		z-index: 1;
+		left: -7rem; top: 2rem;
+		width: 20rem;
+		padding-top: 1rem;
+		visibility: hidden;
+	}
+	&:hover .Menu,
+	.Menu:hover { 
+		visibility: visible; 
+	}
+}
+.NavBar-option {
+	margin-left: 2.5rem;
+
+	&, &:focus { color: $c-font-navbar; }
+	&:hover { color: $c-font-navbar-hover; }
+}
+
+
+.Menu {
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		width: 100%;
+		
+		border: 2px solid $c-font-gray-light;
+		border-top: 0;
+
+		background-color: $c-bg-navbar;
+		font-size: 1.3rem;
+		a { 
+			display: inline-block;
+			height: 100%;
+			width: 100%;
+			padding: .7rem 0;
+			border-bottom: 1px solid $c-font-gray-light;
+			&, &:visited { color: $c-font-gray-light; }
+			&:hover { color: white; }
+		}
+		li {
+			padding: 0 .7rem;
+
+			&:last-child a { border: 0; }
+		}	
+	}
+
+}
+
+
+
+/*******************************/
+/******** Login + SignUp *******/
+/*******************************/
+
+$c-bg-form-yellow: rgba(245, 255, 192, 0.9);
+
+.LoginPage, .SignUpPage {
+	background-image: url('../img/bg-dog.jpg');
+	background-size: cover;
+}
+
+.LoginForm, .SignUpForm {
+	background-color: $c-bg-form-yellow;
+	padding: 3rem;
+	border-radius: $default-radius;
+}
+
+.LoginForm {
+	width: 40%;
+	height: 80vh;
+	margin-top: 5rem;
+
+	input[type="text"],
+	input[type="password"] {
+		width: 100%;
+		max-width: none;
+	}
+	
+	input[type="submit"] {
+		margin-top: 2rem;
+		margin-bottom: 1.5rem;
+		background-color: $c-bg-navbar;
+		color: white;
+		width: 100%;
+	}
+	
+	h1 {
+		margin-bottom: 3rem;
+		text-align: center;
+		
+		img {
+			max-height: 8rem;
+			max-width: 100%;
+			margin-left: -10%;
+		}
+	}
+
+	.LoginForm-error {
+		color: red;
+	}
+}
+
+.SignUpForm {
+	width: 80%;
+	margin: 3rem auto;
+
+	h2 { 
+		padding: 1rem;
+		font-size: 3rem; 
+		background-color: $c-bg-navbar;
+		color: white;
+		border-radius: $default-radius;
+	}
+	h2 ~ p { font-size: 2rem; }
+	h2, h2~p {
+		text-align: center;
+	}
+
+	.form-group {
+		margin: 5rem 0;
+	}
+
+	input[type="submit"] {
+		width: 70%;
+		margin: 0 auto;
+
+		background-color: $c-bg-navbar;
+		color: white;
+	}
+}
+
+
+/*****************/
+/*** Questions ***/
+/*****************/
+
+.QuestionsNav {
+	margin: 4rem 0;
+}
+
+.QuestionsNav a {
+	font-size: 2.3rem;
+	color: $c-font-gray;
+	text-align: center;
+
+	border-right: 1px solid $c-font-gray;
+	&:last-child { border-right: 0; }
+
+	&:hover, &.selected {
+		color: black;
+		text-decoration: underline;
+	}
+}
+
+
+.QuestionList {
+	width: 100%;
+	margin: 0;
+	list-style: none;
+}
+
+.Question {
+	margin-bottom: 2rem;
+	padding: 2.5rem 0;
+	border-radius: $default-radius;
+	
+	font-size: 1.7rem;
+	background-color: white;
+
+	.Question-votes {
+		text-align: center;
+		font-size: 2rem;
+	}
+
+	.Question-asker {
+		font-weight: bold;
+		color: $c-bg-navbar;
+	}
+
+	.Vote {
+		cursor: pointer;
+		&.selected { color: orange; }
+	}
+
+	.Question-button {
+		margin-top: .5rem;
+		background-color: $c-bg-navbar;
+		&, &:hover { color: white; }
+	}
+}
+
+.SmallButton {
+	background-color: $c-bg-navbar;
+	color: white;
+}
+
+
+.QuestionCreateForm {
+
+	.TopicsInput {
+		display: inline-block;
+		margin-left: 3rem;
+	}	
+
+	input[type=submit] {
+		background: $c-bg-navbar;
+		color: white;
+		width: 50%;
+		margin-top: 5rem;
+	}
+}
+
+

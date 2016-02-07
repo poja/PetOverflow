@@ -1,8 +1,0 @@
-package dao;
-
-public abstract class UserDao {
-	
-	boolean authenticate(String username, String password);
-	
-	
-}

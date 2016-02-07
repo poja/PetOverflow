@@ -1,0 +1,30 @@
+<main>
+	<pet-nav></pet-nav>
+
+	<div class="container-fluid">
+		<div class="QuestionsNav row">
+			<a href="#/questions/recent" class="col-sm-4">New Questions</a>
+			<a href="#/questions/existing" class="col-sm-4">Existing Questions</a>
+			<a href="#/questions/ask" class="col-sm-4 selected">Ask a Question</a>
+		</div>
+
+		<form action="" class="QuestionCreateForm" ng-controller="QuestionAskingController as qCont">
+			<div class="form-group">
+				<label for="qtext" class="control-label">Question Text:</label>
+				<textarea name="qtext" id="qtext" rows="6" class="form-control"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="qtopics" class="control-label">Topics:</label>
+				<span>{{ (qCont.topics | arrayPrint) || 'None' }}</span>
+				<input type="text" id="qtopics" class="form-control TopicsInput" placeholder="Enter a topic name" />
+				<button class="SmallButton btn">Add topic</button>
+			</div>
+			<div class="form-group u-center">
+				<input type="submit" class="btn" value="Submit Question" />	
+			</div>
+			
+		</form>
+	</div>
+	
+	
+</main>

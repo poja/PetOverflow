@@ -1,52 +1,226 @@
+/******************/
+/**** General *****/
+/******************/
+a.u-cleanLinks, a.NavBar,
+.u-cleanLinks a,
+.NavBar a {
+  text-decoration: none; }
+  a.u-cleanLinks:hover, a.NavBar:hover,
+  .u-cleanLinks a:hover,
+  .NavBar a:hover {
+    text-decoration: none; }
+
+.u-center {
+  text-align: center; }
+
+.u-bold {
+  font-weight: bold; }
+
+html, body {
+  min-height: 100%;
+  height: 100%; }
+
+div[ng-view], main {
+  min-height: 100vh; }
+
 main {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
+  padding: 0;
+  background: url("../img/bg-gray.jpg"); }
 
-	background-image: url('../img/bg-dog.jpg');
-	background-size: cover;
-}
-
-h1 {
-	margin-bottom: 3rem;
-	text-align: center;
-}
-h1 > img {
-	max-height: 8rem;
-	max-width: 100%;
-	margin-left: -10%;
-}
-
-form {
-	background-color: rgba(245, 255, 192, 0.7); /* yellow */
-	width: 40%;
-	height: 80vh;
-	padding: 3rem;
-	margin-top: 5rem;
-	border-radius: 5px;
-}
-
-form .form-row {
-	margin-top: .5rem;
-	margin-bottom: .5rem;
-}
-form input[type="submit"] {
-	margin-top: 2rem;
-	background-color: #7E7EFF; /* blue */
-	color: white;
-	width: 100%;
-}
-
-/* tmp: */
-h1.yellow-back {
-	background-color: #CACA3B; /* yellow */
-}
 h2 {
-	background-color: rgba(255, 255, 255, 0.7);
-}
+  font-size: 2rem; }
 
-.message-error {
-	color: red;
-}
+ul {
+  padding: 0;
+  margin: 0;
+  list-style: none; }
+
+li {
+  padding: 0;
+  margin: 0; }
+
+textarea {
+  resize: none; }
+
+input[type="text"],
+input[type="password"],
+input[type="tel"] {
+  max-width: 20rem; }
+
+/***************************/
+/**** Shared Components ****/
+/***************************/
+.NavBar {
+  padding: 1rem;
+  background-color: #3D3961;
+  font-size: 2rem;
+  border-bottom: 3px solid white; }
+
+.NavBar-brand {
+  font-size: 1.2em;
+  margin: 0;
+  padding: 0; }
+  .NavBar-brand a {
+    color: white; }
+
+.NavBar-dropdown {
+  display: inline;
+  position: relative; }
+  .NavBar-dropdown .Menu {
+    position: absolute;
+    z-index: 1;
+    left: -7rem;
+    top: 2rem;
+    width: 20rem;
+    padding-top: 1rem;
+    visibility: hidden; }
+  .NavBar-dropdown:hover .Menu,
+  .NavBar-dropdown .Menu:hover {
+    visibility: visible; }
+
+.NavBar-option {
+  margin-left: 2.5rem; }
+  .NavBar-option, .NavBar-option:focus {
+    color: #C0C0C0; }
+  .NavBar-option:hover {
+    color: white; }
+
+.Menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  border: 2px solid #C0C0C0;
+  border-top: 0;
+  background-color: #3D3961;
+  font-size: 1.3rem; }
+  .Menu ul a {
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+    padding: .7rem 0;
+    border-bottom: 1px solid #C0C0C0; }
+    .Menu ul a, .Menu ul a:visited {
+      color: #C0C0C0; }
+    .Menu ul a:hover {
+      color: white; }
+  .Menu ul li {
+    padding: 0 .7rem; }
+    .Menu ul li:last-child a {
+      border: 0; }
+
+/*******************************/
+/******** Login + SignUp *******/
+/*******************************/
+.LoginPage, .SignUpPage {
+  background-image: url("../img/bg-dog.jpg");
+  background-size: cover; }
+
+.LoginForm, .SignUpForm {
+  background-color: rgba(245, 255, 192, 0.9);
+  padding: 3rem;
+  border-radius: 5px; }
+
+.LoginForm {
+  width: 40%;
+  height: 80vh;
+  margin-top: 5rem; }
+  .LoginForm input[type="text"],
+  .LoginForm input[type="password"] {
+    width: 100%;
+    max-width: none; }
+  .LoginForm input[type="submit"] {
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+    background-color: #3D3961;
+    color: white;
+    width: 100%; }
+  .LoginForm h1 {
+    margin-bottom: 3rem;
+    text-align: center; }
+    .LoginForm h1 img {
+      max-height: 8rem;
+      max-width: 100%;
+      margin-left: -10%; }
+  .LoginForm .LoginForm-error {
+    color: red; }
+
+.SignUpForm {
+  width: 80%;
+  margin: 3rem auto; }
+  .SignUpForm h2 {
+    padding: 1rem;
+    font-size: 3rem;
+    background-color: #3D3961;
+    color: white;
+    border-radius: 5px; }
+  .SignUpForm h2 ~ p {
+    font-size: 2rem; }
+  .SignUpForm h2, .SignUpForm h2 ~ p {
+    text-align: center; }
+  .SignUpForm .form-group {
+    margin: 5rem 0; }
+  .SignUpForm input[type="submit"] {
+    width: 70%;
+    margin: 0 auto;
+    background-color: #3D3961;
+    color: white; }
+
+/*****************/
+/*** Questions ***/
+/*****************/
+.QuestionsNav {
+  margin: 4rem 0; }
+
+.QuestionsNav a {
+  font-size: 2.3rem;
+  color: #505050;
+  text-align: center;
+  border-right: 1px solid #505050; }
+  .QuestionsNav a:last-child {
+    border-right: 0; }
+  .QuestionsNav a:hover, .QuestionsNav a.selected {
+    color: black;
+    text-decoration: underline; }
+
+.QuestionList {
+  width: 100%;
+  margin: 0;
+  list-style: none; }
+
+.Question {
+  margin-bottom: 2rem;
+  padding: 2.5rem 0;
+  border-radius: 5px;
+  font-size: 1.7rem;
+  background-color: white; }
+  .Question .Question-votes {
+    text-align: center;
+    font-size: 2rem; }
+  .Question .Question-asker {
+    font-weight: bold;
+    color: #3D3961; }
+  .Question .Vote {
+    cursor: pointer; }
+    .Question .Vote.selected {
+      color: orange; }
+  .Question .Question-button {
+    margin-top: .5rem;
+    background-color: #3D3961; }
+    .Question .Question-button, .Question .Question-button:hover {
+      color: white; }
+
+.SmallButton {
+  background-color: #3D3961;
+  color: white; }
+
+.QuestionCreateForm .TopicsInput {
+  display: inline-block;
+  margin-left: 3rem; }
+.QuestionCreateForm input[type=submit] {
+  background: #3D3961;
+  color: white;
+  width: 50%;
+  margin-top: 5rem; }
+
+/*# sourceMappingURL=index.css.map */

@@ -6,7 +6,10 @@
 
 		$routeProvider
 			.when('/', { templateUrl: 'pages/login.html' })
-			.when('/questions/recent', { templateUrl: 'pages/recentQuestions.html' });
+			.when('/questions/recent', { templateUrl: 'pages/questionList.html' })
+			.when('/questions/existing', { templateUrl: 'pages/questionList.html' })
+			.when('/users/new', { templateUrl: 'pages/signUp.html' })
+			.when('/questions/ask', { templateUrl: 'pages/askQuestion.html'});
 
 	}]);
 
@@ -25,7 +28,7 @@
 		var session = this;
 
 		/**
-			POSTS to the server. Emits loginSucess on success.
+			POSTS to the server. Emits loginSuccess on success.
 			On error calls back with a message from the server.
 		*/
 		function authenticate(username, password, errCallback) {
@@ -57,7 +60,7 @@
 			'getUsername': function () {
 				return this.username;
 			}
-		}
+		};
 
 	}]);
 
@@ -93,13 +96,56 @@
 			console.log("Updating the recent questions");
 			$http.get('./questions/recent').then(function (response) {
 				// resonse.data is an array of Questions objects (currently strings)
-				questCtrl.newest = response.data;
+				// questCtrl.newest = response.data;
+				questCtrl.newest = [{
+						text: 'What is a good name for a pet turtle? Today I recieved a pet turtle and it is so amazing. I love it such much and it is cute. The only thing I do not know is what to name it. Help!',
+						voteCount: 20,
+						askerNickname: 'Bob',
+						hasVote: 1
+					}, {
+						text: 'Why does my dog eat everything? In order to be clear, everything means: food, not food, animals, non-animals, leaves, humans, trumpets, and more.',
+						voteCount: -1,
+						askerNickname: 'Bobby',
+						hasVote: -1
+					}
+				];
 			});
 		};
 
 		init();
 
 	}]);
+
+	app.controller('QuestionAskingController', function() {
+
+	});
+
+	app.directive('petNav', function () {
+		return {
+			restrict: 'E',
+			templateUrl: './pages/components/nav-bar.html'
+		};
+	});
+
+	app.directive('question', function () {
+		return {
+			restrict: 'A',
+			templateUrl: './pages/components/question.html'
+		};
+	});
+
+	app.filter('arrayPrint', function () {
+		return function (array) {
+			
+			if (!array || !(array instanceof Array)) return null;
+
+			var string = array.reduce(function (oldOutcome, currentValue) {
+				return oldOutcome + ', ' + currentValue;
+			}, '').substring(2);
+
+			return string;
+		};
+	});
 
 
 }(angular));

@@ -1,0 +1,20 @@
+<div class="Question row">
+	<div class="col-sm-1 Question-votes">
+		<i class="Vote glyphicon glyphicon-triangle-top" ng-class="{selected: question.hasVote > 0}"></i>
+		<p>{{ question.voteCount }}</p>
+		<i class="Vote glyphicon glyphicon-triangle-bottom" ng-class="{selected: question.hasVote < 0}"></i>
+	</div>
+	<div class="col-sm-9">
+		<p class="Question-text">
+			{{ question.text }}
+		</p>
+		<p class="Question-asker">
+			- {{ question.askerNickname }}
+		</p>
+	</div>
+	<div class="col-ms-2">
+		<a class="Question-button btn">View Answers</a>
+		<a class="Question-button btn">Answer this Question</a>
+	</div>
+
+</div>

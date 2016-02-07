@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;ApacheProject&apos; to &apos;PetOverflow&apos;" description="Rename resource &apos;ApacheProject&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/ApacheProject" name="PetOverflow" stamp="1452092297012" updateReferences="true"/>
-</session>

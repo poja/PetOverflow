@@ -1,0 +1,17 @@
+<main ng-controller="QuestionsController as questCtrl">
+	<pet-nav></pet-nav>
+
+	<div class="container-fluid">
+		<div class="QuestionsNav row">
+			<a href="#/questions/recent" class="col-sm-4 selected">New Questions</a>
+			<a href="#/questions/existing" class="col-sm-4">Existing Questions</a>
+			<a href="#/questions/ask" class="col-sm-4">Ask a Question</a>
+		</div>
+
+		<ul class="QuestionList container">
+			<li question ng-repeat="question in questCtrl.newest"></li>
+		</ul>	
+	</div>
+	
+	
+</main>

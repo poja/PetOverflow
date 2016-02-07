@@ -36,6 +36,7 @@ public class LoginServlet extends HttpServlet {
 		response.setContentType("application/json");
 		Gson gson = new Gson();
 
+		
 		// Parse the authentication information
 		StringBuilder sb = new StringBuilder();
 		String s;
@@ -46,6 +47,7 @@ public class LoginServlet extends HttpServlet {
 		
 		if (auth == null || auth.getUsername() == null || auth.getPassword() == null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			return;
 		}
 		
 		UserDao dao = new UserDaoDerby();
@@ -59,6 +61,10 @@ public class LoginServlet extends HttpServlet {
 		}
 		else {
 			auth.setSuccess(false);
+			Cookie usernameCookie = new Cookie("username", "");
+			Cookie passwordCookie = new Cookie("password", "");
+			response.addCookie(usernameCookie);
+			response.addCookie(passwordCookie);
 			response.getWriter().write(gson.toJson(auth));
 		}
 	}

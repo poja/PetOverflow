@@ -1,4 +1,4 @@
-<main class="container-fluid">
+<main class="LoginPage container-fluid">
 	<div class="row">
 		<div class="col-md-1"></div>
 		<form 
@@ -6,26 +6,29 @@
 			name="loginCtrl.loginForm"
 			ng-submit="loginCtrl.login(loginCtrl.loginForm.$valid)"
 			novalidate 
-			class="col-md-4 col-sm-6 col-xs-12">
+			class="LoginForm col-md-4 col-sm-6 col-xs-12">
 
 			<h1><img src="./img/logo.png" alt="Pet Overflow"></h1>
 			
-			<label for="username">Username:</label>
-			<input 	type="text" name="username" class="form-control"
-					ng-model="loginCtrl.username" placeholder="username" required />	
-		
-		
-			<label for="password">Password:</label>
-			<input 	type="password" name="password" class="form-control"
-						ng-model="loginCtrl.password" placeholder="password" required />
-			
-			<p class="message-error">{{ loginCtrl.errMessage }}</p>
-			
-			<div class="row">
-				<input type="submit" class="btn" value="Log In" />		
+			<div class="form-group">
+				<label for="username" class="control-label">Username:</label>
+				<input 	type="text" name="username" class="form-control"
+					ng-model="loginCtrl.username" placeholder="username" required />		
 			</div>
 			
+			<div class="form-group">
+				<label for="password" class="control-label">Password:</label>
+				<input 	type="password" name="password" class="form-control"
+					ng-model="loginCtrl.password" placeholder="password" required />	
+			</div>
 			
+			<p class="LoginForm-error">{{ loginCtrl.errMessage }}</p>
+			
+			<div class="form-group">
+				<input type="submit" class="btn" value="Log In" />		
+			</div>
+
+			<p class="u-bold">Don't have an account? <a href="#/users/new">Sign up</a> now!</p>			
 
 		</form>		
 	</div>
