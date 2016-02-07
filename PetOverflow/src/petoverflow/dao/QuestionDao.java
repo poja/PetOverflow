@@ -50,13 +50,13 @@ public interface QuestionDao {
 	 *            text of the question
 	 * @param authorId
 	 *            id of the author
-	 * @param timestamp
-	 *            time stamp of this question
+	 * @param topics
+	 *            a list of the topics for the questions
 	 * @return the new question
 	 * @throws Exception
 	 *             if fail
 	 */
-	public Question createQuestion(String text, int authorId, Timestamp timestamp) throws Exception;
+	public Question createQuestion(String text, int authorId, List<String> topics) throws Exception;
 
 	/**
 	 * Get the text of a question

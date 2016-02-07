@@ -32,6 +32,21 @@ public interface AnswerDao {
 	public boolean exist(int answerId) throws Exception;
 
 	/**
+	 * Create a new answer
+	 * 
+	 * @param text
+	 *            text of the answer
+	 * @param authorId
+	 *            id of the author
+	 * @param questionId
+	 *            the id of the question the answer is related to
+	 * @return the new answer
+	 * @throws Exception
+	 *             if fail
+	 */
+	public Answer createAnswer(String text, int authorId, int questionId) throws Exception;
+
+	/**
 	 * Get a text of an answer
 	 * 
 	 * @param answerId

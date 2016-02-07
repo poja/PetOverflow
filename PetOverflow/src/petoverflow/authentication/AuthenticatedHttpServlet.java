@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import petoverflow.dao.User;
 import petoverflow.dao.UserDao;
 import petoverflow.dao.derby.UserDaoDerby;
 
@@ -26,6 +27,12 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 		m_userDao = UserDaoDerby.getInstance();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doPut(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -33,10 +40,21 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 		if (authenticatorResponse != HttpServletResponse.SC_CONTINUE) {
 			response.sendError(authenticatorResponse);
 		} else {
-			doAuthenticatedPut(request, response);
+			try {
+				doAuthenticatedPut(request, response, getCurrentUser(request));
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new ServletException(e.getMessage());
+			}
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -44,10 +62,21 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 		if (authenticatorResponse != HttpServletResponse.SC_CONTINUE) {
 			response.sendError(authenticatorResponse);
 		} else {
-			doAuthenticatedPost(request, response);
+			try {
+				doAuthenticatedPost(request, response, getCurrentUser(request));
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new ServletException(e.getMessage());
+			}
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -55,10 +84,21 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 		if (authenticatorResponse != HttpServletResponse.SC_CONTINUE) {
 			response.sendError(authenticatorResponse);
 		} else {
-			doAuthenticatedGet(request, response);
+			try {
+				doAuthenticatedGet(request, response, getCurrentUser(request));
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new ServletException(e.getMessage());
+			}
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doDelete(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -66,10 +106,21 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 		if (authenticatorResponse != HttpServletResponse.SC_CONTINUE) {
 			response.sendError(authenticatorResponse);
 		} else {
-			doAuthenticatedDelete(request, response);
+			try {
+				doAuthenticatedDelete(request, response, getCurrentUser(request));
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new ServletException(e.getMessage());
+			}
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doHead(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doHead(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -77,10 +128,21 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 		if (authenticatorResponse != HttpServletResponse.SC_CONTINUE) {
 			response.sendError(authenticatorResponse);
 		} else {
-			doAuthenticatedHead(request, response);
+			try {
+				doAuthenticatedHead(request, response, getCurrentUser(request));
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new ServletException(e.getMessage());
+			}
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doOptions(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doOptions(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -88,10 +150,21 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 		if (authenticatorResponse != HttpServletResponse.SC_CONTINUE) {
 			response.sendError(authenticatorResponse);
 		} else {
-			doAuthenticatedOptions(request, response);
+			try {
+				doAuthenticatedOptions(request, response, getCurrentUser(request));
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new ServletException(e.getMessage());
+			}
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doTrace(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doTrace(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -99,7 +172,12 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 		if (authenticatorResponse != HttpServletResponse.SC_CONTINUE) {
 			response.sendError(authenticatorResponse);
 		} else {
-			doAuthenticatedTrace(request, response);
+			try {
+				doAuthenticatedTrace(request, response, getCurrentUser(request));
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new ServletException(e.getMessage());
+			}
 		}
 	}
 
@@ -108,7 +186,7 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 	 * 
 	 * Authenticated version of {@link HttpServlet#doPut}
 	 */
-	protected void doAuthenticatedPut(HttpServletRequest request, HttpServletResponse response)
+	protected void doAuthenticatedPut(HttpServletRequest request, HttpServletResponse response, User user)
 			throws ServletException, IOException {
 	}
 
@@ -117,7 +195,7 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 	 * 
 	 * Authenticated version of {@link HttpServlet#doPost}
 	 */
-	protected void doAuthenticatedPost(HttpServletRequest request, HttpServletResponse response)
+	protected void doAuthenticatedPost(HttpServletRequest request, HttpServletResponse response, User user)
 			throws ServletException, IOException {
 	}
 
@@ -126,7 +204,7 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 	 * 
 	 * Authenticated version of {@link HttpServlet#doGet}
 	 */
-	protected void doAuthenticatedGet(HttpServletRequest request, HttpServletResponse response)
+	protected void doAuthenticatedGet(HttpServletRequest request, HttpServletResponse response, User user)
 			throws ServletException, IOException {
 	}
 
@@ -135,7 +213,7 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 	 * 
 	 * Authenticated version of {@link HttpServlet#doDelete}
 	 */
-	protected void doAuthenticatedDelete(HttpServletRequest request, HttpServletResponse response)
+	protected void doAuthenticatedDelete(HttpServletRequest request, HttpServletResponse response, User user)
 			throws ServletException, IOException {
 	}
 
@@ -144,7 +222,7 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 	 * 
 	 * Authenticated version of {@link HttpServlet#doHead}
 	 */
-	protected void doAuthenticatedHead(HttpServletRequest request, HttpServletResponse response)
+	protected void doAuthenticatedHead(HttpServletRequest request, HttpServletResponse response, User user)
 			throws ServletException, IOException {
 	}
 
@@ -153,7 +231,7 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 	 * 
 	 * Authenticated version of {@link HttpServlet#doOptions}
 	 */
-	protected void doAuthenticatedOptions(HttpServletRequest request, HttpServletResponse response)
+	protected void doAuthenticatedOptions(HttpServletRequest request, HttpServletResponse response, User user)
 			throws ServletException, IOException {
 	}
 
@@ -162,7 +240,7 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 	 * 
 	 * Authenticated version of {@link HttpServlet#doTrace}
 	 */
-	protected void doAuthenticatedTrace(HttpServletRequest request, HttpServletResponse response)
+	protected void doAuthenticatedTrace(HttpServletRequest request, HttpServletResponse response, User user)
 			throws ServletException, IOException {
 	}
 
@@ -212,9 +290,27 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 				e.printStackTrace();
 				return HttpServletResponse.SC_UNAUTHORIZED;
 			}
+		}
+	}
 
+	protected String getCurrentUsername(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		if (cookies == null) {
+			return null;
 		}
 
+		String username = null;
+		for (Cookie c : cookies) {
+			if (c.getName().equals("username")) {
+				username = c.getValue();
+			}
+		}
+		return username;
+	}
+
+	protected User getCurrentUser(HttpServletRequest request) throws Exception {
+		String username = getCurrentUsername(request);
+		return m_userDao.getUser(username);
 	}
 
 }

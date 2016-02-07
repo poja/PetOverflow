@@ -1,5 +1,9 @@
 package petoverflow.dto;
 
+/**
+ * The UserDto holds information about a user. This object is used to transfer
+ * that data easily.
+ */
 public class UserDto {
 
 	public int id;
@@ -8,9 +12,9 @@ public class UserDto {
 
 	public String nickname;
 
-	public String photoUrl;
+	public String description;
 
-	public String phone;
+	public String photoUrl;
 
 	public double rating;
 

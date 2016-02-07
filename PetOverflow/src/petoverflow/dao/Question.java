@@ -132,11 +132,13 @@ public class Question {
 	/**
 	 * Create a QuestionDto object that contains this question data
 	 * 
+	 * @param userId
+	 *            the id of the user's, used to check the vote status
 	 * @return QuestionDto that holds this question data
 	 * @throws Exception
 	 *             if the DAO fails
 	 */
-	public QuestionDto toQuestionDto() throws Exception {
+	public QuestionDto toQuestionDto(int userId) throws Exception {
 		QuestionDto question = new QuestionDto();
 		question.id = m_id;
 		question.text = getText();
@@ -144,6 +146,17 @@ public class Question {
 		question.rating = getRating();
 		question.timeStamp = getTimestamp();
 		question.topics = getTopics();
+
+		int voteStatus = 0;
+		List<Vote> votes = m_questionVoteDao.getQuestionVotes(m_id);
+		for (Vote vote : votes) {
+			if (vote.getVoterId() == userId) {
+				voteStatus = vote.getType() == VoteType.Up ? 1 : -1;
+				break;
+			}
+		}
+		question.voteStatus = voteStatus;
+
 		return question;
 	}
 

@@ -2,6 +2,8 @@ package petoverflow.dao;
 
 import java.util.List;
 
+import petoverflow.dto.UserDto;
+
 /**
  * The User class represent a user in the PetOverflow system. This class uses
  * DAO to get it's data and in most of it's methods exceptions are thrown if the
@@ -189,6 +191,24 @@ public class User {
 	 */
 	public void setPhoneNum(String phoneNum) throws Exception {
 		m_userDao.setUserPhoneNum(m_id, phoneNum);
+	}
+
+	/**
+	 * Create a user DTO that holds the public information about the user
+	 * 
+	 * @return user DTO object with the user information
+	 * @throws Exception
+	 *             if DAO fail
+	 */
+	public UserDto toUserDto() throws Exception {
+		UserDto user = new UserDto();
+		user.id = m_id;
+		user.username = getUsername();
+		user.nickname = getNickname();
+		user.description = getDescription();
+		user.photoUrl = getPhotoUrl();
+		user.rating = getRating();
+		return user;
 	}
 
 }

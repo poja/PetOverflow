@@ -30,4 +30,25 @@ public interface TopicDao {
 	 */
 	public List<String> getQuestionTopics(int questionId) throws Exception;
 
+	/**
+	 * Set topics to a question
+	 * 
+	 * @param questionId
+	 *            the question's id
+	 * @param topics
+	 *            a list of all question's topics
+	 * @throws Exception
+	 *             if fail
+	 */
+	public void setTopics(int questionId, List<String> topics) throws Exception;
+
+	/**
+	 * Get all the current topics
+	 * 
+	 * @return a list of all topics
+	 * @throws Exception
+	 *             if fail
+	 */
+	public List<String> getAllTopics() throws Exception;
+
 }

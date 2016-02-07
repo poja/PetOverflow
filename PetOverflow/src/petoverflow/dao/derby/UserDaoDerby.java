@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import petoverflow.dao.AnswerDao;
 import petoverflow.dao.QuestionDao;
@@ -114,6 +117,9 @@ public class UserDaoDerby implements UserDao {
 			statements.add(s);
 			s.setString(1, username);
 			rs = s.executeQuery();
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
 			int id = rs.getInt(DerbyConfig.ID);
 			return new User(id, this, m_questionDao, m_answerDao);
 
@@ -210,6 +216,9 @@ public class UserDaoDerby implements UserDao {
 			s.setString(6, phoneNum);
 			rs = s.executeQuery();
 
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
 			int id = rs.getInt(DerbyConfig.ID);
 			return new User(id, this, m_questionDao, m_answerDao);
 
@@ -243,6 +252,9 @@ public class UserDaoDerby implements UserDao {
 			s.setInt(1, userId);
 			rs = s.executeQuery();
 
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
 			return rs.getString(DerbyConfig.USERNAME);
 
 		} catch (SQLException e) {
@@ -275,6 +287,9 @@ public class UserDaoDerby implements UserDao {
 			s.setInt(1, userId);
 			rs = s.executeQuery();
 
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
 			return rs.getString(DerbyConfig.NICKNAME);
 
 		} catch (SQLException e) {
@@ -307,6 +322,9 @@ public class UserDaoDerby implements UserDao {
 			s.setInt(1, userId);
 			rs = s.executeQuery();
 
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
 			return rs.getString(DerbyConfig.DESCRIPTION);
 
 		} catch (SQLException e) {
@@ -339,6 +357,9 @@ public class UserDaoDerby implements UserDao {
 			s.setInt(1, userId);
 			rs = s.executeQuery();
 
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
 			return rs.getString(DerbyConfig.PHOTO_URL);
 
 		} catch (SQLException e) {
@@ -371,6 +392,9 @@ public class UserDaoDerby implements UserDao {
 			s.setInt(1, userId);
 			rs = s.executeQuery();
 
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
 			return rs.getString(DerbyConfig.PHONE_NUM);
 
 		} catch (SQLException e) {
@@ -503,6 +527,62 @@ public class UserDaoDerby implements UserDao {
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see petoverflow.dao.UserDao#getMostRatedUsers(int, int)
+	 */
+	public List<User> getMostRatedUsers(int requestedSize, int offset) throws SQLException {
+		Connection conn = DerbyUtils.getConnection(DerbyConfig.USER_TABLE_CREATE);
+		ArrayList<Statement> statements = new ArrayList<Statement>();
+		ResultSet rs = null;
+
+		List<User> allUsers = new ArrayList<User>();
+		try {
+			PreparedStatement s = conn
+					.prepareStatement("SELECT " + DerbyConfig.ID + " FROM " + DerbyConfig.USER_TABLE_NAME);
+			statements.add(s);
+			rs = s.executeQuery();
+			while (rs.next()) {
+				int id = rs.getInt(DerbyConfig.ID);
+				allUsers.add(new User(id, this, m_questionDao, m_answerDao));
+			}
+
+		} catch (SQLException e) {
+			DerbyUtils.printSQLException(e);
+			throw e;
+		} finally {
+			DerbyUtils.cleanUp(rs, statements, conn);
+		}
+
+		Collections.sort(allUsers, new Comparator<User>() {
+
+			@Override
+			public int compare(User o1, User o2) {
+				try {
+					double rating1 = o1.getRating();
+					double rating2 = o2.getRating();
+					if (rating1 > rating2) {
+						return 1;
+					} else if (rating1 < rating2) {
+						return -1;
+					} else {
+						return 0;
+					}
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					return 0;
+				}
+			}
+		});
+
+		if (allUsers.size() <= offset) {
+			return new ArrayList<User>();
+		}
+		return allUsers.subList(offset, Math.min(allUsers.size() + 1, offset + requestedSize));
 	}
 
 	/*

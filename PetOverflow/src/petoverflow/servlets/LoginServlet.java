@@ -14,9 +14,6 @@ import petoverflow.dao.UserDao;
 import petoverflow.dao.derby.UserDaoDerby;
 import petoverflow.dto.AuthenticationDto;
 
-/**
- * Servlet implementation class LoginServlet
- */
 public class LoginServlet extends HttpServlet {
 
 	private UserDao m_userDao;

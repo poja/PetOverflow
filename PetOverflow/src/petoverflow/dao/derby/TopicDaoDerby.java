@@ -117,4 +117,60 @@ public class TopicDaoDerby implements TopicDao {
 		}
 	}
 
+	public void setTopics(int questionId, List<String> topics) throws SQLException {
+		Connection conn = DerbyUtils.getConnection(DerbyConfig.TOPIC_TABLE_CREATE);
+		ArrayList<Statement> statements = new ArrayList<Statement>();
+		ResultSet rs = null;
+
+		try {
+			for (String topic : topics) {
+				PreparedStatement s = conn.prepareStatement("INSERT INTO " + DerbyConfig.TOPIC_TABLE_NAME + " ("
+						+ DerbyConfig.QUESTION_ID + "," + DerbyConfig.TOPIC + ") VALUES (?, ?)");
+				statements.add(s);
+				s.setInt(1, questionId);
+				s.setString(2, topic);
+				rs = s.executeQuery();
+			}
+
+		} catch (SQLException e) {
+			DerbyUtils.printSQLException(e);
+			throw e;
+		} finally {
+			DerbyUtils.cleanUp(rs, statements, conn);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see petoverflow.dao.TopicDao#getAllTopics()
+	 */
+	public List<String> getAllTopics() throws SQLException {
+		List<String> topics = new ArrayList<String>();
+
+		Connection conn = DerbyUtils.getConnection(DerbyConfig.TOPIC_TABLE_CREATE);
+		ArrayList<Statement> statements = new ArrayList<Statement>();
+		ResultSet rs = null;
+
+		try {
+			PreparedStatement s = conn
+					.prepareStatement("SELECT " + DerbyConfig.TOPIC + " FROM " + DerbyConfig.TOPIC_TABLE_NAME);
+			rs = s.executeQuery();
+			while (rs.next()) {
+				String topic = rs.getString(DerbyConfig.TOPIC);
+				if (!topics.contains(topic)) {
+					topics.add(topic);
+				}
+			}
+
+		} catch (SQLException e) {
+			DerbyUtils.printSQLException(e);
+			throw e;
+		} finally {
+			DerbyUtils.cleanUp(rs, statements, conn);
+		}
+
+		return topics;
+	}
+
 }

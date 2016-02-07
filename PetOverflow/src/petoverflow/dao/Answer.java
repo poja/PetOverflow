@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import petoverflow.dao.Vote.VoteType;
+import petoverflow.dto.AnswerDto;
 
 /**
  * The Answer class represent a user answer to question. This class uses DAO to
@@ -118,6 +119,28 @@ public class Answer {
 	 */
 	public Timestamp getTimestamp() throws Exception {
 		return m_answerDao.getAnswerTimestamp(m_id);
+	}
+
+	public AnswerDto toAnswerDto(int userId) throws Exception {
+		AnswerDto answer = new AnswerDto();
+		answer.id = m_id;
+		answer.text = getText();
+		answer.authorId = getAuthorId();
+		answer.rating = getRating();
+		answer.timestamp = getTimestamp();
+		answer.questionId = getQuestionId();
+
+		int voteStatus = 0;
+		List<Vote> votes = m_answerVoteDao.getAnswerVotes(m_id);
+		for (Vote vote : votes) {
+			if (vote.getVoterId() == userId) {
+				voteStatus = vote.getType() == VoteType.Up ? 1 : -1;
+				break;
+			}
+		}
+		answer.voteStatus = voteStatus;
+
+		return answer;
 	}
 
 }

@@ -9,6 +9,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.tomcat.jni.Time;
+
 import petoverflow.dao.Question;
 import petoverflow.dao.QuestionDao;
 import petoverflow.dao.QuestionVoteDao;
@@ -161,7 +163,7 @@ public class QuestionDaoDerby implements QuestionDao {
 	 * java.sql.Timestamp)
 	 */
 	@Override
-	public Question createQuestion(String text, int userId, Timestamp timestamp) throws SQLException {
+	public Question createQuestion(String text, int userId, List<String> topics) throws Exception {
 		Connection conn = DerbyUtils.getConnection(DerbyConfig.QUESTION_TABLE_CREATE);
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
@@ -173,11 +175,18 @@ public class QuestionDaoDerby implements QuestionDao {
 			statements.add(s);
 			s.setString(1, text);
 			s.setInt(2, userId);
-			s.setTimestamp(3, timestamp);
+			s.setTimestamp(3, new Timestamp(Time.now()));
 			rs = s.executeQuery();
 
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
 			int id = rs.getInt(DerbyConfig.ID);
-			return new Question(id, this, m_questionVoteDao, m_topicDao);
+			Question question = new Question(id, this, m_questionVoteDao, m_topicDao);
+
+			m_topicDao.setTopics(question.getId(), topics);
+
+			return question;
 
 		} catch (SQLException e) {
 			DerbyUtils.printSQLException(e);
@@ -208,7 +217,9 @@ public class QuestionDaoDerby implements QuestionDao {
 			statements.add(s);
 			s.setInt(1, questionId);
 			rs = s.executeQuery();
-
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
 			return rs.getString(DerbyConfig.TEXT);
 
 		} catch (SQLException e) {
@@ -240,7 +251,9 @@ public class QuestionDaoDerby implements QuestionDao {
 			statements.add(s);
 			s.setInt(1, questionId);
 			rs = s.executeQuery();
-
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
 			return rs.getInt(DerbyConfig.AUTHOR_ID);
 
 		} catch (SQLException e) {
@@ -272,7 +285,9 @@ public class QuestionDaoDerby implements QuestionDao {
 			statements.add(s);
 			s.setInt(1, questionId);
 			rs = s.executeQuery();
-
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
 			return rs.getTimestamp(DerbyConfig.TIMESTAMP);
 
 		} catch (SQLException e) {

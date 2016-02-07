@@ -9,6 +9,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.tomcat.jni.Time;
+
 import petoverflow.dao.Answer;
 import petoverflow.dao.AnswerDao;
 import petoverflow.dao.AnswerVoteDao;
@@ -110,6 +112,37 @@ public class AnswerDaoDerby implements AnswerDao {
 		}
 	}
 
+	public Answer createAnswer(String text, int authorId, int questionId) throws SQLException {
+		Connection conn = DerbyUtils.getConnection(DerbyConfig.ANSWER_TABLE_CREATE);
+		ArrayList<Statement> statements = new ArrayList<Statement>();
+		ResultSet rs = null;
+
+		try {
+			PreparedStatement s = conn.prepareStatement("INSERT INTO " + DerbyConfig.ANSWER_TABLE_NAME + " ("
+					+ DerbyConfig.TEXT + "," + DerbyConfig.AUTHOR_ID + "," + DerbyConfig.QUESTION_ID + ","
+					+ DerbyConfig.TIMESTAMP + ") VALUES (?, ?, ?, ?)");
+			statements.add(s);
+			s.setString(1, text);
+			s.setInt(2, authorId);
+			s.setInt(3, questionId);
+			s.setTimestamp(4, new Timestamp(Time.now()));
+			rs = s.executeQuery();
+
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
+			int id = rs.getInt(DerbyConfig.ID);
+			Answer answer = new Answer(id, this, m_answerVoteDao);
+			return answer;
+
+		} catch (SQLException e) {
+			DerbyUtils.printSQLException(e);
+			throw e;
+		} finally {
+			DerbyUtils.cleanUp(rs, statements, conn);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -131,6 +164,9 @@ public class AnswerDaoDerby implements AnswerDao {
 			statements.add(s);
 			s.setInt(1, answerId);
 			rs = s.executeQuery();
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
 			return rs.getString(DerbyConfig.TEXT);
 
 		} catch (SQLException e) {
@@ -162,6 +198,9 @@ public class AnswerDaoDerby implements AnswerDao {
 			statements.add(s);
 			s.setInt(1, answerId);
 			rs = s.executeQuery();
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
 			return rs.getInt(DerbyConfig.AUTHOR_ID);
 
 		} catch (SQLException e) {
@@ -193,6 +232,9 @@ public class AnswerDaoDerby implements AnswerDao {
 			statements.add(s);
 			s.setInt(1, answerId);
 			rs = s.executeQuery();
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
 			return rs.getInt(DerbyConfig.QUESTION_ID);
 
 		} catch (SQLException e) {
@@ -224,6 +266,9 @@ public class AnswerDaoDerby implements AnswerDao {
 			statements.add(s);
 			s.setInt(1, answerId);
 			rs = s.executeQuery();
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
 			return rs.getTimestamp(DerbyConfig.TIMESTAMP);
 
 		} catch (SQLException e) {

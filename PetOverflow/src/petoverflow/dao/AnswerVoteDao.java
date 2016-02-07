@@ -9,6 +9,30 @@ import java.util.List;
 public interface AnswerVoteDao {
 
 	/**
+	 * Add a vote to a answer
+	 * 
+	 * @param answerId
+	 *            the answer's id
+	 * @param vote
+	 *            the vote
+	 * @throws Exception
+	 *             if fail
+	 */
+	public void addVote(int answerId, Vote vote) throws Exception;
+
+	/**
+	 * Remove a vote from a answer
+	 * 
+	 * @param answerId
+	 *            the answer's id
+	 * @param voterId
+	 *            the voter's id
+	 * @throws Exception
+	 *             if fail
+	 */
+	public void removeVote(int answerId, int voterId) throws Exception;
+
+	/**
 	 * Get all votes to a specific answer
 	 * 
 	 * @param answerId

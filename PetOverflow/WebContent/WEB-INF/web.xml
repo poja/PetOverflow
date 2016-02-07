@@ -13,21 +13,21 @@
 	</listener>
 
 	<servlet>
-		<servlet-name>RecentQuestionsServlet</servlet-name>
-		<servlet-class>petoverflow.servlets.RecentQuestionsServlet</servlet-class>
-	</servlet>
-	<servlet>
 		<servlet-name>LoginServlet</servlet-name>
 		<servlet-class>petoverflow.servlets.LoginServlet</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>QuestionServlet</servlet-name>
+		<servlet-class>petoverflow.servlets.QuestionServlet</servlet-class>
+	</servlet>
 
-	<servlet-mapping>
-		<servlet-name>RecentQuestionsServlet</servlet-name>
-		<url-pattern>/questions/recent</url-pattern>
-	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>LoginServlet</servlet-name>
 		<url-pattern>/login</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>QuestionServlet</servlet-name>
+		<url-pattern>/question*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>

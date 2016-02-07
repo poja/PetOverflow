@@ -1,13 +1,12 @@
 package petoverflow.dto;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 /**
- * The QuestionDto holds information about a question. This object is used to
+ * The AnswerDto holds information about an answer. This object is used to
  * transfer that data easily.
  */
-public class QuestionDto {
+public class AnswerDto {
 
 	public int id;
 
@@ -17,9 +16,9 @@ public class QuestionDto {
 
 	public double rating;
 
-	public Timestamp timeStamp;
+	public Timestamp timestamp;
 
-	public List<String> topics;
+	public int questionId;
 
 	public int voteStatus;
 

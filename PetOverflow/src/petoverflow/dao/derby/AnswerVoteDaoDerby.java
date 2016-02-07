@@ -61,6 +61,63 @@ public class AnswerVoteDaoDerby implements AnswerVoteDao {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see petoverflow.dao.AnswerVoteDao#addVote(int, petoverflow.dao.Vote)
+	 */
+	public void addVote(int answerId, Vote vote) throws SQLException {
+		// Remove previous vote
+		removeVote(answerId, vote.getVoterId());
+
+		Connection conn = DerbyUtils.getConnection(DerbyConfig.ANSWER_VOTE_TABLE_CREATE);
+		ArrayList<Statement> statements = new ArrayList<Statement>();
+		ResultSet rs = null;
+
+		try {
+			PreparedStatement s = conn
+					.prepareStatement("INSERT INTO " + DerbyConfig.ANSWER_VOTE_TABLE_NAME + " (" + DerbyConfig.VOTER_ID
+							+ "," + DerbyConfig.ANSWER_ID + "," + DerbyConfig.VOTE_TYPE + ") VALUES (?, ?, ?)");
+			statements.add(s);
+			s.setInt(1, vote.getVoterId());
+			s.setInt(2, answerId);
+			s.setBoolean(3, vote.getType() == VoteType.Up);
+			rs = s.executeQuery();
+
+		} catch (SQLException e) {
+			DerbyUtils.printSQLException(e);
+			throw e;
+		} finally {
+			DerbyUtils.cleanUp(rs, statements, conn);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see petoverflow.dao.AnswerVoteDao#removeVote(int, int)
+	 */
+	public void removeVote(int answerId, int voterId) throws SQLException {
+		Connection conn = DerbyUtils.getConnection(DerbyConfig.ANSWER_VOTE_TABLE_CREATE);
+		ArrayList<Statement> statements = new ArrayList<Statement>();
+		ResultSet rs = null;
+
+		try {
+			PreparedStatement s = conn.prepareStatement("DELETE FROM " + DerbyConfig.ANSWER_VOTE_TABLE_NAME + " WHERE "
+					+ DerbyConfig.VOTER_ID + " = ? AND " + DerbyConfig.ANSWER_ID + " = ?");
+			statements.add(s);
+			s.setInt(1, voterId);
+			s.setInt(2, answerId);
+			rs = s.executeQuery();
+
+		} catch (SQLException e) {
+			DerbyUtils.printSQLException(e);
+			throw e;
+		} finally {
+			DerbyUtils.cleanUp(rs, statements, conn);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see petoverflow.dao.AnswerVoteDao#getAnswerVotes(int)
 	 */
 	@Override
