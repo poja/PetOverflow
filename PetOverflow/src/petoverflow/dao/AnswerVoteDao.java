@@ -2,6 +2,8 @@ package petoverflow.dao;
 
 import java.util.List;
 
+import petoverflow.dao.items.Vote;
+
 /**
  * The AnswerVoteDao interface provide a set of methods to manage and read all
  * votes to answers. All methods throws Exception in failure.

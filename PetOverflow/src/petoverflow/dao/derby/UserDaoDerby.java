@@ -6,32 +6,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-import petoverflow.dao.AnswerDao;
-import petoverflow.dao.QuestionDao;
-import petoverflow.dao.User;
+import petoverflow.Utility;
+import petoverflow.dao.DaoManager;
+import petoverflow.dao.DaoObject;
 import petoverflow.dao.UserDao;
-import petoverflow.dao.exception.DerbyNotInitialized;
-import petoverflow.dao.exception.ExistingUsernameException;
-import petoverflow.dao.exception.NoSuchUserException;
+import petoverflow.dao.items.User;
+import petoverflow.dao.utility.exception.ExistingUsernameException;
+import petoverflow.dao.utility.exception.NoSuchUserException;
 
 /**
  * The UserDaoDerby class implements the UserDao with the Derby data base.
  */
-public class UserDaoDerby implements UserDao {
-
-	/**
-	 * The questions DAO this DAO's users are related to
-	 */
-	private final QuestionDao m_questionDao;
-
-	/**
-	 * The answers DAO this DAO's users are related to
-	 */
-	private final AnswerDao m_answerDao;
+public class UserDaoDerby extends DaoObject implements UserDao {
 
 	/**
 	 * The single instance of this class
@@ -45,7 +33,7 @@ public class UserDaoDerby implements UserDao {
 	 */
 	public static UserDaoDerby getInstance() {
 		if (m_instance == null) {
-			throw new DerbyNotInitialized();
+			throw new IllegalStateException("Users dao wasn't initialized.");
 		}
 		return m_instance;
 	}
@@ -62,10 +50,10 @@ public class UserDaoDerby implements UserDao {
 	 * @throws SQLException
 	 *             if failed to created this DAO tables
 	 */
-	public static void init(QuestionDao questionDao, AnswerDao answerDao) throws ClassNotFoundException, SQLException {
+	public static void init(DaoManager daoManager) throws ClassNotFoundException, SQLException {
 		System.out.println("Initiating users database connection");
-		DerbyUtils.initTable(DerbyConfig.USER_TABLE_NAME, DerbyConfig.USER_TABLE_CREATE);
-		m_instance = new UserDaoDerby(questionDao, answerDao);
+		DerbyUtils.initTable(DerbyConfig.DB_NAME, DerbyConfig.USER_TABLE_CREATE);
+		m_instance = new UserDaoDerby(daoManager);
 	}
 
 	/**
@@ -78,9 +66,8 @@ public class UserDaoDerby implements UserDao {
 	 * @param answerDao
 	 *            The answers DAO this DAO's users are related to
 	 */
-	private UserDaoDerby(QuestionDao questionDao, AnswerDao answerDao) {
-		m_questionDao = questionDao;
-		m_answerDao = answerDao;
+	private UserDaoDerby(DaoManager daoManager) {
+		super(daoManager);
 	}
 
 	/*
@@ -93,7 +80,7 @@ public class UserDaoDerby implements UserDao {
 		if (!exist(userId)) {
 			throw new NoSuchUserException();
 		}
-		return new User(userId, this, m_questionDao, m_answerDao);
+		return new User(m_daoManager, userId);
 	}
 
 	/*
@@ -107,11 +94,12 @@ public class UserDaoDerby implements UserDao {
 			throw new NoSuchUserException();
 		}
 
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.USER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.ID + " FROM "
 					+ DerbyConfig.USER_TABLE_NAME + " WHERE " + DerbyConfig.USERNAME + " = ?");
 			statements.add(s);
@@ -121,10 +109,9 @@ public class UserDaoDerby implements UserDao {
 				throw new SQLException("Unexpected error");
 			}
 			int id = rs.getInt(DerbyConfig.ID);
-			return new User(id, this, m_questionDao, m_answerDao);
+			return new User(m_daoManager, id);
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -138,11 +125,12 @@ public class UserDaoDerby implements UserDao {
 	 */
 	@Override
 	public boolean exist(int userId) throws SQLException {
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.USER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement(
 					"SELECT * FROM " + DerbyConfig.USER_TABLE_NAME + " WHERE " + DerbyConfig.ID + " = ?");
 			statements.add(s);
@@ -151,7 +139,6 @@ public class UserDaoDerby implements UserDao {
 			return rs.next();
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -165,11 +152,12 @@ public class UserDaoDerby implements UserDao {
 	 */
 	@Override
 	public boolean exist(String username) throws SQLException {
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.USER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement(
 					"SELECT * FROM " + DerbyConfig.USER_TABLE_NAME + " WHERE " + DerbyConfig.USERNAME + " = ?");
 			statements.add(s);
@@ -178,7 +166,6 @@ public class UserDaoDerby implements UserDao {
 			return rs.next();
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -198,15 +185,17 @@ public class UserDaoDerby implements UserDao {
 		if (exist(username)) {
 			throw new ExistingUsernameException();
 		}
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.USER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
-			PreparedStatement s = conn
-					.prepareStatement("INSERT INTO " + DerbyConfig.USER_TABLE_NAME + " (" + DerbyConfig.USERNAME + ", "
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
+			PreparedStatement s = conn.prepareStatement(
+					"INSERT INTO " + DerbyConfig.USER_TABLE_NAME + " (" + DerbyConfig.USERNAME + ", "
 							+ DerbyConfig.PASSWORD + ", " + DerbyConfig.NICKNAME + ", " + DerbyConfig.DESCRIPTION + ", "
-							+ DerbyConfig.PHOTO_URL + ", " + DerbyConfig.PHONE_NUM + ") VALUES (?, ?, ?, ?, ?, ?)");
+							+ DerbyConfig.PHOTO_URL + ", " + DerbyConfig.PHONE_NUM + ") VALUES (?, ?, ?, ?, ?, ?)",
+					new String[] { DerbyConfig.ID });
 			statements.add(s);
 			s.setString(1, username);
 			s.setString(2, password);
@@ -214,16 +203,16 @@ public class UserDaoDerby implements UserDao {
 			s.setString(4, description);
 			s.setString(5, photoUrl);
 			s.setString(6, phoneNum);
-			rs = s.executeQuery();
+			s.executeUpdate();
+			rs = s.getGeneratedKeys();
 
 			if (!rs.next()) {
 				throw new SQLException("Unexpected error");
 			}
-			int id = rs.getInt(DerbyConfig.ID);
-			return new User(id, this, m_questionDao, m_answerDao);
+			int id = rs.getInt(1);
+			return new User(m_daoManager, id);
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -241,11 +230,12 @@ public class UserDaoDerby implements UserDao {
 			throw new NoSuchUserException();
 		}
 
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.USER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.USERNAME + " FROM "
 					+ DerbyConfig.USER_TABLE_NAME + " WHERE " + DerbyConfig.ID + " = ?");
 			statements.add(s);
@@ -258,7 +248,6 @@ public class UserDaoDerby implements UserDao {
 			return rs.getString(DerbyConfig.USERNAME);
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -276,11 +265,12 @@ public class UserDaoDerby implements UserDao {
 			throw new NoSuchUserException();
 		}
 
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.USER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.NICKNAME + " FROM "
 					+ DerbyConfig.USER_TABLE_NAME + " WHERE " + DerbyConfig.ID + " = ?");
 			statements.add(s);
@@ -293,7 +283,6 @@ public class UserDaoDerby implements UserDao {
 			return rs.getString(DerbyConfig.NICKNAME);
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -311,11 +300,12 @@ public class UserDaoDerby implements UserDao {
 			throw new NoSuchUserException();
 		}
 
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.USER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.DESCRIPTION + " FROM "
 					+ DerbyConfig.USER_TABLE_NAME + " WHERE " + DerbyConfig.ID + " = ?");
 			statements.add(s);
@@ -328,7 +318,6 @@ public class UserDaoDerby implements UserDao {
 			return rs.getString(DerbyConfig.DESCRIPTION);
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -346,11 +335,12 @@ public class UserDaoDerby implements UserDao {
 			throw new NoSuchUserException();
 		}
 
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.USER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.PHOTO_URL + " FROM "
 					+ DerbyConfig.USER_TABLE_NAME + " WHERE " + DerbyConfig.ID + " = ?");
 			statements.add(s);
@@ -363,7 +353,6 @@ public class UserDaoDerby implements UserDao {
 			return rs.getString(DerbyConfig.PHOTO_URL);
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -381,11 +370,12 @@ public class UserDaoDerby implements UserDao {
 			throw new NoSuchUserException();
 		}
 
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.USER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.PHONE_NUM + " FROM "
 					+ DerbyConfig.USER_TABLE_NAME + " WHERE " + DerbyConfig.ID + " = ?");
 			statements.add(s);
@@ -398,7 +388,6 @@ public class UserDaoDerby implements UserDao {
 			return rs.getString(DerbyConfig.PHONE_NUM);
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -416,20 +405,20 @@ public class UserDaoDerby implements UserDao {
 			throw new NoSuchUserException();
 		}
 
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.USER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("UPDATE " + DerbyConfig.USER_TABLE_NAME + " SET "
 					+ DerbyConfig.PASSWORD + " = ? WHERE " + DerbyConfig.ID + " = ?");
 			statements.add(s);
 			s.setString(1, password);
 			s.setInt(2, userId);
-			rs = s.executeQuery();
+			s.executeUpdate();
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -447,20 +436,20 @@ public class UserDaoDerby implements UserDao {
 			throw new NoSuchUserException();
 		}
 
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.USER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("UPDATE " + DerbyConfig.USER_TABLE_NAME + " SET "
 					+ DerbyConfig.DESCRIPTION + " = ? WHERE " + DerbyConfig.ID + " = ?");
 			statements.add(s);
 			s.setString(1, description);
 			s.setInt(2, userId);
-			rs = s.executeQuery();
+			s.executeUpdate();
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -478,20 +467,20 @@ public class UserDaoDerby implements UserDao {
 			throw new NoSuchUserException();
 		}
 
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.USER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("UPDATE " + DerbyConfig.USER_TABLE_NAME + " SET "
 					+ DerbyConfig.PHOTO_URL + " = ? WHERE " + DerbyConfig.ID + " = ?");
 			statements.add(s);
 			s.setString(1, photoUrl);
 			s.setInt(2, userId);
-			rs = s.executeQuery();
+			s.executeUpdate();
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -509,20 +498,20 @@ public class UserDaoDerby implements UserDao {
 			throw new NoSuchUserException();
 		}
 
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.USER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("UPDATE " + DerbyConfig.USER_TABLE_NAME + " SET "
 					+ DerbyConfig.PHONE_NUM + " = ? WHERE " + DerbyConfig.ID + " = ?");
 			statements.add(s);
 			s.setString(1, phoneNum);
 			s.setInt(2, userId);
-			rs = s.executeQuery();
+			s.executeUpdate();
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -534,55 +523,31 @@ public class UserDaoDerby implements UserDao {
 	 * 
 	 * @see petoverflow.dao.UserDao#getMostRatedUsers(int, int)
 	 */
-	public List<User> getMostRatedUsers(int requestedSize, int offset) throws SQLException {
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.USER_TABLE_CREATE);
+	public List<User> getMostRatedUsers(int size, int offset) throws SQLException {
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		List<User> allUsers = new ArrayList<User>();
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn
 					.prepareStatement("SELECT " + DerbyConfig.ID + " FROM " + DerbyConfig.USER_TABLE_NAME);
 			statements.add(s);
 			rs = s.executeQuery();
 			while (rs.next()) {
 				int id = rs.getInt(DerbyConfig.ID);
-				allUsers.add(new User(id, this, m_questionDao, m_answerDao));
+				allUsers.add(new User(m_daoManager, id));
 			}
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
 		}
 
-		Collections.sort(allUsers, new Comparator<User>() {
-
-			@Override
-			public int compare(User o1, User o2) {
-				try {
-					double rating1 = o1.getRating();
-					double rating2 = o2.getRating();
-					if (rating1 > rating2) {
-						return 1;
-					} else if (rating1 < rating2) {
-						return -1;
-					} else {
-						return 0;
-					}
-
-				} catch (Exception e) {
-					e.printStackTrace();
-					return 0;
-				}
-			}
-		});
-
-		if (allUsers.size() <= offset) {
-			return new ArrayList<User>();
-		}
-		return allUsers.subList(offset, Math.min(allUsers.size() + 1, offset + requestedSize));
+		Utility.sortByRating(allUsers);
+		return Utility.cutList(allUsers, size, offset);
 	}
 
 	/*
@@ -593,11 +558,12 @@ public class UserDaoDerby implements UserDao {
 	 */
 	@Override
 	public boolean isAuthenticationPair(String username, String password) throws SQLException {
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.USER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.PASSWORD + " FROM "
 					+ DerbyConfig.USER_TABLE_NAME + " WHERE " + DerbyConfig.USERNAME + " = ?");
 			statements.add(s);
@@ -615,7 +581,6 @@ public class UserDaoDerby implements UserDao {
 			}
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			// release all open resources to avoid unnecessary memory usage

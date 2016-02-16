@@ -11,21 +11,19 @@ import java.util.List;
 
 import org.apache.tomcat.jni.Time;
 
-import petoverflow.dao.Answer;
+import petoverflow.Utility;
 import petoverflow.dao.AnswerDao;
-import petoverflow.dao.AnswerVoteDao;
-import petoverflow.dao.exception.DerbyNotInitialized;
-import petoverflow.dao.exception.NoSuchAnswerException;
+import petoverflow.dao.DaoManager;
+import petoverflow.dao.DaoObject;
+import petoverflow.dao.items.Answer;
+import petoverflow.dao.items.Question;
+import petoverflow.dao.items.User;
+import petoverflow.dao.utility.exception.NoSuchAnswerException;
 
 /**
  * The AnswerDaoDerby class implements the AnswerDao with the Derby data base.
  */
-public class AnswerDaoDerby implements AnswerDao {
-
-	/**
-	 * The votes DAO this DAO's answer are related to
-	 */
-	private final AnswerVoteDao m_answerVoteDao;
+public class AnswerDaoDerby extends DaoObject implements AnswerDao {
 
 	/**
 	 * The single instance of this class
@@ -39,7 +37,7 @@ public class AnswerDaoDerby implements AnswerDao {
 	 */
 	public static AnswerDaoDerby getInstance() {
 		if (m_instance == null) {
-			throw new DerbyNotInitialized();
+			throw new IllegalStateException("Answers dao wasn't initialized.");
 		}
 		return m_instance;
 	}
@@ -54,10 +52,10 @@ public class AnswerDaoDerby implements AnswerDao {
 	 * @throws SQLException
 	 *             if failed to created this DAO tables
 	 */
-	public static void init(AnswerVoteDao answerVoteDao) throws ClassNotFoundException, SQLException {
+	public static void init(DaoManager daoManager) throws ClassNotFoundException, SQLException {
 		System.out.println("Initiating answers database connection");
-		DerbyUtils.initTable(DerbyConfig.ANSWER_TABLE_NAME, DerbyConfig.ANSWER_TABLE_CREATE);
-		m_instance = new AnswerDaoDerby(answerVoteDao);
+		DerbyUtils.initTable(DerbyConfig.DB_NAME, DerbyConfig.ANSWER_TABLE_CREATE);
+		m_instance = new AnswerDaoDerby(daoManager);
 	}
 
 	/**
@@ -68,8 +66,8 @@ public class AnswerDaoDerby implements AnswerDao {
 	 * @param answerVoteDao
 	 *            The votes DAO this DAO's answer are related to
 	 */
-	private AnswerDaoDerby(AnswerVoteDao answerVoteDao) {
-		m_answerVoteDao = answerVoteDao;
+	private AnswerDaoDerby(DaoManager daoManager) {
+		super(daoManager);
 	}
 
 	/*
@@ -82,7 +80,7 @@ public class AnswerDaoDerby implements AnswerDao {
 		if (!exist(answerId)) {
 			throw new NoSuchAnswerException();
 		}
-		return new Answer(answerId, this, m_answerVoteDao);
+		return new Answer(m_daoManager, answerId);
 	}
 
 	/*
@@ -92,11 +90,12 @@ public class AnswerDaoDerby implements AnswerDao {
 	 */
 	@Override
 	public boolean exist(int answerId) throws SQLException {
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.ANSWER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement(
 					"SELECT * FROM " + DerbyConfig.ANSWER_TABLE_NAME + " WHERE " + DerbyConfig.ID + " = ?");
 			statements.add(s);
@@ -105,7 +104,6 @@ public class AnswerDaoDerby implements AnswerDao {
 			return rs.next();
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -113,30 +111,30 @@ public class AnswerDaoDerby implements AnswerDao {
 	}
 
 	public Answer createAnswer(String text, int authorId, int questionId) throws SQLException {
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.ANSWER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("INSERT INTO " + DerbyConfig.ANSWER_TABLE_NAME + " ("
 					+ DerbyConfig.TEXT + "," + DerbyConfig.AUTHOR_ID + "," + DerbyConfig.QUESTION_ID + ","
-					+ DerbyConfig.TIMESTAMP + ") VALUES (?, ?, ?, ?)");
+					+ DerbyConfig.TIMESTAMP + ") VALUES (?, ?, ?, ?)", new String[] { DerbyConfig.ID });
 			statements.add(s);
 			s.setString(1, text);
 			s.setInt(2, authorId);
 			s.setInt(3, questionId);
 			s.setTimestamp(4, new Timestamp(Time.now()));
-			rs = s.executeQuery();
+			s.executeUpdate();
+			rs = s.getGeneratedKeys();
 
 			if (!rs.next()) {
 				throw new SQLException("Unexpected error");
 			}
-			int id = rs.getInt(DerbyConfig.ID);
-			Answer answer = new Answer(id, this, m_answerVoteDao);
-			return answer;
+			int id = rs.getInt(0);
+			return new Answer(m_daoManager, id);
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -154,11 +152,12 @@ public class AnswerDaoDerby implements AnswerDao {
 			throw new NoSuchAnswerException();
 		}
 
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.ANSWER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.TEXT + " FROM "
 					+ DerbyConfig.ANSWER_TABLE_NAME + " WHERE " + DerbyConfig.ID + " = ?");
 			statements.add(s);
@@ -170,7 +169,6 @@ public class AnswerDaoDerby implements AnswerDao {
 			return rs.getString(DerbyConfig.TEXT);
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -183,16 +181,17 @@ public class AnswerDaoDerby implements AnswerDao {
 	 * @see petoverflow.dao.AnswerDao#getAnswerAuthorId(int)
 	 */
 	@Override
-	public int getAnswerAuthorId(int answerId) throws SQLException, NoSuchAnswerException {
+	public User getAnswerAuthor(int answerId) throws Exception {
 		if (!exist(answerId)) {
 			throw new NoSuchAnswerException();
 		}
 
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.ANSWER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.AUTHOR_ID + " FROM "
 					+ DerbyConfig.ANSWER_TABLE_NAME + " WHERE " + DerbyConfig.ID + " = ?");
 			statements.add(s);
@@ -201,10 +200,10 @@ public class AnswerDaoDerby implements AnswerDao {
 			if (!rs.next()) {
 				throw new SQLException("Unexpected error");
 			}
-			return rs.getInt(DerbyConfig.AUTHOR_ID);
+			int userId = rs.getInt(DerbyConfig.AUTHOR_ID);
+			return m_daoManager.getUserDao().getUser(userId);
 
-		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
+		} catch (Exception e) {
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -217,16 +216,17 @@ public class AnswerDaoDerby implements AnswerDao {
 	 * @see petoverflow.dao.AnswerDao#getAnswerQuestionId(int)
 	 */
 	@Override
-	public int getAnswerQuestionId(int answerId) throws SQLException, NoSuchAnswerException {
+	public Question getAnswerQuestion(int answerId) throws Exception {
 		if (!exist(answerId)) {
 			throw new NoSuchAnswerException();
 		}
 
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.ANSWER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.QUESTION_ID + " FROM "
 					+ DerbyConfig.ANSWER_TABLE_NAME + " WHERE " + DerbyConfig.ID + " = ?");
 			statements.add(s);
@@ -235,10 +235,10 @@ public class AnswerDaoDerby implements AnswerDao {
 			if (!rs.next()) {
 				throw new SQLException("Unexpected error");
 			}
-			return rs.getInt(DerbyConfig.QUESTION_ID);
+			int questionId = rs.getInt(DerbyConfig.QUESTION_ID);
+			return m_daoManager.getQuestionDao().getQuestion(questionId);
 
-		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
+		} catch (Exception e) {
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -256,11 +256,12 @@ public class AnswerDaoDerby implements AnswerDao {
 			throw new NoSuchAnswerException();
 		}
 
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.ANSWER_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.TIMESTAMP + " FROM "
 					+ DerbyConfig.ANSWER_TABLE_NAME + " WHERE " + DerbyConfig.ID + " = ?");
 			statements.add(s);
@@ -272,7 +273,6 @@ public class AnswerDaoDerby implements AnswerDao {
 			return rs.getTimestamp(DerbyConfig.TIMESTAMP);
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -285,12 +285,23 @@ public class AnswerDaoDerby implements AnswerDao {
 	 * @see petoverflow.dao.AnswerDao#getAnswersByUser(int)
 	 */
 	@Override
-	public List<Answer> getAnswersByAuthor(int authorId) throws SQLException {
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.ANSWER_TABLE_CREATE);
+	public List<Answer> getAnswersByAuthor(int authorId, int size, int offset) throws SQLException {
+		List<Answer> answersByUser = getAnswersByAuthorAll(authorId);
+		return Utility.cutList(answersByUser, size, offset);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see petoverflow.dao.AnswerDao#getAnswersByAuthorAll(int)
+	 */
+	public List<Answer> getAnswersByAuthorAll(int authorId) throws SQLException {
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.ID + " FROM "
 					+ DerbyConfig.ANSWER_TABLE_NAME + " WHERE " + DerbyConfig.AUTHOR_ID + " = ?");
 			statements.add(s);
@@ -300,12 +311,11 @@ public class AnswerDaoDerby implements AnswerDao {
 			List<Answer> answersByUser = new ArrayList<Answer>();
 			while (rs.next()) {
 				int answerId = rs.getInt(DerbyConfig.ID);
-				answersByUser.add(new Answer(answerId, this, m_answerVoteDao));
+				answersByUser.add(new Answer(m_daoManager, answerId));
 			}
 			return answersByUser;
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -318,12 +328,13 @@ public class AnswerDaoDerby implements AnswerDao {
 	 * @see petoverflow.dao.AnswerDao#getQuestionAnswers(int)
 	 */
 	@Override
-	public List<Answer> getQuestionAnswers(int questionId) throws SQLException {
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.ANSWER_TABLE_CREATE);
+	public List<Answer> getQuestionAnswers(int questionId, int size, int offset) throws SQLException {
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.ID + " FROM "
 					+ DerbyConfig.ANSWER_TABLE_NAME + " WHERE " + DerbyConfig.QUESTION_ID + " = ?");
 			statements.add(s);
@@ -333,12 +344,11 @@ public class AnswerDaoDerby implements AnswerDao {
 			List<Answer> questionAnswers = new ArrayList<Answer>();
 			while (rs.next()) {
 				int answerId = rs.getInt(DerbyConfig.ID);
-				questionAnswers.add(new Answer(answerId, this, m_answerVoteDao));
+				questionAnswers.add(new Answer(m_daoManager, answerId));
 			}
-			return questionAnswers;
+			return Utility.cutList(questionAnswers, size, offset);
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);

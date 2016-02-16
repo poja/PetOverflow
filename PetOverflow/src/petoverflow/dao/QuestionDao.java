@@ -1,8 +1,10 @@
 package petoverflow.dao;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
+
+import petoverflow.dao.items.Question;
+import petoverflow.dao.items.User;
 
 /**
  * The QuestionDao interface provide a set of methods that allow reading and
@@ -37,11 +39,17 @@ public interface QuestionDao {
 	 * 
 	 * @param authorId
 	 *            the user's id
+	 * @param size
+	 *            the wanted size of the list
+	 * @param offset
+	 *            the wanted offset of the total list
 	 * @return a list of all question published by the user
 	 * @throws Exception
 	 *             if fail
 	 */
-	public List<Question> getQuestionsByAuthor(int authorId) throws Exception;
+	public List<Question> getQuestionsByAuthor(int authorId, int size, int offset) throws Exception;
+
+	public List<Question> getQuestionsByAuthorAll(int authorId) throws Exception;
 
 	/**
 	 * Create a new question
@@ -78,7 +86,7 @@ public interface QuestionDao {
 	 * @throws Exception
 	 *             if fail
 	 */
-	public int getQuestionAuthorId(int questionId) throws Exception;
+	public User getQuestionAuthor(int questionId) throws Exception;
 
 	/**
 	 * Get the time stamp of a question
@@ -92,14 +100,29 @@ public interface QuestionDao {
 	public Timestamp getQuestionTimestamp(int questionId) throws Exception;
 
 	/**
-	 * Get the newest question
+	 * Get the newest questions list
 	 * 
 	 * @param size
 	 *            the wanted size of the list
+	 * @param offset
+	 *            the wanted offset of the total list
 	 * @return a list of the newest questions
 	 * @throws Exception
 	 *             if fail
 	 */
-	public ArrayList<Question> getNewestQuestions(int size) throws Exception;
+	public List<Question> getNewestQuestions(int size, int offset) throws Exception;
+
+	/**
+	 * Get the best questions list
+	 * 
+	 * @param size
+	 *            the wanted size of the list
+	 * @param offset
+	 *            the wanted offset of the total list
+	 * @return a list of the best questions
+	 * @throws Exception
+	 *             if fail
+	 */
+	public List<Question> getBestQuestions(int size, int offset) throws Exception;
 
 }

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import petoverflow.dao.derby.DaoManagerDerby;
 import petoverflow.dao.derby.DerbyUtils;
 
 /**
@@ -23,12 +24,11 @@ public class Main implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent ev) {
 		System.out.println("Initializing server");
 		try {
-			DerbyUtils.init();
+			DaoManagerDerby.init();
 
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	/**

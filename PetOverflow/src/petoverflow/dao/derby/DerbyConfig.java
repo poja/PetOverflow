@@ -18,7 +18,7 @@ public class DerbyConfig {
 	public static final String VOTE_TYPE = "voteType";
 	public static final String TOPIC = "topic";
 
-	private static final String ID_TYPE = "INTEGER NOT NULL AUTO_INCREMENT UNIQUE";
+	private static final String ID_TYPE = "INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)";
 	private static final String USERNAME_TYPE = "VARCHAR(10) NOT NULL UNIQUE";
 	private static final String PASSWORD_TYPE = "VARCHAR(8) NOT NULL";
 	private static final String NICKNAME_TYPE = "VARCHAR(20) NOT NULL";
@@ -46,7 +46,7 @@ public class DerbyConfig {
 			+ TIMESTAMP_TYPE + ")";
 	public static final String ANSWER_TABLE_NAME = "Answers";
 	public static final String ANSWER_TABLE_CREATE = "CREATE TABLE " + ANSWER_TABLE_NAME + " (" + ID + " " + ID_TYPE
-			+ ", " + TEXT + " " + TEXT_TYPE + ", " + ANSWER_ID + " " + AUTHOR_ID_TYPE + ", " + QUESTION_ID + " "
+			+ ", " + TEXT + " " + TEXT_TYPE + ", " + AUTHOR_ID + " " + AUTHOR_ID_TYPE + ", " + QUESTION_ID + " "
 			+ QUESTION_ID_TYPE + ", " + TIMESTAMP + " " + TIMESTAMP_TYPE + ")";
 	public static final String QUESTION_VOTE_TABLE_NAME = "QuestionsVotes";
 	public static final String QUESTION_VOTE_TABLE_CREATE = "CREATE TABLE " + QUESTION_VOTE_TABLE_NAME + " (" + VOTER_ID

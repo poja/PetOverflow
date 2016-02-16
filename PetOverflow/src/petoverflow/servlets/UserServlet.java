@@ -2,11 +2,11 @@ package petoverflow.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -14,16 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
-import petoverflow.authentication.AuthenticatedHttpServlet;
-import petoverflow.dao.Answer;
-import petoverflow.dao.AnswerDao;
-import petoverflow.dao.Question;
-import petoverflow.dao.QuestionDao;
-import petoverflow.dao.User;
-import petoverflow.dao.UserDao;
-import petoverflow.dao.derby.AnswerDaoDerby;
-import petoverflow.dao.derby.QuestionDaoDerby;
-import petoverflow.dao.derby.UserDaoDerby;
+import petoverflow.Utility;
+import petoverflow.dao.items.Answer;
+import petoverflow.dao.items.Question;
+import petoverflow.dao.items.User;
 import petoverflow.dto.AnswerDto;
 import petoverflow.dto.QuestionDto;
 import petoverflow.dto.UserDto;
@@ -34,21 +28,69 @@ import petoverflow.dto.UserDto;
  */
 public class UserServlet extends AuthenticatedHttpServlet {
 
-	private UserDao m_userDao;
-
-	private AnswerDao m_answerDao;
-
-	private QuestionDao m_questionDao;
-
 	private static final long serialVersionUID = 1L;
 
-	public UserServlet() {
-		super();
-		m_userDao = UserDaoDerby.getInstance();
-		m_answerDao = AnswerDaoDerby.getInstance();
-		m_questionDao = QuestionDaoDerby.getInstance();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * petoverflow.servlets.AuthenticatedHttpServlet#doPost(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// Map this request to:
+		// - /user
+		Pattern p = Pattern.compile("/user");
+
+		String path = ServletUtility.getPath(request);
+		Matcher m = p.matcher(path);
+		if (!m.find()) {
+			throw new ServletException("Invalid URI");
+		}
+
+		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
+		System.out.println(params);
+		String username = params.get(ParametersConfig.USERNAME);
+		String password = params.get(ParametersConfig.PASSWORD);
+		String nickname = params.get(ParametersConfig.NICKNAME);
+		String description = params.get(ParametersConfig.DESCRIPTION);
+		String photoUrl = params.get(ParametersConfig.PHOTO_URL);
+		String phoneNum = params.get(ParametersConfig.PHONE_NUM);
+
+		User newUser = null;
+		try {
+			if (m_daoManager.getUserDao().exist(username)) {
+				// TODO send error to user, username already exist
+			} else {
+				newUser = m_daoManager.getUserDao().createUser(username, password, nickname, description, photoUrl,
+						phoneNum);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		response.setContentType("application/json");
+		PrintWriter out = response.getWriter();
+		Gson gson = new Gson();
+		if (newUser != null) {
+			try {
+				out.append(gson.toJson(newUser.toUserDto()));
+			} catch (Exception e) {
+				e.printStackTrace();
+				// TODO send back error
+			}
+		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * petoverflow.servlets.AuthenticatedHttpServlet#doAuthenticatedGet(javax.
+	 * servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
+	 * petoverflow.dao.User)
+	 */
 	protected void doAuthenticatedGet(HttpServletRequest request, HttpServletResponse response, User user)
 			throws ServletException, IOException {
 		// Map this request to:
@@ -56,46 +98,29 @@ public class UserServlet extends AuthenticatedHttpServlet {
 		// - /user/<user#>/answers
 		// - /user/<user#>/questions
 		// - /user/leaders
+		Pattern p1 = Pattern.compile("/user/([0-9]*)");
+		Pattern p2 = Pattern.compile("/user/([0-9]*)/answers");
+		Pattern p3 = Pattern.compile("/user/([0-9]*)/questions");
+		Pattern p4 = Pattern.compile("/user/leaders");
 
-		String path = request.getPathInfo();
-		int index = path.indexOf('/');
-		if (index != 0) {
-			throw new ServletException("Invalid URI");
-		}
-		path = path.substring(index + 1);
-		index = path.indexOf('/');
-		if (!path.substring(0, index).equals("user")) {
-			throw new ServletException("Invalid URI");
-		}
-		path = path.substring(index + 1);
-		index = path.indexOf('/');
-		if (index < 0) {
-			if (path.equals("leaders")) { // /user/leaders
-				getLeaders(request, response, user);
-			} else { // /user/<user#>
-				int requestedUserId;
-				try {
-					requestedUserId = Integer.parseInt(path);
-				} catch (NumberFormatException e) {
-					throw new ServletException("Invalid URI");
-				}
-				getUser(request, response, user, requestedUserId);
-			}
+		String path = ServletUtility.getPath(request);
+		Matcher m1 = p1.matcher(path);
+		Matcher m2 = p2.matcher(path);
+		Matcher m3 = p3.matcher(path);
+		Matcher m4 = p4.matcher(path);
+		if (m4.find()) {
+			getLeaders(request, response, user);
+		} else if (m3.find()) {
+			int requestedUserId = Integer.parseInt(m3.group(1));
+			getUserQuestions(request, response, user, requestedUserId);
+		} else if (m2.find()) {
+			int requestedUserId = Integer.parseInt(m2.group(1));
+			getUserAnswers(request, response, user, requestedUserId);
+		} else if (m1.find()) {
+			int requestedUserId = Integer.parseInt(m1.group(1));
+			getUser(request, response, user, requestedUserId);
 		} else {
-			int requestedUserId;
-			try {
-				requestedUserId = Integer.parseInt(path.substring(0, index));
-			} catch (NumberFormatException e) {
-				throw new ServletException("Invalid URI");
-			}
-			path = path.substring(index + 1);
-			if (path.equals("answers")) { // /user/<user#>/answers
-				getUserAnswers(request, response, user, requestedUserId);
-			} else if (path.equals("questions")) { // /user/<user#>/questions
-				getUserQuestions(request, response, user, requestedUserId);
-			} else {
-				throw new ServletException("Invalid URI");
-			}
+			throw new ServletException("Invalid URI");
 		}
 	}
 
@@ -115,12 +140,13 @@ public class UserServlet extends AuthenticatedHttpServlet {
 	 */
 	private void getLeaders(HttpServletRequest request, HttpServletResponse response, User user)
 			throws IOException, ServletException {
-		int size = 0;
-		int offset = 0;
-		// TODO parameters
+		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
+		int size = Integer.parseInt(params.get(ParametersConfig.SIZE));
+		int offset = Integer.parseInt(params.get(ParametersConfig.OFFSET));
+
 		List<User> leaders;
 		try {
-			leaders = m_userDao.getMostRatedUsers(size, offset);
+			leaders = m_daoManager.getUserDao().getMostRatedUsers(size, offset);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 			throw new ServletException(e1.getMessage());
@@ -136,6 +162,7 @@ public class UserServlet extends AuthenticatedHttpServlet {
 			}
 			leadersDto.add(leaderDto);
 		}
+
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
 		Gson gson = new Gson();
@@ -160,10 +187,9 @@ public class UserServlet extends AuthenticatedHttpServlet {
 	 */
 	private void getUser(HttpServletRequest request, HttpServletResponse response, User user, int requestedUserId)
 			throws IOException, ServletException {
-		User requestedUser;
 		UserDto userDto;
 		try {
-			requestedUser = m_userDao.getUser(requestedUserId);
+			User requestedUser = m_daoManager.getUserDao().getUser(requestedUserId);
 			userDto = requestedUser.toUserDto();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -194,33 +220,18 @@ public class UserServlet extends AuthenticatedHttpServlet {
 	 */
 	private void getUserAnswers(HttpServletRequest request, HttpServletResponse response, User user,
 			int requestedUserId) throws IOException, ServletException {
-		int size = 0; // TODO get parameter
+		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
+		int size = Integer.parseInt(params.get(ParametersConfig.SIZE));
+		int offset = Integer.parseInt(params.get(ParametersConfig.OFFSET));
+
 		List<Answer> answers;
 		try {
-			answers = m_answerDao.getAnswersByAuthor(requestedUserId);
+			answers = m_daoManager.getAnswerDao().getAnswersByAuthor(requestedUserId, size, offset);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 			throw new ServletException(e1.getMessage());
 		}
-		Collections.sort(answers, new Comparator<Answer>() {
-
-			@Override
-			public int compare(Answer o1, Answer o2) {
-				try {
-					Timestamp t1 = o1.getTimestamp();
-					Timestamp t2 = o2.getTimestamp();
-					if (t1.equals(t2)) {
-						return 0;
-					} else if (t1.after(t2)) {
-						return -1;
-					} else
-						return 1;
-
-				} catch (Exception e) {
-					return 0;
-				}
-			}
-		});
+		Utility.sortByTimestamp(answers);
 		List<Answer> releventAnswers = answers.subList(0, Math.min(size, answers.size() + 1));
 		List<AnswerDto> releventAnswersDto = new ArrayList<AnswerDto>();
 		for (Answer answer : releventAnswers) {
@@ -241,36 +252,22 @@ public class UserServlet extends AuthenticatedHttpServlet {
 
 	private void getUserQuestions(HttpServletRequest request, HttpServletResponse response, User user,
 			int requestedUserId) throws ServletException, IOException {
-		int size = 0; // TODO get parameter
+		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
+		int size = Integer.parseInt(params.get(ParametersConfig.SIZE));
+		int offset = Integer.parseInt(params.get(ParametersConfig.OFFSET));
+
 		List<Question> questions;
 		try {
-			questions = m_questionDao.getQuestionsByAuthor(requestedUserId);
+			questions = m_daoManager.getQuestionDao().getQuestionsByAuthor(requestedUserId, size, offset);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 			throw new ServletException(e1.getMessage());
 		}
-		Collections.sort(questions, new Comparator<Question>() {
-
-			@Override
-			public int compare(Question o1, Question o2) {
-				try {
-					Timestamp t1 = o1.getTimestamp();
-					Timestamp t2 = o2.getTimestamp();
-					if (t1.equals(t2)) {
-						return 0;
-					} else if (t1.after(t2)) {
-						return -1;
-					} else
-						return 1;
-
-				} catch (Exception e) {
-					return 0;
-				}
-			}
-		});
-		List<Question> releventAnswers = questions.subList(0, Math.min(size, questions.size() + 1));
+		Utility.sortByTimestamp(questions);
+		Utility.cutList(questions, size, offset);
+		
 		List<QuestionDto> releventAnswersDto = new ArrayList<QuestionDto>();
-		for (Question question : releventAnswers) {
+		for (Question question : questions) {
 			QuestionDto questionDto;
 			try {
 				questionDto = question.toQuestionDto(user.getId());

@@ -5,32 +5,16 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DerbyUtils {
 
 	/**
-	 * Initialize all derby DAOs
-	 * 
-	 * @throws ClassNotFoundException
-	 *             if derby is not installed
-	 * @throws SQLException
-	 *             if failed to created tables
-	 */
-	public static void init() throws ClassNotFoundException, SQLException {
-		TopicDaoDerby.init();
-		QuestionVoteDaoDerby.init();
-		AnswerVoteDaoDerby.init();
-		QuestionDaoDerby.init(QuestionVoteDaoDerby.getInstance(), TopicDaoDerby.getInstance());
-		AnswerDaoDerby.init(AnswerVoteDaoDerby.getInstance());
-		UserDaoDerby.init(QuestionDaoDerby.getInstance(), AnswerDaoDerby.getInstance());
-	}
-
-	/**
 	 * Initialize a derby table
 	 * 
-	 * @param tableName
-	 *            the name of the table
+	 * @param dbName
+	 *            the name of the data base
 	 * @param tableCreate
 	 *            the CREATE TABLE command
 	 * @throws ClassNotFoundException
@@ -38,7 +22,7 @@ public class DerbyUtils {
 	 * @throws SQLException
 	 *             if derby fail
 	 */
-	public static void initTable(String tableName, String tableCreate) throws ClassNotFoundException, SQLException {
+	public static void initTable(String dbName, String tableCreate) throws ClassNotFoundException, SQLException {
 		try {
 			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
 		} catch (ClassNotFoundException e) {
@@ -46,9 +30,14 @@ public class DerbyUtils {
 			throw e;
 		}
 
+		Connection conn = null;
+		ArrayList<Statement> statements = new ArrayList<Statement>();
+		ResultSet rs = null;
+
 		try {
-			Connection conn = DerbyUtils.getConnection(tableName);
+			conn = DerbyUtils.getConnection(dbName);
 			Statement s = conn.createStatement();
+			statements.add(s);
 			s.execute(tableCreate);
 			s.close();
 			conn.close();
@@ -59,6 +48,8 @@ public class DerbyUtils {
 				e.printStackTrace();
 				throw e;
 			}
+		} finally {
+			DerbyUtils.cleanUp(rs, statements, conn);
 		}
 	}
 
@@ -151,38 +142,36 @@ public class DerbyUtils {
 	 */
 	public static void cleanUp(ResultSet rs, List<Statement> statements, Connection conn) {
 		// ResultSet
-		try {
-			if (rs != null) {
-				rs.close();
-				rs = null;
-			}
-		} catch (SQLException sqle) {
-			printSQLException(sqle);
-		}
-
-		// Statements and PreparedStatements
-		int i = 0;
-		while (!statements.isEmpty()) {
-			// PreparedStatement extend Statement
-			Statement st = (Statement) statements.remove(i);
+		if (rs != null) {
 			try {
-				if (st != null) {
-					st.close();
-					st = null;
-				}
+				rs.close();
 			} catch (SQLException sqle) {
 				printSQLException(sqle);
 			}
 		}
 
-		// Connection
-		try {
-			if (conn != null) {
-				conn.close();
-				conn = null;
+		// Statements and PreparedStatements
+		int i = statements.size() - 1;
+		while (!statements.isEmpty()) {
+			// PreparedStatement extend Statement
+			Statement st = (Statement) statements.remove(i);
+			if (st != null) {
+				try {
+					st.close();
+				} catch (SQLException sqle) {
+					printSQLException(sqle);
+				}
 			}
-		} catch (SQLException sqle) {
-			printSQLException(sqle);
+			i--;
+		}
+
+		// Connection
+		if (conn != null) {
+			try {
+				conn.close();
+			} catch (SQLException sqle) {
+				printSQLException(sqle);
+			}
 		}
 	}
 
@@ -199,8 +188,10 @@ public class DerbyUtils {
 		try {
 			return DriverManager.getConnection("jdbc:derby:" + dbName + ";create=true");
 		} catch (SQLException e) {
-			printSQLException(e);
-			throw e;
+			// printSQLException(e);
+			//throw e;
+			e.printStackTrace();
+			return null;
 		}
 	}
 

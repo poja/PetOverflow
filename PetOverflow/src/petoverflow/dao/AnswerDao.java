@@ -3,6 +3,10 @@ package petoverflow.dao;
 import java.sql.Timestamp;
 import java.util.List;
 
+import petoverflow.dao.items.Answer;
+import petoverflow.dao.items.Question;
+import petoverflow.dao.items.User;
+
 /**
  * The AnswerDao interface provide a set of methods to get data about answers to
  * related questions. All methods throws Exception in failure.
@@ -66,7 +70,7 @@ public interface AnswerDao {
 	 * @throws Exception
 	 *             if fail
 	 */
-	public int getAnswerAuthorId(int answerId) throws Exception;
+	public User getAnswerAuthor(int answerId) throws Exception;
 
 	/**
 	 * Get the id of the question this answer is related to
@@ -77,7 +81,7 @@ public interface AnswerDao {
 	 * @throws Exception
 	 *             if fail
 	 */
-	public int getAnswerQuestionId(int answerId) throws Exception;
+	public Question getAnswerQuestion(int answerId) throws Exception;
 
 	/**
 	 * Get the time stamp of this answer
@@ -95,21 +99,31 @@ public interface AnswerDao {
 	 * 
 	 * @param authorId
 	 *            the user id
+	 * @param size
+	 *            the wanted size of the list
+	 * @param offset
+	 *            the wanted offset of the total list
 	 * @return a list of the answer the user published
 	 * @throws Exception
 	 *             if fail
 	 */
-	public List<Answer> getAnswersByAuthor(int authorId) throws Exception;
+	public List<Answer> getAnswersByAuthor(int authorId, int size, int offset) throws Exception;
+
+	public List<Answer> getAnswersByAuthorAll(int authorId) throws Exception;
 
 	/**
 	 * Get all answers to a specific question
 	 * 
 	 * @param questionId
 	 *            the question id
+	 * @param size
+	 *            the wanted size of the list
+	 * @param offset
+	 *            the wanted offset of the total list
 	 * @return a list of all answers to the question
 	 * @throws Exception
 	 *             if fail
 	 */
-	public List<Answer> getQuestionAnswers(int questionId) throws Exception;
+	public List<Answer> getQuestionAnswers(int questionId, int size, int offset) throws Exception;
 
 }

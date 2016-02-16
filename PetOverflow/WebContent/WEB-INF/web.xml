@@ -17,8 +17,20 @@
 		<servlet-class>petoverflow.servlets.LoginServlet</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>UserServlet</servlet-name>
+		<servlet-class>petoverflow.servlets.UserServlet</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>QuestionServlet</servlet-name>
 		<servlet-class>petoverflow.servlets.QuestionServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>AnswerServlet</servlet-name>
+		<servlet-class>petoverflow.servlets.AnswerServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>TopicServlet</servlet-name>
+		<servlet-class>petoverflow.servlets.TopicServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -26,8 +38,20 @@
 		<url-pattern>/login</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
+		<servlet-name>UserServlet</servlet-name>
+		<url-pattern>/user</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
 		<servlet-name>QuestionServlet</servlet-name>
-		<url-pattern>/question*</url-pattern>
+		<url-pattern>/question</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AnswerServlet</servlet-name>
+		<url-pattern>/answer</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>TopicServlet</servlet-name>
+		<url-pattern>/topic</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>

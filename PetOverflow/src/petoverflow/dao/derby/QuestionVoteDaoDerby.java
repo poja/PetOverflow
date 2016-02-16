@@ -8,16 +8,17 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import petoverflow.dao.DaoManager;
+import petoverflow.dao.DaoObject;
 import petoverflow.dao.QuestionVoteDao;
-import petoverflow.dao.Vote;
-import petoverflow.dao.Vote.VoteType;
-import petoverflow.dao.exception.DerbyNotInitialized;
+import petoverflow.dao.items.Vote;
+import petoverflow.dao.items.Vote.VoteType;
 
 /**
  * The QuestionVoteDaoDerby class implements the QuestionVoteDao interface with
  * Derby DB.
  */
-public class QuestionVoteDaoDerby implements QuestionVoteDao {
+public class QuestionVoteDaoDerby extends DaoObject implements QuestionVoteDao {
 
 	/**
 	 * The single instance of this class
@@ -31,7 +32,7 @@ public class QuestionVoteDaoDerby implements QuestionVoteDao {
 	 */
 	public static QuestionVoteDaoDerby getInstance() {
 		if (m_instance == null) {
-			throw new DerbyNotInitialized();
+			throw new IllegalStateException("Questions votes dao wasn't initialized.");
 		}
 		return m_instance;
 	}
@@ -44,10 +45,10 @@ public class QuestionVoteDaoDerby implements QuestionVoteDao {
 	 * @throws SQLException
 	 *             if failed to created this DAO tables
 	 */
-	public static void init() throws ClassNotFoundException, SQLException {
+	public static void init(DaoManager daoManager) throws ClassNotFoundException, SQLException {
 		System.out.println("Initiating questions votes database connection");
-		DerbyUtils.initTable(DerbyConfig.QUESTION_VOTE_TABLE_NAME, DerbyConfig.QUESTION_VOTE_TABLE_CREATE);
-		m_instance = new QuestionVoteDaoDerby();
+		DerbyUtils.initTable(DerbyConfig.DB_NAME, DerbyConfig.QUESTION_VOTE_TABLE_CREATE);
+		m_instance = new QuestionVoteDaoDerby(daoManager);
 	}
 
 	/**
@@ -55,7 +56,8 @@ public class QuestionVoteDaoDerby implements QuestionVoteDao {
 	 * 
 	 * Used once to create the single instance of this class
 	 */
-	private QuestionVoteDaoDerby() {
+	private QuestionVoteDaoDerby(DaoManager daoManager) {
+		super(daoManager);
 	}
 
 	/*
@@ -67,11 +69,12 @@ public class QuestionVoteDaoDerby implements QuestionVoteDao {
 		// Remove previous vote
 		removeVote(questionId, vote.getVoterId());
 
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.QUESTION_VOTE_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement(
 					"INSERT INTO " + DerbyConfig.QUESTION_VOTE_TABLE_NAME + " (" + DerbyConfig.VOTER_ID + ","
 							+ DerbyConfig.QUESTION_ID + "," + DerbyConfig.VOTE_TYPE + ") VALUES (?, ?, ?)");
@@ -79,10 +82,9 @@ public class QuestionVoteDaoDerby implements QuestionVoteDao {
 			s.setInt(1, vote.getVoterId());
 			s.setInt(2, questionId);
 			s.setBoolean(3, vote.getType() == VoteType.Up);
-			rs = s.executeQuery();
+			s.executeUpdate();
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -95,20 +97,20 @@ public class QuestionVoteDaoDerby implements QuestionVoteDao {
 	 * @see petoverflow.dao.QuestionVoteDao#removeVote(int, int)
 	 */
 	public void removeVote(int questionId, int voterId) throws SQLException {
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.QUESTION_VOTE_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("DELETE FROM " + DerbyConfig.QUESTION_VOTE_TABLE_NAME
 					+ " WHERE " + DerbyConfig.VOTER_ID + " = ? AND " + DerbyConfig.QUESTION_ID + " = ?");
 			statements.add(s);
 			s.setInt(1, voterId);
 			s.setInt(2, questionId);
-			rs = s.executeQuery();
+			s.executeUpdate();
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
@@ -122,11 +124,12 @@ public class QuestionVoteDaoDerby implements QuestionVoteDao {
 	 */
 	@Override
 	public List<Vote> getQuestionVotes(int questionId) throws SQLException {
-		Connection conn = DerbyUtils.getConnection(DerbyConfig.QUESTION_VOTE_TABLE_CREATE);
+		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
 			PreparedStatement s = conn.prepareStatement("SELECT * FROM " + DerbyConfig.QUESTION_VOTE_TABLE_NAME
 					+ " WHERE " + DerbyConfig.QUESTION_ID + " = ?");
 			statements.add(s);
@@ -143,7 +146,6 @@ public class QuestionVoteDaoDerby implements QuestionVoteDao {
 			return votes;
 
 		} catch (SQLException e) {
-			DerbyUtils.printSQLException(e);
 			throw e;
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);

@@ -25,24 +25,20 @@ public class LoginServlet extends HttpServlet {
 		m_userDao = UserDaoDerby.getInstance();
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
 		response.setContentType("application/json");
 		Gson gson = new Gson();
 
-		
 		// Parse the authentication information
-		StringBuilder sb = new StringBuilder();
-		String s;
-		while ((s = request.getReader().readLine()) != null) {
-			sb.append(s);
-		}
-		AuthenticationDto auth = gson.fromJson(sb.toString(), AuthenticationDto.class);
+		String authStr = ServletUtility.getRequestData(request);
+		AuthenticationDto auth = gson.fromJson(authStr, AuthenticationDto.class);
 
 		if (auth == null || auth.getUsername() == null || auth.getPassword() == null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);

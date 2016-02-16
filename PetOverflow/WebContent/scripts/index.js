@@ -179,7 +179,7 @@
 				wantsSms: this.wantsSms
 			};
 
-			PetData.postNewUser(userInfo).then(function (response) {
+			PetData.postUser(userInfo).then(function (response) {
 				$rootScope.$emit('login');	
 			}, function (response) {
 				// Sign up failed
@@ -225,15 +225,15 @@
 		if ($routeParams.uId == 'me') userId = Session.userId;
 		else userId = $routeParams.uId;		
 		
-		PetData.getUserById(userId).then(function (response) {
+		PetData.getUser(userId).then(function (response) {
 			prCtrl.user = response.data;
 		}, HttpFailHandler);
 
-		PetData.getNewestQuestionsByUser(userId).then(function (response) {
+		PetData.getUserQuestions(userId).then(function (response) {
 			prCtrl.newestQuestions = response.data;
 		}, HttpFailHandler);
 
-		PetData.getNewestAnswersByUser(userId).then(function (response) {
+		PetData.getUserAnswers(userId).then(function (response) {
 			prCtrl.newestAnswers = response.data;
 		}, HttpFailHandler);
 
@@ -247,7 +247,7 @@
 		var htpCtrl = this;
 		htpCtrl.topics = [];
 
-		PetData.getHotTopics().then(function (response) {
+		PetData.getTopicsPopular().then(function (response) {
 			htpCtrl.topics = response.data;
 		}, HttpFailHandler);
 	}]);
@@ -276,7 +276,7 @@
 		}
 
 		lbCtrl.updateData = function () {
-			PetData.getLeaders(this.firstIndex(), this.lastIndex()).then(function (response) {
+			PetData.getUsersLeaders(this.firstIndex(), this.lastIndex()).then(function (response) {
 				if (response.data.length === 0 && lbCtrl.currentPage > 0) {
 					lbCtrl.previousPage();
 					return;
@@ -348,7 +348,7 @@
 		var qCtrl = this;
 		qCtrl.qId = $routeParams.qId;
 
-		PetData.getAnswersByQuestionId(qCtrl.qId).then(function (response) {
+		PetData.getQuestionAnswers(qCtrl.qId).then(function (response) {
 			qCtrl.answers = response.data;
 		}, HttpFailHandler);
 
@@ -367,7 +367,7 @@
 				userId: '='
 			},
 			link: function (scope, element, attr) {
-				PetData.getUserById(scope.userId).then(function (response) {
+				PetData.getUser(scope.userId).then(function (response) {
 					scope.user = response.data;
 					scope.DEFAULT_PROFILE = DEFAULT_PROFILE;
 				}, HttpFailHandler);
@@ -393,7 +393,7 @@
 				withAnswer: '='
 			},
 			link: function (scope, element, attrs, controller) {
-				PetData.getQuestionById(scope.id).then(function (response) {
+				PetData.getQuestion(scope.id).then(function (response) {
 					scope.question = response.data;
 				}, HttpFailHandler);
 
@@ -413,7 +413,7 @@
 				withQuestion: '='
 			},
 			link: function (scope, element, attrs, controller) {
-				PetData.getAnswerById(scope.id).then(function (response) {
+				PetData.getAnswer(scope.id).then(function (response) {
 					scope.answer = response.data;
 				}, HttpFailHandler);
 				

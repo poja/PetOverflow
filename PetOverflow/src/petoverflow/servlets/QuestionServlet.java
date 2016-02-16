@@ -3,7 +3,10 @@ package petoverflow.servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,18 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
-import petoverflow.authentication.AuthenticatedHttpServlet;
-import petoverflow.dao.Answer;
-import petoverflow.dao.AnswerDao;
-import petoverflow.dao.Question;
-import petoverflow.dao.QuestionDao;
-import petoverflow.dao.QuestionVoteDao;
-import petoverflow.dao.User;
-import petoverflow.dao.Vote;
-import petoverflow.dao.Vote.VoteType;
-import petoverflow.dao.derby.AnswerDaoDerby;
-import petoverflow.dao.derby.QuestionDaoDerby;
-import petoverflow.dao.derby.QuestionVoteDaoDerby;
+import petoverflow.dao.items.Answer;
+import petoverflow.dao.items.Question;
+import petoverflow.dao.items.User;
+import petoverflow.dao.items.Vote;
+import petoverflow.dao.items.Vote.VoteType;
 import petoverflow.dto.AnswerDto;
 import petoverflow.dto.QuestionDto;
 
@@ -32,20 +28,7 @@ import petoverflow.dto.QuestionDto;
  */
 public class QuestionServlet extends AuthenticatedHttpServlet {
 
-	private QuestionDao m_questionDao;
-
-	private QuestionVoteDao m_questionVoteDao;
-
-	private AnswerDao m_answerDao;
-
 	private static final long serialVersionUID = 1L;
-
-	public QuestionServlet() {
-		super();
-		m_questionDao = QuestionDaoDerby.getInstance();
-		m_questionVoteDao = QuestionVoteDaoDerby.getInstance();
-		m_answerDao = AnswerDaoDerby.getInstance();
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -60,32 +43,26 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 			throws ServletException, IOException {
 		// Map this request to:
 		// - /question/<question#>/vote
+		Pattern p = Pattern.compile("/question/([0-9]*)/vote");
 
-		String path = request.getPathInfo();
-		int index = path.indexOf('/');
-		if (index != 0) {
+		String path = ServletUtility.getPath(request);
+		Matcher m = p.matcher(path);
+		if (!m.find()) {
 			throw new ServletException("Invalid URI");
 		}
-		path = path.substring(index + 1);
-		index = path.indexOf('/');
-		if (!path.substring(0, index).equals("question")) {
-			throw new ServletException("Invalid URI");
-		}
-		path = path.substring(index + 1);
-		index = path.indexOf('/');
-		if (!path.substring(index + 1).equals("vote")) {
-			throw new ServletException("Invalid URI");
-		}
-		int questionId;
-		try {
-			questionId = Integer.parseInt(path.substring(0, index));
-		} catch (NumberFormatException e) {
-			throw new ServletException("Invalid URI");
-		}
+		int questionId = Integer.parseInt(m.group(1));
 
-		VoteType voteType = null; // TODO
+		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
+		String voteType = params.get(ParametersConfig.VOTE_TYPE);
+
 		try {
-			m_questionVoteDao.addVote(questionId, new Vote(user.getId(), voteType));
+			if (voteType.equals(ParametersConfig.VOTE_TYPE_NONE)) {
+				m_daoManager.getQuestionVoteDao().removeVote(questionId, user.getId());
+			} else if (voteType.equals(ParametersConfig.VOTE_TYPE_UP)) {
+				m_daoManager.getQuestionVoteDao().addVote(questionId, new Vote(user.getId(), VoteType.Up));
+			} else if (voteType.equals(ParametersConfig.VOTE_TYPE_DOWN)) {
+				m_daoManager.getQuestionVoteDao().addVote(questionId, new Vote(user.getId(), VoteType.Down));
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException();
@@ -105,23 +82,20 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 			throws ServletException, IOException {
 		// Map this request to:
 		// - /question
+		Pattern p = Pattern.compile("/question");
 
-		String path = request.getPathInfo();
-		int index = path.indexOf('/');
-		if (index != 0) {
-			throw new ServletException("Invalid URI");
-		}
-		path = path.substring(index + 1);
-		if (!path.equals("question")) {
+		String path = ServletUtility.getPath(request);
+		Matcher m = p.matcher(path);
+		if (!m.find()) {
 			throw new ServletException("Invalid URI");
 		}
 
-		String text = null;
-		List<String> topics = null;
-		// Get parameters TODO
+		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
+		String text = params.get(ParametersConfig.TEXT);
+		List<String> topics = ServletUtility.convertListFromJson(params.get(ParametersConfig.TOPICS));
 
 		try {
-			m_questionDao.createQuestion(text, user.getId(), topics);
+			m_daoManager.getQuestionDao().createQuestion(text, user.getId(), topics);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
@@ -141,48 +115,31 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 			throws ServletException, IOException {
 		// Map this request to:
 		// - /question/newest
+		// - /question/best
 		// - /question/<question#>
 		// - /question/<question#>/answers
+		Pattern p1 = Pattern.compile("/question/best");
+		Pattern p2 = Pattern.compile("/question/newest");
+		Pattern p3 = Pattern.compile("/question/([0-9]*)");
+		Pattern p4 = Pattern.compile("/question/([0-9]*)/answers");
 
-		String path = request.getPathInfo();
-		int index = path.indexOf('/');
-		if (index != 0) {
-			throw new ServletException("Invalid URI");
-		}
-		path = path.substring(index + 1);
-		index = path.indexOf('/');
-		if (index < 0) {
-			throw new ServletException("Invalid URI");
-		}
-		if (!path.substring(0, index).equals("question")) {
-			throw new ServletException("Invalid URI");
-		}
-		path = path.substring(index + 1);
-		index = path.indexOf('/');
-		if (index < 0) {
-			if (path.equals("newest")) {
-				getNewestQuestions(request, response, user);
-				return;
-			} else {
-				int questionId;
-				try {
-					questionId = Integer.parseInt(path);
-				} catch (NumberFormatException e) {
-					throw new ServletException("Invalid URI");
-				}
-				getAQuestion(request, response, user, questionId);
-			}
-		} else {
-			int questionId;
-			try {
-				questionId = Integer.parseInt(path.substring(0, index));
-			} catch (NumberFormatException e) {
-				throw new ServletException("Invalid URI");
-			}
-			if (!path.substring(index + 1).equals("answers")) {
-				throw new ServletException("Invalid URI");
-			}
+		String path = ServletUtility.getPath(request);
+		Matcher m1 = p1.matcher(path);
+		Matcher m2 = p2.matcher(path);
+		Matcher m3 = p3.matcher(path);
+		Matcher m4 = p4.matcher(path);
+		if (m4.find()) {
+			int questionId = Integer.parseInt(m3.group(1));
 			getBestAnswers(request, response, user, questionId);
+		} else if (m3.find()) {
+			int questionId = Integer.parseInt(m2.group(1));
+			getAQuestion(request, response, user, questionId);
+		} else if (m2.find()) {
+			getNewestQuestions(request, response, user);
+		} else if (m1.find()) {
+			getBestQuestion(request, response, user);
+		} else {
+			throw new ServletException("Invalid URI");
 		}
 	}
 
@@ -199,22 +156,24 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 	 *            the requested question's id
 	 * @throws ServletException
 	 *             if DAO fail
+	 * @throws IOException
+	 *             if failed to write back to client
 	 */
 	private void getAQuestion(HttpServletRequest request, HttpServletResponse response, User user, int questionId)
-			throws ServletException {
+			throws ServletException, IOException {
+		QuestionDto questionDto;
 		try {
-			Question question = m_questionDao.getQuestion(questionId);
-			QuestionDto questionDto = question.toQuestionDto(user.getId());
-
-			response.setContentType("application/json");
-			PrintWriter out = response.getWriter();
-			Gson gson = new Gson();
-			out.append(gson.toJson(questionDto));
-
+			Question question = m_daoManager.getQuestionDao().getQuestion(questionId);
+			questionDto = question.toQuestionDto(user.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
 		}
+
+		response.setContentType("application/json");
+		PrintWriter out = response.getWriter();
+		Gson gson = new Gson();
+		out.append(gson.toJson(questionDto));
 	}
 
 	/**
@@ -235,23 +194,32 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 	 */
 	private void getBestAnswers(HttpServletRequest request, HttpServletResponse response, User user, int questionId)
 			throws ServletException, IOException {
-		try {
-			List<Answer> answers = m_answerDao.getQuestionAnswers(questionId);
-			List<AnswerDto> answersDto = new ArrayList<AnswerDto>();
-			for (Answer answer : answers) {
-				AnswerDto answerDto = answer.toAnswerDto(user.getId());
-				answersDto.add(answerDto);
-			}
+		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
+		int size = Integer.parseInt(params.get(ParametersConfig.SIZE));
+		int offset = Integer.parseInt(params.get(ParametersConfig.OFFSET));
 
-			response.setContentType("application/json");
-			PrintWriter out = response.getWriter();
-			Gson gson = new Gson();
-			out.append(gson.toJson(answersDto));
+		List<AnswerDto> answersDto;
+		try {
+			List<Answer> answers = m_daoManager.getAnswerDao().getQuestionAnswers(questionId, size, offset);
+			answersDto = new ArrayList<AnswerDto>();
+			for (Answer answer : answers) {
+				try {
+					AnswerDto answerDto = answer.toAnswerDto(user.getId());
+					answersDto.add(answerDto);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
 		}
+
+		response.setContentType("application/json");
+		PrintWriter out = response.getWriter();
+		Gson gson = new Gson();
+		out.append(gson.toJson(answersDto));
 	}
 
 	/**
@@ -270,14 +238,17 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 	 */
 	private void getNewestQuestions(HttpServletRequest request, HttpServletResponse response, User user)
 			throws ServletException, IOException {
-		List<QuestionDto> ans = new ArrayList<QuestionDto>();
+		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
+		int size = Integer.parseInt(params.get(ParametersConfig.SIZE));
+		int offset = Integer.parseInt(params.get(ParametersConfig.OFFSET));
+
+		List<QuestionDto> questionsDto = new ArrayList<QuestionDto>();
 		try {
-			List<Question> newestQuestions = m_questionDao.getNewestQuestions(20);
+			List<Question> newestQuestions = m_daoManager.getQuestionDao().getNewestQuestions(size, offset);
 			for (Question question : newestQuestions) {
 				try {
 					QuestionDto questionDto = question.toQuestionDto(user.getId());
-					ans.add(questionDto);
-
+					questionsDto.add(questionDto);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -290,7 +261,36 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
 		Gson gson = new Gson();
-		out.append(gson.toJson(ans));
+		out.append(gson.toJson(questionsDto));
+	}
+
+	private void getBestQuestion(HttpServletRequest request, HttpServletResponse response, User user)
+			throws ServletException, IOException {
+		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
+		int size = Integer.parseInt(params.get(ParametersConfig.SIZE));
+		int offset = Integer.parseInt(params.get(ParametersConfig.OFFSET));
+
+		List<QuestionDto> questionsDto = new ArrayList<QuestionDto>();
+		List<Question> bestQuestions;
+		try {
+			bestQuestions = m_daoManager.getQuestionDao().getBestQuestions(size, offset);
+
+			for (Question question : bestQuestions) {
+				try {
+					QuestionDto questionDto = question.toQuestionDto(user.getId());
+					questionsDto.add(questionDto);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (Exception e1) {
+			throw new ServletException(e1.getMessage());
+		}
+
+		response.setContentType("application/json");
+		PrintWriter out = response.getWriter();
+		Gson gson = new Gson();
+		out.append(gson.toJson(questionsDto));
 	}
 
 }

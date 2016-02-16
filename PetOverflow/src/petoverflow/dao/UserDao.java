@@ -2,6 +2,8 @@ package petoverflow.dao;
 
 import java.util.List;
 
+import petoverflow.dao.items.User;
+
 /**
  * The UserDao interface provide a set of methods to manage, read and create new
  * users in a DB. All methods throws Exception in failure.
@@ -180,7 +182,7 @@ public interface UserDao {
 	/**
 	 * Get a list of the users with the highest rating
 	 * 
-	 * @param requestedSize
+	 * @param size
 	 *            the length of the requested list
 	 * @param offset
 	 *            offset in the total list
@@ -188,7 +190,7 @@ public interface UserDao {
 	 * @throws Exception
 	 *             if fail
 	 */
-	public List<User> getMostRatedUsers(int requestedSize, int offset) throws Exception;
+	public List<User> getMostRatedUsers(int size, int offset) throws Exception;
 
 	/**
 	 * Checks if a username and a password is authenticated

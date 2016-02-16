@@ -2,6 +2,9 @@ package petoverflow.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -10,15 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
-import petoverflow.authentication.AuthenticatedHttpServlet;
-import petoverflow.dao.Answer;
-import petoverflow.dao.AnswerDao;
-import petoverflow.dao.AnswerVoteDao;
-import petoverflow.dao.User;
-import petoverflow.dao.Vote;
-import petoverflow.dao.Vote.VoteType;
-import petoverflow.dao.derby.AnswerDaoDerby;
-import petoverflow.dao.derby.AnswerVoteDaoDerby;
+import petoverflow.dao.items.Answer;
+import petoverflow.dao.items.User;
+import petoverflow.dao.items.Vote;
+import petoverflow.dao.items.Vote.VoteType;
 import petoverflow.dto.AnswerDto;
 
 /**
@@ -27,17 +25,7 @@ import petoverflow.dto.AnswerDto;
  */
 public class AnswerServlet extends AuthenticatedHttpServlet {
 
-	private AnswerDao m_answerDao;
-
-	private AnswerVoteDao m_answerVoteDao;
-
 	private static final long serialVersionUID = 1L;
-
-	public AnswerServlet() {
-		super();
-		m_answerDao = AnswerDaoDerby.getInstance();
-		m_answerVoteDao = AnswerVoteDaoDerby.getInstance();
-	}
 
 	/**
 	 * Do Authenticated Put
@@ -48,32 +36,27 @@ public class AnswerServlet extends AuthenticatedHttpServlet {
 			throws ServletException, IOException {
 		// Map this request to:
 		// - /answer/<answer#>/vote
+		Pattern p = Pattern.compile("/answer/([0-9]*)/vote");
 
-		String path = request.getPathInfo();
-		int index = path.indexOf('/');
-		if (index != 0) {
+		String path = ServletUtility.getPath(request);
+		Matcher m = p.matcher(path);
+		if (!m.find()) {
 			throw new ServletException("Invalid URI");
 		}
-		path = path.substring(index + 1);
-		index = path.indexOf('/');
-		if (!path.substring(0, index).equals("answer")) {
-			throw new ServletException("Invalid URI");
-		}
-		path = path.substring(index + 1);
-		index = path.indexOf('/');
-		if (!path.substring(index + 1).equals("vote")) {
-			throw new ServletException("Invalid URI");
-		}
-		int answerId;
-		try {
-			answerId = Integer.parseInt(path.substring(0, index));
-		} catch (NumberFormatException e) {
-			throw new ServletException("Invalid URI");
-		}
+		int answerId = Integer.parseInt(m.group(1));
 
-		VoteType voteType = null; // TODO
+		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
+		String voteType = params.get(ParametersConfig.VOTE_TYPE);
+
 		try {
-			m_answerVoteDao.addVote(answerId, new Vote(user.getId(), voteType));
+			if (voteType.equals(ParametersConfig.VOTE_TYPE_NONE)) {
+				m_daoManager.getAnswerVoteDao().removeVote(answerId, user.getId());
+			} else if (voteType.equals(ParametersConfig.VOTE_TYPE_UP)) {
+				m_daoManager.getAnswerVoteDao().addVote(answerId, new Vote(user.getId(), VoteType.Up));
+			} else if (voteType.equals(ParametersConfig.VOTE_TYPE_DOWN)) {
+				m_daoManager.getAnswerVoteDao().addVote(answerId, new Vote(user.getId(), VoteType.Down));
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException();
@@ -89,22 +72,20 @@ public class AnswerServlet extends AuthenticatedHttpServlet {
 			throws ServletException, IOException {
 		// Map this request to:
 		// - /answer
+		Pattern p = Pattern.compile("/answer");
 
-		String path = request.getPathInfo();
-		int index = path.indexOf('/');
-		if (index != 0) {
-			throw new ServletException("Invalid URI");
-		}
-		path = path.substring(index + 1);
-		if (!path.equals("answer")) {
+		String path = ServletUtility.getPath(request);
+		Matcher m = p.matcher(path);
+		if (!m.find()) {
 			throw new ServletException("Invalid URI");
 		}
 
-		// read parameters TODO
-		String text = null;
-		int questionId = 0;
+		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
+		String text = params.get(ParametersConfig.TEXT);
+		int questionId = Integer.parseInt(params.get(ParametersConfig.QUESTION_ID));
+		
 		try {
-			m_answerDao.createAnswer(text, user.getId(), questionId);
+			m_daoManager.getAnswerDao().createAnswer(text, user.getId(), questionId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
@@ -120,30 +101,18 @@ public class AnswerServlet extends AuthenticatedHttpServlet {
 			throws ServletException, IOException {
 		// Map this request to:
 		// - /answer/<answer#>
+		Pattern p = Pattern.compile("/answer/([0-9]*)");
 
-		String path = request.getPathInfo();
-		int index = path.indexOf('/');
-		if (index != 0) {
+		String path = ServletUtility.getPath(request);
+		Matcher m = p.matcher(path);
+		if (!m.find()) {
 			throw new ServletException("Invalid URI");
 		}
-		path = path.substring(index + 1);
-		index = path.indexOf('/');
-		if (!path.substring(0, index).equals("answer")) {
-			throw new ServletException("Invalid URI");
-		}
-		path = path.substring(index + 1);
+		int answerId = Integer.parseInt(m.group(1));
 
-		int answerId;
-		try {
-			answerId = Integer.parseInt(path);
-		} catch (NumberFormatException e) {
-			throw new ServletException("Invalid URI");
-		}
-
-		Answer answer;
 		AnswerDto answerDto;
 		try {
-			answer = m_answerDao.getAnswer(answerId);
+			Answer answer = m_daoManager.getAnswerDao().getAnswer(answerId);
 			answerDto = answer.toAnswerDto(user.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
