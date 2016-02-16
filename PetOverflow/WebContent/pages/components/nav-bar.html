@@ -1,0 +1,25 @@
+<nav class="NavBar" ng-controller="NavBarController as nbCtrl">
+	<div class="container-fluid">
+		<div class="row">
+			<h1 class="col-sm-7 NavBar-brand"><a href="#/questions/newest">PetOverflow</a></h1>
+			<div class="col-sm-5">
+				<a href="#/questions/newest" class="NavBar-option">Questions</a>
+				<a href="#/topics/hot" class="NavBar-option">Hot Topics</a>
+				<a href="#/users/leading" class="NavBar-option">Leaderboard</a>
+				<div class="NavBar-dropdown NavBar-option">
+					<span class="glyphicon glyphicon-menu-down"></span>
+					<div class="Menu">
+						<ul>
+							<li><a href="#/users/me">My Profile</a></li>
+							<li><a href="#/settings">Settings</a></li>
+							<li><a href="#/" ng-click="nbCtrl.logout()">Log Out</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			
+
+
+		</div>	
+	</div>
+</nav>

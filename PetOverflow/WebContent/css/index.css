@@ -1,52 +1,419 @@
+/******************/
+/**** General *****/
+/******************/
+a.u-cleanLinks, a.NavBar, a.QuestionsNav, a.u-cleanLinks:hover, a.NavBar:hover, a.QuestionsNav:hover, a.u-cleanLinks:focus, a.NavBar:focus, a.QuestionsNav:focus,
+.u-cleanLinks a,
+.NavBar a,
+.QuestionsNav a,
+.u-cleanLinks a:hover,
+.NavBar a:hover,
+.QuestionsNav a:hover,
+.u-cleanLinks a:focus,
+.NavBar a:focus,
+.QuestionsNav a:focus {
+  text-decoration: none; }
+
+.u-center {
+  text-align: center; }
+
+.u-bold {
+  font-weight: bold; }
+
+html, body {
+  min-height: 100%;
+  height: 100%; }
+
+div[ng-view], main {
+  min-height: 100vh; }
+
 main {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
+  padding: 0;
+  background: url("../img/bg-gray.jpg"); }
 
-	background-image: url('../img/bg-dog.jpg');
-	background-size: cover;
-}
-
-h1 {
-	margin-bottom: 3rem;
-	text-align: center;
-}
-h1 > img {
-	max-height: 8rem;
-	max-width: 100%;
-	margin-left: -10%;
-}
-
-form {
-	background-color: rgba(245, 255, 192, 0.7); /* yellow */
-	width: 40%;
-	height: 80vh;
-	padding: 3rem;
-	margin-top: 5rem;
-	border-radius: 5px;
-}
-
-form .form-row {
-	margin-top: .5rem;
-	margin-bottom: .5rem;
-}
-form input[type="submit"] {
-	margin-top: 2rem;
-	background-color: #7E7EFF; /* blue */
-	color: white;
-	width: 100%;
-}
-
-/* tmp: */
-h1.yellow-back {
-	background-color: #CACA3B; /* yellow */
-}
 h2 {
-	background-color: rgba(255, 255, 255, 0.7);
-}
+  font-size: 2rem; }
 
-.message-error {
-	color: red;
-}
+ul {
+  padding: 0;
+  margin: 0;
+  list-style: none; }
+
+li {
+  padding: 0;
+  margin: 0; }
+
+textarea {
+  display: block;
+  width: 100%;
+  resize: none; }
+
+input[type="text"],
+input[type="password"],
+input[type="tel"] {
+  max-width: 20rem; }
+
+.btn {
+  white-space: normal; }
+
+/***************************/
+/**** Shared Components ****/
+/***************************/
+.NavBar {
+  padding: 1rem;
+  background-color: #3D3961;
+  font-size: 2rem;
+  border-bottom: 3px solid white; }
+
+.NavBar-brand {
+  font-size: 1.2em;
+  margin: 0;
+  padding: 0; }
+  .NavBar-brand a {
+    color: white; }
+
+.NavBar-dropdown {
+  display: inline;
+  position: relative; }
+  .NavBar-dropdown .Menu {
+    position: absolute;
+    z-index: 1;
+    left: -7rem;
+    top: 2rem;
+    width: 20rem;
+    padding-top: 1rem;
+    visibility: hidden; }
+  .NavBar-dropdown:hover .Menu,
+  .NavBar-dropdown .Menu:hover {
+    visibility: visible; }
+
+.NavBar-option {
+  margin-left: 2.5rem; }
+  .NavBar-option, .NavBar-option:focus {
+    color: #C0C0C0; }
+  .NavBar-option:hover {
+    color: white; }
+
+.Menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  border: 2px solid #C0C0C0;
+  border-top: 0;
+  background-color: #3D3961;
+  font-size: 1.3rem; }
+  .Menu ul a {
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+    padding: .7rem 0;
+    border-bottom: 1px solid #C0C0C0; }
+    .Menu ul a, .Menu ul a:visited {
+      color: #C0C0C0; }
+    .Menu ul a:hover {
+      color: white; }
+  .Menu ul li {
+    padding: 0 .7rem; }
+    .Menu ul li:last-child a {
+      border: 0; }
+
+.SmallButton {
+  background-color: #3D3961; }
+  .SmallButton, .SmallButton:hover, .SmallButton:focus {
+    color: white; }
+
+.LargeButton {
+  width: 50%;
+  background: #3D3961;
+  margin: 1rem auto;
+  display: block; }
+  .LargeButton, .LargeButton:hover {
+    color: white; }
+
+/*******************************/
+/******** Login + SignUp *******/
+/*******************************/
+.LoginPage, .SignUpPage {
+  background-image: url("../img/bg-dog.jpg");
+  background-size: cover; }
+
+.LoginForm, .SignUpForm {
+  background-color: rgba(245, 255, 192, 0.9);
+  padding: 3rem;
+  border-radius: 5px; }
+
+.LoginForm {
+  width: 40%;
+  height: 80vh;
+  margin-top: 5rem; }
+  .LoginForm input[type="text"],
+  .LoginForm input[type="password"] {
+    width: 100%;
+    max-width: none; }
+  .LoginForm input[type="submit"] {
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+    background-color: #3D3961;
+    color: white;
+    width: 100%; }
+  .LoginForm h1 {
+    margin-bottom: 3rem;
+    text-align: center; }
+    .LoginForm h1 img {
+      max-height: 8rem;
+      max-width: 100%;
+      margin-left: -10%; }
+  .LoginForm .LoginForm-error {
+    color: red; }
+
+.SignUpForm {
+  width: 80%;
+  margin: 3rem auto; }
+  .SignUpForm h2 {
+    padding: 1rem;
+    font-size: 3rem;
+    background-color: #3D3961;
+    color: white;
+    border-radius: 5px; }
+  .SignUpForm h2 ~ p {
+    font-size: 2rem; }
+  .SignUpForm h2, .SignUpForm h2 ~ p {
+    text-align: center; }
+  .SignUpForm .form-group {
+    margin: 5rem 0; }
+  .SignUpForm input[type="submit"] {
+    width: 70%;
+    margin: 0 auto;
+    background-color: #3D3961;
+    color: white; }
+  .SignUpForm img {
+    width: 100px;
+    height: 100px; }
+
+/*****************************/
+/*** Questions And Answers ***/
+/*****************************/
+.QuestionsNav {
+  margin: 4rem 0;
+  border-radius: 5px;
+  overflow: hidden; }
+
+.QuestionsNav a {
+  font-size: 2.3rem;
+  color: #C0C0C0;
+  text-align: center;
+  padding: 2rem;
+  background-color: #0C612E;
+  transition: .5s background-color ease;
+  border-right: 1px solid white; }
+  .QuestionsNav a:last-child {
+    border-right: 0; }
+  .QuestionsNav a:hover, .QuestionsNav a.active {
+    color: white;
+    text-shadow: 1px 1px 1px black;
+    background-color: #128e44; }
+
+.QuestionList {
+  width: 100%;
+  margin: 0;
+  list-style: none; }
+
+.Question {
+  margin-bottom: 2rem;
+  padding: 2.5rem 0;
+  border-radius: 5px;
+  font-size: 1.7rem;
+  background-color: white; }
+  .Question .Question-button {
+    margin-top: .5rem;
+    background-color: #3D3961; }
+    .Question .Question-button, .Question .Question-button:hover {
+      color: white; }
+  .Question .Question-topics {
+    margin-top: 5rem;
+    font-size: 1.5rem; }
+    .Question .Question-topics a {
+      margin-right: .5rem; }
+  .Question .UserBox {
+    border-left: 1px solid #C0C0C0; }
+
+.Question--withAnswer {
+  margin-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border: 1px solid #505050;
+  border-bottom: 0; }
+
+.VoteArea {
+  text-align: center;
+  color: #505050;
+  font-size: 2.5rem; }
+
+.Vote {
+  cursor: pointer; }
+  .Vote.selected {
+    color: orange; }
+
+.UserBox {
+  text-align: center; }
+  .UserBox img, .UserBox p, .UserBox a {
+    display: block; }
+  .UserBox img {
+    width: 50%;
+    margin: 0 auto; }
+  .UserBox a {
+    margin-top: .5rem; }
+
+.Answer {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+  color: #1d1d1d;
+  border-radius: 5px;
+  border: 1px solid #505050;
+  background-color: #C0C0C0; }
+
+.Answer--withQuestion {
+  margin-top: 0;
+  border-top: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0; }
+
+/***********************/
+/*** Question Asking ***/
+/***********************/
+.QuestionCreateForm .TopicsInput {
+  margin-left: 5rem;
+  display: inline-block; }
+.QuestionCreateForm .LargeButton {
+  margin-top: 5rem; }
+
+.TopicError {
+  display: inline-block;
+  padding: .5rem;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid red;
+  opacity: 0;
+  transition: none; }
+  .TopicError.visible {
+    transition: opacity .5s ease;
+    opacity: 1; }
+
+/***************/
+/*** Profile ***/
+/***************/
+.Profile .Info {
+  margin-top: 4rem;
+  margin-bottom: 4rem; }
+  .Profile .Info h2 {
+    font-size: 3rem; }
+  .Profile .Info q {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 5px;
+    display: block;
+    margin-bottom: 1rem; }
+  .Profile .Info img {
+    width: 60%;
+    margin: 0 auto;
+    display: block; }
+
+.ExpertiseList {
+  list-style: none; }
+  .ExpertiseList li {
+    display: inline; }
+    .ExpertiseList li::after {
+      content: ", "; }
+    .ExpertiseList li:last-child::after {
+      content: ""; }
+
+.Profile hr {
+  border-color: #C0C0C0; }
+
+/******************/
+/*** Hot Topics ***/
+/******************/
+.HotTopics h2 {
+  margin-top: 4rem;
+  font-size: 3rem;
+  color: #3D3961;
+  font-weight: 700;
+  text-align: center;
+  padding: 1rem 0;
+  border-width: 3px 0px;
+  border-color: #3D3961;
+  border-style: solid; }
+.HotTopics svg {
+  margin: 2rem auto 0 auto;
+  display: block; }
+  .HotTopics svg a, .HotTopics svg a:hover {
+    text-decoration: none; }
+  .HotTopics svg text {
+    fill: #3D3961;
+    transition: .5s fill ease; }
+    .HotTopics svg text:hover {
+      fill: #847fb4; }
+
+/******************/
+/** Leaderboards **/
+/******************/
+.Leaderboard h2 {
+  font-size: 2.7rem;
+  font-weight: 700;
+  margin-top: 4rem;
+  margin-bottom: 3rem; }
+.Leaderboard .Leaderboard-list {
+  list-style: none;
+  padding: 0;
+  margin: 0; }
+  .Leaderboard .Leaderboard-list li {
+    margin-bottom: 4rem;
+    position: relative; }
+.Leaderboard .LeaderIndex {
+  position: absolute;
+  width: 15%;
+  left: 0;
+  top: 0;
+  bottom: 0; }
+.Leaderboard div[leader] {
+  position: relative;
+  left: 15%;
+  width: 85%;
+  font-size: 1.5rem; }
+
+.LeaderIndex {
+  font-size: 5rem;
+  text-align: center;
+  height: 100%; }
+  .LeaderIndex p {
+    margin-top: 25%; }
+
+.Leader {
+  background-color: white;
+  border-radius: 5px;
+  padding-top: 2rem;
+  padding-bottom: 2rem; }
+  .Leader img {
+    display: block;
+    width: 70%;
+    margin: 0 auto; }
+
+/******************/
+/*** Topic Page ***/
+/******************/
+.TopicPage h2 {
+  font-size: 3rem;
+  margin: 4rem 0; }
+
+/***********************/
+/**** Question View ****/
+/***********************/
+.QuestionView .Question {
+  margin-top: 3rem; }
+.QuestionView form {
+  margin-top: 5rem; }
+  .QuestionView form textarea {
+    margin-bottom: 2rem; }
+
+/*# sourceMappingURL=index.css.map */

@@ -1,0 +1,15 @@
+<div class="Answer row">
+	<div class="col-sm-1 VoteArea">
+		<i class="Vote glyphicon glyphicon-triangle-top" ng-class="{selected: answer.hasVote > 0}"></i>
+		<p>{{ answer.voteCount }}</p>
+		<i class="Vote glyphicon glyphicon-triangle-bottom" ng-class="{selected: answer.hasVote < 0}"></i>
+	</div>
+	<div class="col-sm-9">
+		<p class="Answer-text">
+			{{ answer.text }}
+		</p>
+	</div>
+	<div class="col-sm-2">
+		<user-box asker-id="{{ question.askerId }}"></user-box>
+	</div>
+</div>

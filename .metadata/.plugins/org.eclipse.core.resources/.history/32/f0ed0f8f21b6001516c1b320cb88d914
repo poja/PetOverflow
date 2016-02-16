@@ -1,7 +1,0 @@
-package dao;
-
-public interface QuestionDao {
-
-	public String[] getNewestQuestions(int number);
-	
-}

@@ -1,4 +1,10 @@
 *.sublime-project
 *.sublime-workspace
 PetOverflow/build
+.metadata
+.recommenders
+*/.sass-cache/*
+./PetOverflow/PetOvDb/derby.log
+./PetOverflow/PetOvDb/db.lck
+*/PetOvDb/*log*
 

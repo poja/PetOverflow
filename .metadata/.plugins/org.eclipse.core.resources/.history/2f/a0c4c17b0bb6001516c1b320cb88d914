@@ -1,9 +1,0 @@
-package authentication;
-
-public class Authenticator {
-
-	public static boolean isAuthenticated(HTTPServletRequest request) {
-		
-	}
-	
-}

@@ -89,7 +89,7 @@ public class UserDaoDerby implements UserDao {
 	 * @param e
 	 *            the SQLException from which to print details.
 	 */
-	public static void printSQLException(SQLException e) {
+	private static void printSQLException(SQLException e) {
 		// Unwraps the entire exception chain to unveil the real cause of the
 		// Exception.
 		while (e != null) {

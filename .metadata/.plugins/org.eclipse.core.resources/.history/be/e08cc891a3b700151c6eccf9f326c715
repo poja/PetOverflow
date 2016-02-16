@@ -1,9 +1,0 @@
-package authentication;
-
-public class DataValidator {
-	
-	public boolean isValidUsername() {
-		
-	}
-
-}

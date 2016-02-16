@@ -1,0 +1,80 @@
+<main class="SignUpPage container-fluid">
+	<form class="SignUpForm" ng-controller="SignUpController as suCtrl" ng-submit="suCtrl.submit()">
+		<h2>Welcome!</h2>
+		<p>Before we start, you will have to enter some information.</p>
+
+		<div class="form-group">
+			<label for="username" class="control-label">Username:</label>
+			<input type="text" 
+				id="username" 
+				class="form-control" 
+				placeholder="username" 
+				ng-model="suCtrl.username"
+				required />
+		</div>
+		<div class="form-group">
+			<label for="password" class="control-label">Password:</label>
+			<p>At least 5 characters long</p>
+			<input type="password" 
+				id="password" 
+				class="form-control" 
+				placeholder="password" 
+				ng-model="suCtrl.password"
+				ng-minlength="5"
+				required />
+		</div>
+		<div class="form-group">
+			<label for="phone" class="control-label">Phone number: </label>
+			<p>Your phone number will not be displayed to anyone using PetOverflow. It is only for security purposes and for recieving optional SMS notifications.</p>
+			<input type="tel" 
+				id="phone" 
+				class="form-control" 
+				placeholder="+972527567813" 
+				ng-model="suCtrl.phoneNumber" 
+				required />
+			<div class="checkbox">
+				<label>
+					<input 
+						type="checkbox" 
+						ng-model="suCtrl.wantsSms" /> 
+					I would like to recieve an SMS when someone answers my question.
+				</label>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="description">Description:</label>
+			<p>Tell us about yourself! Use up to 50 characters to describe who you are. It will appear on your profile to anyone who is curious about you.</p>
+			<textarea 
+				id="description" 
+				class="form-control" 
+				ng-model="suCtrl.description" 
+				rows="3"></textarea>
+		</div>
+		<div class="form-group">
+			<label for="nickname" class="control-label">Nickname:</label>
+			<p>A display name - what you want other users to call you.</p>
+			<input type="text" 
+				id="nickname" 
+				class="form-control" 
+				ng-model="suCtrl.nickname" 
+				placeholder="petlover" 
+				required />
+		</div>
+		<div class="form-group">
+			<label for="photoUrl" class="control-label">Photo:</label>
+			<p>A URL to a photo of you. The photo should be 100x100 pixels.</p>
+			<input 
+				id="photoUrl"
+				class="form-control" 
+				type="text" 
+				ng-model="suCtrl.photoUrl" 
+				placeholder="http://tinyurl.com/rapmonkey" />
+			<p>Preview:</p>
+			<img 
+				ng-src="{{ suCtrl.photoUrl || 'http://tinyurl.com/rapmonkey' }}" 
+				alt="The photo cannot be shown" />
+		</div>
+
+		<input class="form-control" type="submit" value="Let's Start!"></input>
+	</form>
+</main>

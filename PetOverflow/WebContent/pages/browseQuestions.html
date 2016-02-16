@@ -1,0 +1,31 @@
+<main>
+	<pet-nav></pet-nav>
+
+	<div class="container-fluid">
+		<div class="QuestionsNav row">
+			<a 	href="#/questions/newest"
+				class="col-sm-4" 
+				active-link="active">
+				New Questions</a>
+			<a 	href="#/questions/existing" 
+				class="col-sm-4" 
+				active-link="active">
+				Existing Questions</a>
+			<a 	href="#/questions/ask" 
+				class="col-sm-4"
+				active-link="active">
+				Ask a Question</a>
+		</div>
+
+		<ul class="QuestionList container" ng-show="questCtrl.newest">
+			<li ng-repeat="question in questCtrl.newest">
+				<question question-id="question.id"></question>
+			</li>
+		</ul>	
+		<ul class="QuestionList container" ng-show="questCtrl.existing">
+			<li ng-repeat="question in questCtrl.existing">
+				<question question-id="question.id"></question>
+			</li>
+		</ul>
+	</div>	
+</main>
