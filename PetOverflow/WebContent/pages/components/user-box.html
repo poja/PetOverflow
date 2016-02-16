@@ -1,0 +1,5 @@
+<div class="UserBox">
+	<img ng-src="{{ user.photoUrl || DEFAULT_PROFILE }}" alt="" />
+	<a ng-href="{{'#/users/' + user.id}}">{{ user.nickname }}</a>
+	<p>User Rating: {{ user.rating }}</p>
+</div>

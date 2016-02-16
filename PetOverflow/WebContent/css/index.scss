@@ -16,9 +16,8 @@ $default-radius: 5px;
 
 a.u-cleanLinks,
 .u-cleanLinks a {
-	text-decoration: none;
 
-	&:hover {
+	&, &:hover, &:focus {
 		text-decoration: none;		
 	}
 }
@@ -62,6 +61,8 @@ li {
 }
 
 textarea {
+	display: block;
+	width: 100%;
 	resize: none;
 }
 
@@ -69,6 +70,10 @@ input[type="text"],
 input[type="password"],
 input[type="tel"] { 
 	max-width: 20rem; 
+}
+
+.btn {
+	white-space: normal;
 }
 
 /***************************/
@@ -79,6 +84,7 @@ $c-bg-navbar: #3D3961;
 $c-navbar-bottom: white;
 $c-font-navbar: $c-font-gray-light;
 $c-font-navbar-hover: white;
+$c-seconday-green: #0C612E;
 
 .NavBar {
 	@extend .u-cleanLinks;
@@ -147,7 +153,19 @@ $c-font-navbar-hover: white;
 			&:last-child a { border: 0; }
 		}	
 	}
+}
 
+.SmallButton {
+	background-color: $c-bg-navbar;
+	&, &:hover, &:focus { color: white; }
+}
+
+.LargeButton {
+	width: 50%;
+	background: $c-bg-navbar;
+	margin: 1rem auto;
+	display: block;
+	&, &:hover { color: white; }
 }
 
 
@@ -231,28 +249,41 @@ $c-bg-form-yellow: rgba(245, 255, 192, 0.9);
 		background-color: $c-bg-navbar;
 		color: white;
 	}
+
+	img {
+		width: 100px;
+		height: 100px;
+	}
 }
 
 
-/*****************/
-/*** Questions ***/
-/*****************/
+/*****************************/
+/*** Questions And Answers ***/
+/*****************************/
 
 .QuestionsNav {
+	@extend .u-cleanLinks;
+
 	margin: 4rem 0;
+	border-radius: $default-radius;
+	overflow: hidden;
 }
 
 .QuestionsNav a {
 	font-size: 2.3rem;
-	color: $c-font-gray;
+	color: $c-font-navbar;
 	text-align: center;
+	padding: 2rem;
+	background-color: $c-seconday-green;
+	transition: .5s background-color ease;
 
-	border-right: 1px solid $c-font-gray;
+	border-right: 1px solid white;
 	&:last-child { border-right: 0; }
 
-	&:hover, &.selected {
-		color: black;
-		text-decoration: underline;
+	&:hover, &.active {
+		color: white;
+		text-shadow: 1px 1px 1px black;
+		background-color: lighten($c-seconday-green, 10%);
 	}
 }
 
@@ -271,47 +302,290 @@ $c-bg-form-yellow: rgba(245, 255, 192, 0.9);
 	font-size: 1.7rem;
 	background-color: white;
 
-	.Question-votes {
-		text-align: center;
-		font-size: 2rem;
-	}
-
-	.Question-asker {
-		font-weight: bold;
-		color: $c-bg-navbar;
-	}
-
-	.Vote {
-		cursor: pointer;
-		&.selected { color: orange; }
-	}
-
 	.Question-button {
 		margin-top: .5rem;
 		background-color: $c-bg-navbar;
 		&, &:hover { color: white; }
 	}
+
+	.Question-topics {
+		margin-top: 5rem;
+		font-size: 1.5rem;
+
+		a {
+			margin-right: .5rem;
+		}
+	}
+
+	.UserBox {
+		border-left: 1px solid $c-font-gray-light;
+	}
+}
+.Question--withAnswer {
+	margin-bottom: 0;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+	border: 1px solid $c-font-gray;
+	border-bottom: 0;
 }
 
-.SmallButton {
-	background-color: $c-bg-navbar;
-	color: white;
+.VoteArea {
+	text-align: center;
+	color: $c-font-gray;
+	font-size: 2.5rem;
 }
 
+.Vote {
+	cursor: pointer;
+	&.selected { color: orange; }
+}
+
+
+.UserBox {
+	text-align: center;
+
+	img, p, a {
+		display: block;
+	}
+
+	img {
+		width: 50%;
+		margin: 0 auto;
+	}
+
+	a {
+		margin-top: .5rem;
+	}
+}
+
+.Answer {
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+	padding: 1rem 0;
+	
+	color: darken($c-font-gray, 20%);
+	border-radius: $default-radius;
+	border: 1px solid $c-font-gray;
+	background-color: $c-font-gray-light;
+}
+.Answer--withQuestion {
+	margin-top: 0;
+	border-top: none;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+
+
+/***********************/
+/*** Question Asking ***/
+/***********************/
 
 .QuestionCreateForm {
 
 	.TopicsInput {
+		margin-left: 5rem;
 		display: inline-block;
-		margin-left: 3rem;
-	}	
+	}
 
-	input[type=submit] {
-		background: $c-bg-navbar;
-		color: white;
-		width: 50%;
+	.LargeButton {
 		margin-top: 5rem;
+	}
+
+}
+.TopicError {
+	display: inline-block;
+	padding: .5rem;
+	background-color: white;
+	border-radius: $default-radius;
+	border: 1px solid red;
+
+	opacity: 0;
+	transition: none;
+	
+	&.visible {
+		transition: opacity .5s ease;
+		opacity: 1;
 	}
 }
 
+
+/***************/
+/*** Profile ***/
+/***************/
+
+.Profile .Info {
+	margin-top: 4rem;
+	margin-bottom: 4rem;
+
+	h2 {
+		font-size: 3rem;
+	}
+
+	q {
+		background-color: white;
+		padding: 1rem;
+		border-radius: $default-radius;
+		display: block;
+		margin-bottom: 1rem;
+	}
+
+	img {
+		width: 60%;
+		margin: 0 auto;
+		display: block;
+	}
+}
+
+.ExpertiseList {
+	list-style: none;
+
+	li {
+		display: inline;
+
+		&::after {
+			content: ", "
+		}
+		&:last-child::after {
+			content: "";
+		}
+	}
+}
+
+.Profile hr {
+	border-color: $c-font-gray-light;
+}
+
+
+/******************/
+/*** Hot Topics ***/
+/******************/
+
+$c-hot: #DC0202;
+
+.HotTopics {
+	
+	h2 {
+		margin-top: 4rem;
+		font-size: 3rem;
+		color: $c-bg-navbar;
+		font-weight: 700;
+		text-align: center;
+		
+		padding: 1rem 0;
+		border-width: 3px 0px;
+		border-color: $c-bg-navbar;
+		border-style: solid;
+
+	}
+
+	svg {
+		margin: 2rem auto 0 auto;
+		display: block;
+
+		a, a:hover { text-decoration: none; }
+	
+		text {
+			fill: $c-bg-navbar;
+			transition: .5s fill ease;
+
+			&:hover { fill: lighten($c-bg-navbar, 30%); }
+		}
+	}
+}
+
+
+/******************/
+/** Leaderboards **/
+/******************/
+
+.Leaderboard {
+
+	h2 {
+		font-size: 2.7rem;
+		font-weight: 700;
+		margin-top: 4rem;
+		margin-bottom: 3rem;
+	}
+
+	.Leaderboard-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+
+		li {
+			margin-bottom: 4rem;
+			position: relative;
+		}
+	}
+
+	.LeaderIndex {
+		position: absolute;
+		width: 15%;
+		left: 0;
+		top: 0;
+		bottom: 0;
+	}
+	div[leader] {
+		position: relative;
+		left: 15%;
+		width: 85%;
+		font-size: 1.5rem;
+	}
+}
+
+.LeaderIndex {
+	font-size: 5rem;
+	text-align: center;
+	height: 100%;
+
+	p {
+		margin-top: 25%;
+	}
+}
+
+.Leader {
+	background-color: white;
+	border-radius: $default-radius;
+	padding-top: 2rem;
+	padding-bottom: 2rem;
+
+	img {
+		display: block;
+		width: 70%;
+		margin: 0 auto;	
+	}
+}
+
+/******************/
+/*** Topic Page ***/
+/******************/
+
+.TopicPage {
+	
+	h2 {
+		font-size: 3rem;
+		margin: 4rem 0;
+	}
+}
+
+
+
+/***********************/
+/**** Question View ****/
+/***********************/
+
+.QuestionView {
+	.Question {
+		margin-top: 3rem;
+	}
+
+	form {
+		margin-top: 5rem;
+
+		textarea {
+			margin-bottom: 2rem;
+		}
+	}
+
+}
 

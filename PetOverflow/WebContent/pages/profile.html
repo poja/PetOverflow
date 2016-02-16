@@ -1,0 +1,41 @@
+<main ng-controller="ProfileController as prCtrl" class="Profile">
+	<pet-nav></pet-nav>
+
+	<div class="container-fluid Info">
+		<div class="row">
+			<div class="col-sm-3 col-sm-offset-2">
+				<img ng-src="{{ prCtrl.user.photoUrl || prCtrl.DEFAULT_PROFILE }}" alt="" />
+			</div>
+			<div class="col-sm-5">
+				<h2><span class="u-bold">{{ prCtrl.user.username }}</span>'s Profile</h2>		
+				<p>User rating: {{ prCtrl.user.rating }}</p>
+				<p class="u-bold">Get to know {{ prCtrl.user.nickname }}:</p>
+				<q>{{ prCtrl.user.description }}</q>
+				<p class="u-bold">Mike is an expert at:</p>
+				<ol class="ExpertiseList">
+					<li ng-repeat="topic in prCtrl.user.expertise">
+						<a ng-href="#/topics/{{topic.id}}">{{ topic.name }}</a>
+					</li>
+				</ol>
+			</div>
+		</div>
+	</div>
+	<hr />
+	<div class="container">
+		<h3>{{ prCtrl.user.nickname }}'s Recent Questions</h3>
+		<ul>
+			<li ng-repeat="question in prCtrl.newestQuestions">
+				<question question-id="question.id"></question>
+			</li>
+		</ul>
+		<h3>{{ prCtrl.user.nickname }}'s Recent Answers</h3>
+		<ul>
+			<li ng-repeat="answer in prCtrl.newestAnswers">
+				<question question-id="answer.questionId" with-answer="true"></question>
+				<answer answer-id="answer.id" with-question="true"></answer>
+			</li>
+		</ul>
+	</div>
+		
+
+</main>

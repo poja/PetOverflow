@@ -3,26 +3,40 @@
 
 	<div class="container-fluid">
 		<div class="QuestionsNav row">
-			<a href="#/questions/recent" class="col-sm-4">New Questions</a>
-			<a href="#/questions/existing" class="col-sm-4">Existing Questions</a>
-			<a href="#/questions/ask" class="col-sm-4 selected">Ask a Question</a>
+			<a href="#/questions/newest" class="col-sm-4" active-link="active">New Questions</a>
+			<a href="#/questions/existing" class="col-sm-4" active-link="active">Existing Questions</a>
+			<a href="#/questions/ask" class="col-sm-4" active-link="active">Ask a Question</a>
 		</div>
 
-		<form action="" class="QuestionCreateForm" ng-controller="QuestionAskingController as qCont">
+		<form action="" class="QuestionCreateForm" ng-controller="QuestionAskingController as qCtrl">
 			<div class="form-group">
 				<label for="qtext" class="control-label">Question Text:</label>
-				<textarea name="qtext" id="qtext" rows="6" class="form-control"></textarea>
+				<textarea name="qtext" id="qtext" rows="6" class="form-control" required></textarea>
 			</div>
+			<label for="qtopics" class="control-label">Topics:</label>
+			<span>{{ (qCtrl.topics | arrayPrint) || 'None' }}</span>
 			<div class="form-group">
-				<label for="qtopics" class="control-label">Topics:</label>
-				<span>{{ (qCont.topics | arrayPrint) || 'None' }}</span>
-				<input type="text" id="qtopics" class="form-control TopicsInput" placeholder="Enter a topic name" />
-				<button class="SmallButton btn">Add topic</button>
+				<input type="text" 
+					id="qtopics" 
+					class="form-control TopicsInput" 
+					placeholder="Enter a topic name" 
+					ng-model="qCtrl.newTopic"
+					ng-change="qCtrl.topicError = ''"
+					focus-on="topicAdded"
+					on-enter-key="qCtrl.addTopic()" />
+				<input 
+					type="button" 
+					class="SmallButton btn" 
+					ng-click="qCtrl.addTopic()" 
+					value="Add topic" />
+				<div class="TopicError" ng-class="{ visible: qCtrl.topicError }">
+					<i class="glyphicon glyphicon-chevron-left"></i>
+					{{ qCtrl.topicError }}
+				</div>
 			</div>
 			<div class="form-group u-center">
-				<input type="submit" class="btn" value="Submit Question" />	
+				<input type="submit" class="LargeButton btn" value="Submit Question" />	
 			</div>
-			
 		</form>
 	</div>
 	

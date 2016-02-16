@@ -1,20 +1,27 @@
 <div class="Question row">
-	<div class="col-sm-1 Question-votes">
+	<div class="col-sm-1 VoteArea">
 		<i class="Vote glyphicon glyphicon-triangle-top" ng-class="{selected: question.hasVote > 0}"></i>
 		<p>{{ question.voteCount }}</p>
 		<i class="Vote glyphicon glyphicon-triangle-bottom" ng-class="{selected: question.hasVote < 0}"></i>
 	</div>
-	<div class="col-sm-9">
+	<div class="col-sm-7">
 		<p class="Question-text">
 			{{ question.text }}
 		</p>
-		<p class="Question-asker">
-			- {{ question.askerNickname }}
+		<p class="Question-topics">
+			Topics: 
+			<span ng-hide="question.topics">(none)</span>
+			<a ng-href="#/topics/{{ topic.id }}" ng-repeat="topic in question.topics">{{ topic.name }}</a>
 		</p>
 	</div>
-	<div class="col-ms-2">
-		<a class="Question-button btn">View Answers</a>
-		<a class="Question-button btn">Answer this Question</a>
+	<div class="col-sm-2">
+		<a class="Question-button btn" ng-href="#/questions/{{ question.id }}">View Answers</a>
+		<a class="Question-button btn" 
+			ng-href="#/questions/{{ question.id }}"
+			ng-click="$root.$broadcast('answerRequest')">
+			Answer this Question</a>
 	</div>
-
+	<div class="col-sm-2">
+		<user-box user-id="question.askerId"></user-box>
+	</div>
 </div>

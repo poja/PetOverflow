@@ -1,0 +1,21 @@
+<div class="Leader">
+	<div class="row">
+		<div class="col-sm-3">
+			<img 
+				ng-src="{{ leader.photoUrl || 'https://www.mybeacon.biz/static/img/anonymous.jpg' }}" 
+				alt="Leader's photo" />
+		</div>
+		<div class="col-sm-9">
+			<p>
+				<a ng-href="#/users/{{ leader.id }}">{{ leader.nickname }}</a>
+				 - <span class="u-bold">User Rating</span>: {{ leader.rating }} 
+			</p>
+			<p class="u-bold">Expertise:</p>
+			<ol class="ExpertiseList">
+				<li ng-repeat="topic in leader.expertise">
+					<a ng-href="#/topics/{{topic.id}}">{{ topic.name }}</a>
+				</li>
+			</ol>
+		</div>
+	</div>
+</div>

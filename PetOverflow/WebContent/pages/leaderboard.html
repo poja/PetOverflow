@@ -1,0 +1,14 @@
+<main ng-controller="LeaderboardController as lbCtrl" class="Leaderboard">
+	<pet-nav></pet-nav>
+	<div class="container">
+		<h2>Current Pet Leaders</h2>
+
+		<ol class="Leaderboard-list">
+			<li ng-repeat="leader in lbCtrl.leaders">
+				<div class="LeaderIndex"><p>{{ $index + 1 }}</p></div>
+				<div leader></div>
+			</li>
+		</ol>	
+	</div>
+	
+</main>

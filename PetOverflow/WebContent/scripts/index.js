@@ -1,34 +1,48 @@
+
+
 (function (angular) {
 
-	var app = angular.module('PetOverflow', ['ngRoute']);
+	var app = angular.module('petOverflow', ['ngRoute', 'ngCookies', 'petd3', 'petData']);
 
 	app.config(['$routeProvider', function($routeProvider) {
 
 		$routeProvider
 			.when('/', { templateUrl: 'pages/login.html' })
-			.when('/questions/recent', { templateUrl: 'pages/questionList.html' })
-			.when('/questions/existing', { templateUrl: 'pages/questionList.html' })
+			.when('/questions/newest', { templateUrl: 'pages/browseQuestions.html' , controller: 'NewestQuestionsController as questCtrl'})
+			.when('/questions/existing', { templateUrl: 'pages/browseQuestions.html' , controller: 'ExistingQuestionsController as questCtrl'})
+			.when('/questions/ask', { templateUrl: 'pages/askQuestion.html'})
+			.when('/questions/:qId', { templateUrl: 'pages/questionView.html' })
 			.when('/users/new', { templateUrl: 'pages/signUp.html' })
-			.when('/questions/ask', { templateUrl: 'pages/askQuestion.html'});
+			.when('/users/leading', { templateUrl: 'pages/leaderboard.html' })
+			.when('/users/:uId', { templateUrl: 'pages/profile.html' })
+			.when('/topics/hot', { templateUrl: 'pages/hotTopics.html'})
+			.when('/topics/:tId', { templateUrl: 'pages/topic.html' })
+			.otherwise({ templateUrl: 'pages/404.html' });
 
 	}]);
 
-	app.run(['$rootScope', '$location', function($rootScope, $location) {
+	app.run(['$rootScope', '$location', 'DEFAULT_PROFILE', function($rootScope, $location, DEFAULT_PROFILE) {
 
-		$rootScope
-			.$on('loginSuccess', function () {
-				$location.url('/questions/recent');
-			});
+		$rootScope.$on('login', function () {
+			$location.url('/questions/newest');
+		})
+		$rootScope.$on('logout', function () {
+			$location.url('/');
+		});
+
+		$rootScope.contants = {
+			DEFAULT_PROFILE: DEFAULT_PROFILE
+		};
 
 	}]);
 
 
-	app.factory('Session', ['$rootScope', '$http', function ($rootScope, $http) {
+	app.factory('Session', ['$rootScope', '$http', '$cookies', function ($rootScope, $http, $cookies) {
 
 		var session = this;
 
 		/**
-			POSTS to the server. Emits loginSuccess on success.
+			POSTS to the server. Emits 'login' on success.
 			On error calls back with a message from the server.
 		*/
 		function authenticate(username, password, errCallback) {
@@ -45,7 +59,7 @@
 			}).success(function (data) {
 				if (data.success) {
 					session.username = username;
-					$rootScope.$emit('loginSuccess');
+					$rootScope.$emit('login');
 				}
 				else {
 					errCallback(data.message);
@@ -55,14 +69,22 @@
 			});
 		}
 
+		function logout() {
+			$cookies.remove('username');
+			$cookies.remove('password');
+			$rootScope.$emit('logout');
+		}
+
 		return {
 			'authenticate': authenticate,
 			'getUsername': function () {
 				return this.username;
-			}
+			},
+			'logout': logout
 		};
 
 	}]);
+
 
 	app.controller('LoginController', ['Session', function (Session) {
 		var loginCtrl = this;
@@ -76,16 +98,13 @@
 			Session.authenticate(loginCtrl.username, loginCtrl.password, function (err) {
 				loginCtrl.errMessage = err;
 			});
-			
-
 		};
 
 	}]);
 
-	app.controller('QuestionsController', ['$rootScope', '$http', function ($rootScope, $http) {
+	app.controller('NewestQuestionsController', ['$scope', 'PetData', 'HttpFailHandler', function ($scope, PetData, HttpFailHandler) {
 
 		var questCtrl = this;
-
 		questCtrl.newest = [];
 
 		function init() {
@@ -93,32 +112,176 @@
 		}
 
 		questCtrl.updateNewest = function () {
-			console.log("Updating the recent questions");
-			$http.get('./questions/recent').then(function (response) {
-				// resonse.data is an array of Questions objects (currently strings)
-				// questCtrl.newest = response.data;
-				questCtrl.newest = [{
-						text: 'What is a good name for a pet turtle? Today I recieved a pet turtle and it is so amazing. I love it such much and it is cute. The only thing I do not know is what to name it. Help!',
-						voteCount: 20,
-						askerNickname: 'Bob',
-						hasVote: 1
-					}, {
-						text: 'Why does my dog eat everything? In order to be clear, everything means: food, not food, animals, non-animals, leaves, humans, trumpets, and more.',
-						voteCount: -1,
-						askerNickname: 'Bobby',
-						hasVote: -1
-					}
-				];
-			});
+			PetData.getNewestQuestions().then(
+				function (response) {
+					questCtrl.newest = response.data;
+				},
+				HttpFailHandler
+			);
 		};
 
 		init();
 
 	}]);
 
-	app.controller('QuestionAskingController', function() {
+	app.controller('ExistingQuestionsController', ['PetData', 'HttpFailHandler', function (PetData, HttpFailHandler) {
 
-	});
+		var questCtrl = this;
+
+		questCtrl.existing = [];
+
+		function init() {
+			questCtrl.updateExisting();
+		}
+
+		questCtrl.updateExisting = function () {
+			PetData.getExistingQuestions().then(
+				function (response) {
+					questCtrl.existing = response.data;
+				},
+				HttpFailHandler
+			);
+		};
+
+		init();
+
+	}]);
+
+
+	app.controller('SignUpController', ['PetData', '$rootScope', function (PetData, $rootScope) {
+
+		this.wantsSms = false;
+		this.photoUrl = '';
+
+		this.submit = function() {
+			var userInfo = {
+				username: this.username,
+				password: this.password,
+				nickname: this.nickname,
+				description: this.description,
+				photoUrl: this.photoUrl,
+				phoneNumber: this.phoneNumber,
+				wantsSms: this.wantsSms
+			};
+
+			PetData.postNewUser(userInfo).then(function (response) {
+				$rootScope.$emit('login');	
+			}, function (response) {
+				// Sign up failed
+			});
+			
+		};
+
+
+	}]);
+
+	app.controller('QuestionAskingController', ['$scope', function ($scope) {
+
+		var TOPIC_REGEX = /^[a-zA-Z0-9]+$/,
+			MAX_TOPIC_LENGTH = 50;
+
+		this.topics = [];
+
+		this.addTopic = function () {
+			if (!this.newTopic) {
+				this.topicError = 'Please enter a name for the topic';
+			}
+			else if (this.newTopic.length > MAX_TOPIC_LENGTH)
+				this.topicError = 'The name of the topic should be less than 50 characters';
+			else if (!this.newTopic.match(TOPIC_REGEX))
+				this.topicError = 'Topic name should only have digits and letters';
+			else {
+				this.topics.push(this.newTopic);
+				this.newTopic = '';
+				$scope.$broadcast('topicAdded');
+			}
+		};
+
+	}]);
+
+	app.controller('ProfileController', ['$routeParams', 'Session', 'PetData', 'HttpFailHandler', 'DEFAULT_PROFILE', function ($routeParams, Session, PetData, HttpFailHandler, DEFAULT_PROFILE) {
+		var prCtrl = this;
+		prCtrl.user = {};
+		prCtrl.newestQuestions = [];
+		prCtrl.newestAnswers = [];
+		prCtrl.DEFAULT_PROFILE = DEFAULT_PROFILE;
+
+		var userId;
+		if ($routeParams.uId == 'me') userId = Session.userId;
+		else userId = $routeParams.uId;		
+		
+		PetData.getUserById(userId).then(function (response) {
+			prCtrl.user = response.data;
+		}, HttpFailHandler);
+
+		PetData.getNewestQuestionsByUser(userId).then(function (response) {
+			prCtrl.newestQuestions = response.data;
+		}, HttpFailHandler);
+
+		PetData.getNewestAnswersByUser(userId).then(function (response) {
+			prCtrl.newestAnswers = response.data;
+		}, HttpFailHandler);
+
+	}]);
+
+	app.controller('NavBarController', ['Session', function (Session) {
+		this.logout = Session.logout;
+	}]);
+
+	app.controller('HotTopicsController', ['PetData', 'HttpFailHandler', function (PetData, HttpFailHandler) {
+		var htpCtrl = this;
+		htpCtrl.topics = [];
+
+		PetData.getHotTopics().then(function (response) {
+			htpCtrl.topics = response.data;
+		}, HttpFailHandler);
+	}]);
+
+	app.controller('TopicController', ['PetData', 'HttpFailHandler', '$routeParams', function (PetData, HttpFailHandler, $routeParams) {
+		var tpCtrl = this;
+		tpCtrl.name = '';
+		tpCtrl.questions = [];
+
+		PetData.getTopicById($routeParams.tId).then(function (response) {
+			tpCtrl.name = response.data.name;
+			tpCtrl.questions = response.data.questions;
+		}, HttpFailHandler);
+
+	}]);
+
+	app.controller('LeaderboardController', ['PetData', 'HttpFailHandler', function (PetData, HttpFailHandler) {		
+		var lbCtrl = this;
+		lbCtrl.leaders = [];
+
+		PetData.getLeaders().then(function (response) {
+			lbCtrl.leaders = response.data;
+		}, HttpFailHandler);
+	}]);
+
+	app.controller('QuestionController', ['$routeParams', 'PetData', 'HttpFailHandler', function ($routeParams, PetData, HttpFailHandler) {
+		var qCtrl = this;
+		qCtrl.qId = $routeParams.qId;
+
+		PetData.getAnswersByQuestionId(qCtrl.qId).then(function (response) {
+			qCtrl.answers = response.data;
+		}, HttpFailHandler);
+	}]);
+
+	app.directive('userBox', ['PetData', 'HttpFailHandler', 'DEFAULT_PROFILE', function (PetData, HttpFailHandler, DEFAULT_PROFILE) {
+		return {
+			restrict: 'E',
+			scope: {
+				userId: '='
+			},
+			link: function (scope, element, attr) {
+				PetData.getUserById(scope.userId).then(function (response) {
+					scope.user = response.data;
+					scope.DEFAULT_PROFILE = DEFAULT_PROFILE;
+				}, HttpFailHandler);
+			},
+			templateUrl: './pages/components/user-box.html'
+		};
+	}]);
 
 	app.directive('petNav', function () {
 		return {
@@ -127,10 +290,102 @@
 		};
 	});
 
-	app.directive('question', function () {
+	app.directive('question', ['PetData', 'HttpFailHandler', function (PetData, HttpFailHandler) {
+		return {
+			restrict: 'E',
+			templateUrl: './pages/components/question.html',
+			scope: {
+				id: '=questionId',
+				withAnswer: '='
+			},
+			link: function (scope, element, attrs, controller) {
+				PetData.getQuestionById(scope.id).then(function (response) {
+					scope.question = response.data;
+				}, HttpFailHandler);
+
+				if (scope.withAnswer)
+					element[0].querySelector('.Question')
+						.classList.add('Question--withAnswer');
+			}
+		};
+	}]);
+
+	app.directive('answer', ['PetData', 'HttpFailHandler', function (PetData, HttpFailHandler) {
+		return {
+			restrict: 'E',
+			templateUrl: './pages/components/answer.html',
+			scope: {
+				id: '=answerId',
+				withQuestion: '='
+			},
+			link: function (scope, element, attrs, controller) {
+				PetData.getAnswerById(scope.id).then(function (response) {
+					scope.answer = response.data;
+				}, HttpFailHandler);
+				
+				if (scope.withQuestion)
+					element[0].querySelector('.Answer')
+						.classList.add('Answer--withQuestion');
+			}
+		};
+	}]);
+
+	app.directive('leader', function () {
 		return {
 			restrict: 'A',
-			templateUrl: './pages/components/question.html'
+			templateUrl: './pages/components/leader.html'
+		};
+	});
+
+	app.directive('activeLink', ['$location', function (location) {
+	    return {
+	    	restrict: 'A',
+	    	link: function (scope, element, attrs, controller) {
+		        var clazz = attrs.activeLink;
+		        var path = attrs.href;
+		        path = path.substring(1); //hack because path does not return including hashbang
+		        scope.location = location;
+		        scope.$watch('location.path()', function (newPath) {
+		        	if (path === newPath) {
+		            	element.addClass(clazz);
+		          	} else {
+		            	element.removeClass(clazz);
+		          	}
+		        });
+	    	}
+	    };
+	}]);
+
+	app.directive('focusOn', function() {
+		return {
+	   		restrict: 'A',
+	   		link: function(scope, elem, attr) {
+		    	scope.$on(attr.focusOn, function(e) {
+		        	elem[0].focus();
+		    	});
+		    }
+	   };
+	});
+
+	app.directive('onEnterKey', function() {
+	    return  {
+	    	restrict: 'A',
+	    	link: function(scope, element, attrs) {
+
+		        element.bind("keydown keypress", function(event) {
+		            var keyCode = event.which || event.keyCode;
+
+		            // If enter key is pressed
+		            if (keyCode === 13) {
+		                scope.$apply(function() {
+		                        // Evaluate the expression
+		                    scope.$eval(attrs.onEnterKey);
+		                });
+
+		                event.preventDefault();
+		            }
+		        });
+		    }
 		};
 	});
 
@@ -146,6 +401,29 @@
 			return string;
 		};
 	});
+
+	app.constant('HttpCodes', {
+		OK: 200,
+		UNAUTHORIZED: 401,
+		BAD_REQUEST: 400,
+		INTERNAL_SERVER_ERROR: 500,
+		FORBIDDEN: 403
+	});
+
+	app.constant('DEFAULT_PROFILE', 'https://www.mybeacon.biz/static/img/anonymous.jpg');
+
+	/**
+	 * Default failure handler for http requests.
+	 * If the reason is because the user was unauthorized, the user is notified and led to the login screen.
+	 */
+	app.factory('HttpFailHandler', ['HttpCodes', '$window', '$rootScope', function (HttpCodes, $window, $rootScope) {
+		return function (response) {
+			if (response.status ==  HttpCodes.UNAUTHORIZED) {
+				$window.alert('You are not authorized to view this page, and therefore are redirected to the login page.');
+				$rootScope.$emit('logout');
+			}
+		}
+	}]);
 
 
 }(angular));

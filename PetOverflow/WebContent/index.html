@@ -3,16 +3,29 @@
 <head>
 	<title>PetOverflow</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1" /> 
+
 	<link rel="stylesheet" href="./css/bootstrap/bootstrap.min.css" />
+	<link rel="stylesheet" href="./css/nvd3/nv.d3.css" />
+
 	<link rel="stylesheet" href="./css/index.css" />
 	<link rel="icon" href="favicon.ico" type="image/x-icon" />
 
 </head>
-<body ng-app="PetOverflow">
+<body ng-app="petOverflow">
 	<div ng-view></div>
 	
 	<script src="./scripts/angular/angular.min.js"></script>
 	<script src="./scripts/angular/angular-route.min.js"></script>
+	<script src="./scripts/angular/angular-cookies.min.js"></script>
+
+	<script src='./scripts/d3/d3.min.js'></script>
+	<script src='./scripts/d3/d3.layout.cloud.js'></script>
+	
+	<script src="./scripts/nvd3/angular-nvd3.js"></script>
+	<script src="./scripts/nvd3/nv.d3.js"></script>
+	
+	<script src="./scripts/petd3.js"></script>
+	<script src="./scripts/petData.js"></script>
 	<script src="./scripts/index.js"></script>
 </body>
 </html>
