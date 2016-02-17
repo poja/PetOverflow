@@ -1,10 +1,10 @@
 <main class="QuestionView">
 	<pet-nav></pet-nav>
 
-	<div class="container" ng-controller="QuestionController as qCtrl">
+	<div class="container">
 		<div class="row">
 			<div class="col-sm-10 col-sm-offset-1">
-				<question question-id="qCtrl.qId"></question>
+				<question question-id="qCtrl.qId" full-page="true"></question>
 			</div>
 		</div>
 		<answer ng-repeat="answer in qCtrl.answers" answer-id="answer.id"></answer>
