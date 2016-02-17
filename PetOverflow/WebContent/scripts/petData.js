@@ -93,6 +93,18 @@
 					name: 'calculus', id: 571 }, {
 					name: 'machineLearning', id: 571
 				}]
+			}, {
+				nickname: 'CoolMonkey',
+				id: 922,
+				rating: 245,
+				photoUrl: 'http://tinyurl.com/rapmonkey',
+				expertise: [{
+					name: 'banana', id: 245 },{
+					name: 'banana', id: 927 },{
+					name: 'banana', id: 944 },{
+					name: 'banana', id: 944 },{
+					name: 'banana', id: 944
+				}]
 			
 			}]);
 		}

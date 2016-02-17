@@ -260,9 +260,50 @@
 		var lbCtrl = this;
 		lbCtrl.leaders = [];
 
-		PetData.getLeaders().then(function (response) {
-			lbCtrl.leaders = response.data;
-		}, HttpFailHandler);
+		lbCtrl.init = function () {
+			PetData.getLeaders().then(function (response) {
+				lbCtrl.leaders = response.data;
+				lbCtrl.initGraphData();
+			}, HttpFailHandler);
+
+			lbCtrl.graphOptions = {
+				chart: {
+			        type: 'discreteBarChart',
+			        height: 450,
+			        margin : {
+			            top: 20,
+			            right: 20,
+			            bottom: 60,
+			            left: 55
+			        },
+			        x: function(d){ return d.label; },
+			        y: function(d){ return d.value; },
+			        showValues: true,
+			        valueFormat: function(d){
+			            return d3.format(',.4f')(d);
+			        },
+			        transitionDuration: 500,
+			        xAxis: {
+			            axisLabel: 'Leaders'
+			        },
+			        yAxis: {
+			            axisLabel: 'Rating',
+			            axisLabelDistance: 30
+		        	}
+		        }
+		    };	
+		}
+		
+
+	    lbCtrl.initGraphData = function (){
+	    	lbCtrl.graphData = [{
+			    values: lbCtrl.leaders.map(function (leader) {
+			    	return { label: leader.nickname, value: leader.rating };
+			    })
+			}];
+		};
+
+		lbCtrl.init();
 	}]);
 
 	app.controller('QuestionController', ['$timeout', '$scope', '$routeParams', 'PetData', 'HttpFailHandler', function ($timeout, $scope, $routeParams, PetData, HttpFailHandler) {

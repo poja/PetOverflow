@@ -268,10 +268,12 @@ input[type="tel"] {
   margin-top: 2rem;
   margin-bottom: 2rem;
   padding: 1rem 0;
-  color: #1d1d1d;
+  color: #D4D4D4;
   border-radius: 5px;
-  border: 1px solid #505050;
-  background-color: #C0C0C0; }
+  border: 1px solid #D4D4D4;
+  background-color: #252525; }
+  .Answer .VoteArea {
+    color: #D4D4D4; }
 
 .Answer--withQuestion {
   margin-top: 0;
@@ -344,16 +346,27 @@ input[type="tel"] {
   border-width: 3px 0px;
   border-color: #3D3961;
   border-style: solid; }
-.HotTopics svg {
-  margin: 2rem auto 0 auto;
-  display: block; }
-  .HotTopics svg a, .HotTopics svg a:hover {
-    text-decoration: none; }
-  .HotTopics svg text {
-    fill: #3D3961;
-    transition: .5s fill ease; }
-    .HotTopics svg text:hover {
-      fill: #847fb4; }
+
+.TagCloud {
+  width: 100%;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  border-radius: 5px; }
+  .TagCloud svg {
+    margin: 2rem auto 0 auto;
+    display: block; }
+    .TagCloud svg a, .TagCloud svg a:hover {
+      text-decoration: none; }
+    .TagCloud svg text {
+      fill: #3D3961;
+      transition: .5s fill ease; }
+      .TagCloud svg text:hover {
+        fill: #c2bfda; }
+  .TagCloud, .TagCloud svg {
+    background-color: black;
+    transition: 1s background-color ease; }
+  .TagCloud:hover, .TagCloud:hover svg {
+    background-color: #141414; }
 
 /******************/
 /** Leaderboards **/
@@ -398,6 +411,15 @@ input[type="tel"] {
     display: block;
     width: 70%;
     margin: 0 auto; }
+
+.BarGraph svg {
+  margin-bottom: 3.5rem;
+  border-radius: 5px;
+  background-color: black; }
+  .BarGraph svg text {
+    fill: white; }
+.BarGraph .nv-groups g {
+  fill: #3D3961 !important; }
 
 /******************/
 /*** Topic Page ***/

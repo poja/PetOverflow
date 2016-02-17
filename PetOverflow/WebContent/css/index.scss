@@ -261,6 +261,9 @@ $c-bg-form-yellow: rgba(245, 255, 192, 0.9);
 /*** Questions And Answers ***/
 /*****************************/
 
+$c-bg-answer: #252525;
+$c-font-answer: #D4D4D4;
+
 .QuestionsNav {
 	@extend .u-cleanLinks;
 
@@ -363,10 +366,14 @@ $c-bg-form-yellow: rgba(245, 255, 192, 0.9);
 	margin-bottom: 2rem;
 	padding: 1rem 0;
 	
-	color: darken($c-font-gray, 20%);
+	color: $c-font-answer;
 	border-radius: $default-radius;
-	border: 1px solid $c-font-gray;
-	background-color: $c-font-gray-light;
+	border: 1px solid $c-font-answer;
+	background-color: $c-bg-answer;
+
+	.VoteArea {
+		color: $c-font-answer;
+	}
 }
 .Answer--withQuestion {
 	margin-top: 0;
@@ -477,6 +484,14 @@ $c-hot: #DC0202;
 		border-style: solid;
 
 	}
+	
+}
+
+.TagCloud {
+	width: 100%;
+	padding-top: 4rem;
+	padding-bottom: 4rem;
+	border-radius: $default-radius;
 
 	svg {
 		margin: 2rem auto 0 auto;
@@ -488,7 +503,17 @@ $c-hot: #DC0202;
 			fill: $c-bg-navbar;
 			transition: .5s fill ease;
 
-			&:hover { fill: lighten($c-bg-navbar, 30%); }
+			&:hover { fill: lighten($c-bg-navbar, 50%); }
+		}
+	}
+
+	&, svg {
+		background-color: black;
+		transition: 1s background-color ease;
+	}
+	&:hover {
+		&, svg {
+			background-color: lighten(black, 8%); 
 		}
 	}
 }
@@ -555,6 +580,22 @@ $c-hot: #DC0202;
 		margin: 0 auto;	
 	}
 }
+
+.BarGraph {
+
+	svg {
+		margin-bottom: 3.5rem;
+		border-radius: $default-radius;
+		background-color: black;	
+		text { fill: white; }
+	}
+
+	.nv-groups g {
+		fill: $c-bg-navbar !important;
+	}
+}
+
+
 
 /******************/
 /*** Topic Page ***/
