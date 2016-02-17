@@ -11,7 +11,14 @@
 			.when('/questions/newest', { templateUrl: 'pages/browseQuestions.html' , controller: 'NewestQuestionsController as questCtrl'})
 			.when('/questions/existing', { templateUrl: 'pages/browseQuestions.html' , controller: 'ExistingQuestionsController as questCtrl'})
 			.when('/questions/ask', { templateUrl: 'pages/askQuestion.html'})
-			.when('/questions/:qId', { templateUrl: 'pages/questionView.html' })
+			.when('/questions/:qId', { 
+				templateUrl: 'pages/questionView.html', 
+				controller: 'QuestionController', 
+				controllerAs: 'qCtrl' })
+			.when('/questions/:qId/:mode', { 
+				templateUrl: 'pages/questionView.html', 
+				controller: 'QuestionController', 
+				controllerAs: 'qCtrl' })
 			.when('/users/new', { templateUrl: 'pages/signUp.html' })
 			.when('/users/leading', { templateUrl: 'pages/leaderboard.html' })
 			.when('/users/:uId', { templateUrl: 'pages/profile.html' })
@@ -258,13 +265,22 @@
 		}, HttpFailHandler);
 	}]);
 
-	app.controller('QuestionController', ['$routeParams', 'PetData', 'HttpFailHandler', function ($routeParams, PetData, HttpFailHandler) {
+	app.controller('QuestionController', ['$timeout', '$scope', '$routeParams', 'PetData', 'HttpFailHandler', function ($timeout, $scope, $routeParams, PetData, HttpFailHandler) {
 		var qCtrl = this;
 		qCtrl.qId = $routeParams.qId;
 
 		PetData.getAnswersByQuestionId(qCtrl.qId).then(function (response) {
 			qCtrl.answers = response.data;
 		}, HttpFailHandler);
+
+		$timeout(function () {
+			if ($routeParams.mode == 'answer') {
+				$scope.$emit('answerRequest');
+				window.setTimeout(function() {$scope.$emit('answerRequest');}, 30);
+			}
+		}, 1000);
+
+		
 	}]);
 
 	app.directive('userBox', ['PetData', 'HttpFailHandler', 'DEFAULT_PROFILE', function (PetData, HttpFailHandler, DEFAULT_PROFILE) {
@@ -296,7 +312,8 @@
 			templateUrl: './pages/components/question.html',
 			scope: {
 				id: '=questionId',
-				withAnswer: '='
+				withAnswer: '=',
+				fullPageMode: '=fullPage'
 			},
 			link: function (scope, element, attrs, controller) {
 				PetData.getQuestionById(scope.id).then(function (response) {

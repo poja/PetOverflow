@@ -6,5 +6,5 @@ PetOverflow/build
 */.sass-cache/*
 PetOverflow/derby.log
 PetOverflow/PetOvDb/db.lck
-PetOverflow/PetOvDb/log/*
+*/PetOvDb/*log*
 
