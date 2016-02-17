@@ -3,11 +3,11 @@
 
 	<div class="container-fluid">
 		<div class="QuestionsNav row">
-			<a 	href="#/questions/newest"
+			<a 	href="#/questions/browse/newest"
 				class="col-sm-4" 
 				active-link="active">
 				New Questions</a>
-			<a 	href="#/questions/existing" 
+			<a 	href="#/questions/browse/existing" 
 				class="col-sm-4" 
 				active-link="active">
 				Existing Questions</a>
@@ -17,15 +17,19 @@
 				Ask a Question</a>
 		</div>
 
-		<ul class="QuestionList container" ng-show="questCtrl.newest">
-			<li ng-repeat="question in questCtrl.newest">
-				<question question-id="question.id"></question>
-			</li>
-		</ul>	
-		<ul class="QuestionList container" ng-show="questCtrl.existing">
-			<li ng-repeat="question in questCtrl.existing">
+		<ul class="QuestionList container">
+			<li ng-repeat="question in questCtrl.questions">
 				<question question-id="question.id"></question>
 			</li>
 		</ul>
+		<p class="BigMessage" 
+			ng-hide="questCtrl.questions.length > 0">
+			Sorry, no questions here... Go ask some!
+		</p>	
+		
+		<page-turner 
+			text="'Viewing Questions ' + questCtrl.firstIndex() + '-' + questCtrl.lastIndex()"
+			ng-show="questCtrl.questions.length > 0">
+		</page-turner>
 	</div>	
 </main>

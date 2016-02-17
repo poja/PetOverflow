@@ -118,6 +118,7 @@
 					name: 'turtles',
 					id: 681
 				}],
+				timestamp: 1288323623006,
 				voteCount: 20,
 				askerId: 872,
 				hasVote: 1
@@ -154,7 +155,8 @@
 			if (id == 294)
 				return mockPromise({
 					id: 294,
-					text: 'I think that you are stupid that you bought a turtle. Who buys a turtle? It\'s even illegal in some places to sell turtles, because they belong in NATURE. Name in "poor little guy" and give it back.',
+					text: 'I think that you are stupid that you bought a turtle. Who buys a turtle? It\'s even illegal in some places to sell turtles, because they belong in NATURE. Name it "poor little guy" and give it back.',
+					timestamp: 1288323623006,
 					voteCount: -4,
 					hasVote: -1,
 					answererId: 849,
@@ -164,6 +166,7 @@
 				return mockPromise({
 					id: id,
 					text: 'Wow you are so lucky that you have a turtle. I think the best name for a turtle is Bob, because Bob is the best name for everything.',
+					timestamp: 1288323623006,
 					voteCount: 0,
 					hasVote: 0,
 					answererId: 223,

@@ -8,8 +8,9 @@
 
 		$routeProvider
 			.when('/', { templateUrl: 'pages/login.html' })
-			.when('/questions/newest', { templateUrl: 'pages/browseQuestions.html' , controller: 'NewestQuestionsController as questCtrl'})
-			.when('/questions/existing', { templateUrl: 'pages/browseQuestions.html' , controller: 'ExistingQuestionsController as questCtrl'})
+			.when('/questions/browse/:type', { 
+				templateUrl: 'pages/browseQuestions.html' , 
+				controller: 'BrowseQuestionsController as questCtrl'})
 			.when('/questions/ask', { templateUrl: 'pages/askQuestion.html'})
 			.when('/questions/:qId', { 
 				templateUrl: 'pages/questionView.html', 
@@ -31,7 +32,7 @@
 	app.run(['$rootScope', '$location', 'DEFAULT_PROFILE', function($rootScope, $location, DEFAULT_PROFILE) {
 
 		$rootScope.$on('login', function () {
-			$location.url('/questions/newest');
+			$location.url('/questions/browse/newest');
 		})
 		$rootScope.$on('logout', function () {
 			$location.url('/');
@@ -109,46 +110,52 @@
 
 	}]);
 
-	app.controller('NewestQuestionsController', ['$scope', 'PetData', 'HttpFailHandler', function ($scope, PetData, HttpFailHandler) {
+	app.controller('BrowseQuestionsController', ['$scope', 'PetData', 'HttpFailHandler', '$routeParams', function ($scope, PetData, HttpFailHandler, $routeParams) {
 
 		var questCtrl = this;
-		questCtrl.newest = [];
+		questCtrl.questions = [];
+		questCtrl.currentPage = 0;
+		questCtrl.PAGE_SIZE = 10;
 
 		function init() {
-			questCtrl.updateNewest();
+			questCtrl.updateQuestions();
 		}
 
-		questCtrl.updateNewest = function () {
-			PetData.getNewestQuestions().then(
+		questCtrl.firstIndex = function () {
+			return questCtrl.currentPage * questCtrl.PAGE_SIZE + 1;
+		}
+		questCtrl.lastIndex = function () {
+			return questCtrl.firstIndex() + questCtrl.questions.length - 1;
+		}
+
+		questCtrl.updateQuestions = function () {
+			var updater;
+			if ($routeParams.type === 'existing') updater = PetData.getExistingQuestions;
+			else if ($routeParams.type === 'newest') updater = PetData.getNewestQuestions;
+
+			updater(this.firstIndex(), this.lastIndex()).then(
 				function (response) {
-					questCtrl.newest = response.data;
+					if (response.data.length == 0 && questCtrl.currentPage > 0) { // Went too far
+						questCtrl.previousPage();
+						return;
+					}
+					questCtrl.questions = response.data;
 				},
 				HttpFailHandler
 			);
 		};
 
-		init();
-
-	}]);
-
-	app.controller('ExistingQuestionsController', ['PetData', 'HttpFailHandler', function (PetData, HttpFailHandler) {
-
-		var questCtrl = this;
-
-		questCtrl.existing = [];
-
-		function init() {
-			questCtrl.updateExisting();
-		}
-
-		questCtrl.updateExisting = function () {
-			PetData.getExistingQuestions().then(
-				function (response) {
-					questCtrl.existing = response.data;
-				},
-				HttpFailHandler
-			);
+		questCtrl.previousPage = function () {
+			if (questCtrl.currentPage > 0)
+				questCtrl.currentPage -= 1;
+			questCtrl.updateQuestions();
 		};
+		questCtrl.nextPage = function () {
+			questCtrl.currentPage += 1;
+			questCtrl.updateQuestions();
+		};
+		$scope.$on('previousPage', questCtrl.previousPage);
+		$scope.$on('nextPage', questCtrl.nextPage);
 
 		init();
 
@@ -256,16 +263,37 @@
 
 	}]);
 
-	app.controller('LeaderboardController', ['PetData', 'HttpFailHandler', function (PetData, HttpFailHandler) {		
+	app.controller('LeaderboardController', ['$scope', 'PetData', 'HttpFailHandler', function ($scope, PetData, HttpFailHandler) {		
 		var lbCtrl = this;
 		lbCtrl.leaders = [];
+		lbCtrl.currentPage = 0;
+		lbCtrl.PAGE_SIZE = 20;
 
 		lbCtrl.init = function () {
-			PetData.getLeaders().then(function (response) {
-				lbCtrl.leaders = response.data;
-				lbCtrl.initGraphData();
-			}, HttpFailHandler);
+			lbCtrl.initGraphOptions();
+			lbCtrl.updateData();
+		}
 
+		lbCtrl.updateData = function () {
+			PetData.getLeaders(this.firstIndex(), this.lastIndex()).then(function (response) {
+				if (response.data.length === 0 && lbCtrl.currentPage > 0) {
+					lbCtrl.previousPage();
+					return;
+				}
+				lbCtrl.leaders = response.data;
+				lbCtrl.updateGraphData();
+			}, HttpFailHandler);
+		}
+
+	    lbCtrl.updateGraphData = function (){
+	    	lbCtrl.graphData = [{
+			    values: lbCtrl.leaders.map(function (leader) {
+			    	return { label: leader.nickname, value: leader.rating };
+			    })
+			}];
+		};
+
+		lbCtrl.initGraphOptions = function () {
 			lbCtrl.graphOptions = {
 				chart: {
 			        type: 'discreteBarChart',
@@ -293,15 +321,24 @@
 		        }
 		    };	
 		}
-		
 
-	    lbCtrl.initGraphData = function (){
-	    	lbCtrl.graphData = [{
-			    values: lbCtrl.leaders.map(function (leader) {
-			    	return { label: leader.nickname, value: leader.rating };
-			    })
-			}];
+		lbCtrl.firstIndex = function () {
+			return lbCtrl.currentPage * lbCtrl.PAGE_SIZE + 1;
+		}
+		lbCtrl.lastIndex = function () {
+			return lbCtrl.firstIndex() + lbCtrl.leaders.length - 1;
+		}
+		lbCtrl.previousPage = function () {
+			if (lbCtrl.currentPage > 0)
+				lbCtrl.currentPage -= 1;
+			lbCtrl.updateData();
 		};
+		lbCtrl.nextPage = function () {
+			lbCtrl.currentPage += 1;
+			lbCtrl.updateData();
+		};
+		$scope.$on('previousPage', lbCtrl.previousPage);
+		$scope.$on('nextPage', lbCtrl.nextPage);
 
 		lbCtrl.init();
 	}]);
@@ -319,9 +356,7 @@
 				$scope.$emit('answerRequest');
 				window.setTimeout(function() {$scope.$emit('answerRequest');}, 30);
 			}
-		}, 1000);
-
-		
+		}, 1000);	
 	}]);
 
 	app.directive('userBox', ['PetData', 'HttpFailHandler', 'DEFAULT_PROFILE', function (PetData, HttpFailHandler, DEFAULT_PROFILE) {
@@ -428,7 +463,7 @@
 	app.directive('onEnterKey', function() {
 	    return  {
 	    	restrict: 'A',
-	    	link: function(scope, element, attrs) {
+	    	link: function (scope, element, attrs) {
 
 		        element.bind("keydown keypress", function(event) {
 		            var keyCode = event.which || event.keyCode;
@@ -444,6 +479,24 @@
 		            }
 		        });
 		    }
+		};
+	});
+
+	app.directive('pageTurner', function () {
+		return {
+			restrict: 'E',
+			templateUrl: './pages/components/page-turner.html',
+			scope: {
+				text: '='
+			},
+			link: function (scope, element, attr) {
+				scope.nextPage = function () {
+					scope.$emit('nextPage');
+				}
+				scope.previousPage = function () {
+					scope.$emit('previousPage');
+				}
+			}
 		};
 	});
 

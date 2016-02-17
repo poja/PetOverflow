@@ -130,6 +130,25 @@ input[type="tel"] {
   .LargeButton, .LargeButton:hover {
     color: white; }
 
+.PageTurner {
+  width: 60%;
+  margin: 0 auto;
+  margin-bottom: 2rem;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: white;
+  text-align: center; }
+  .PageTurner > div, .PageTurner > button {
+    padding: 1.2rem; }
+
+.PageTurner-button {
+  background-color: #3D3961;
+  border-radius: 0; }
+  .PageTurner-button, .PageTurner-button:focus {
+    color: #C0C0C0; }
+  .PageTurner-button:hover {
+    color: white; }
+
 /*******************************/
 /******** Login + SignUp *******/
 /*******************************/
@@ -190,9 +209,9 @@ input[type="tel"] {
     width: 100px;
     height: 100px; }
 
-/*****************************/
-/*** Questions And Answers ***/
-/*****************************/
+/************************/
+/** Browsing Questions **/
+/************************/
 .QuestionsNav {
   margin: 4rem 0;
   border-radius: 5px;
@@ -218,24 +237,25 @@ input[type="tel"] {
   margin: 0;
   list-style: none; }
 
+.BigMessage {
+  text-align: center;
+  font-size: 3rem;
+  margin-top: 3rem; }
+
+/*****************************/
+/*** Questions And Answers ***/
+/*****************************/
 .Question {
+  position: relative;
   margin-bottom: 2rem;
   padding: 2.5rem 0;
   border-radius: 5px;
   font-size: 1.7rem;
   background-color: white; }
-  .Question .Question-button {
-    margin-top: .5rem;
-    background-color: #3D3961; }
-    .Question .Question-button, .Question .Question-button:hover {
-      color: white; }
-  .Question .Question-topics {
-    margin-top: 5rem;
-    font-size: 1.5rem; }
-    .Question .Question-topics a {
-      margin-right: .5rem; }
   .Question .UserBox {
     border-left: 1px solid #C0C0C0; }
+  .Question .PointerToAnswer {
+    display: none; }
 
 .Question--withAnswer {
   margin-bottom: 0;
@@ -243,6 +263,30 @@ input[type="tel"] {
   border-bottom-right-radius: 0;
   border: 1px solid #505050;
   border-bottom: 0; }
+  .Question--withAnswer .PointerToAnswer {
+    display: block;
+    font-size: 4rem;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    top: auto; }
+
+.Question-button {
+  margin-top: .5rem;
+  background-color: #3D3961; }
+  .Question-button, .Question-button:hover {
+    color: white; }
+
+.Question-info, .Answer-info {
+  font-size: .9em; }
+  .Question-info a, .Answer-info a {
+    margin-right: .5rem; }
+
+.Question-info {
+  margin-top: 3.5rem; }
+
+.Answer-info {
+  margin-top: 5rem; }
 
 .VoteArea {
   text-align: center;
@@ -333,6 +377,9 @@ input[type="tel"] {
 .Profile hr {
   border-color: #C0C0C0; }
 
+.UserActivity ul {
+  margin-bottom: 8rem; }
+
 /******************/
 /*** Hot Topics ***/
 /******************/
@@ -342,10 +389,7 @@ input[type="tel"] {
   color: #3D3961;
   font-weight: 700;
   text-align: center;
-  padding: 1rem 0;
-  border-width: 3px 0px;
-  border-color: #3D3961;
-  border-style: solid; }
+  padding: 1rem 0; }
 
 .TagCloud {
   width: 100%;

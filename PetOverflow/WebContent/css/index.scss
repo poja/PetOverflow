@@ -168,6 +168,31 @@ $c-seconday-green: #0C612E;
 	&, &:hover { color: white; }
 }
 
+.PageTurner {
+	width: 60%;
+	margin: 0 auto;
+	margin-bottom: 2rem;
+	border-radius: $default-radius;
+	overflow: hidden;
+	background-color: white;
+	text-align: center;
+
+	& > div,
+	& > button {
+		padding: 1.2rem;
+	}
+}
+.PageTurner-button {
+	background-color: $c-bg-navbar;
+	border-radius: 0;
+
+	&, &:focus {
+		color: $c-font-gray-light;
+	}
+	&:hover {
+		color: white;
+	}
+}
 
 
 /*******************************/
@@ -257,12 +282,10 @@ $c-bg-form-yellow: rgba(245, 255, 192, 0.9);
 }
 
 
-/*****************************/
-/*** Questions And Answers ***/
-/*****************************/
 
-$c-bg-answer: #252525;
-$c-font-answer: #D4D4D4;
+/************************/
+/** Browsing Questions **/
+/************************/
 
 .QuestionsNav {
 	@extend .u-cleanLinks;
@@ -297,7 +320,24 @@ $c-font-answer: #D4D4D4;
 	list-style: none;
 }
 
+.BigMessage {
+	text-align: center;
+	font-size: 3rem;
+	margin-top: 3rem;
+}
+
+
+
+
+/*****************************/
+/*** Questions And Answers ***/
+/*****************************/
+
+$c-bg-answer: #252525;
+$c-font-answer: #D4D4D4;
+
 .Question {
+	position: relative;
 	margin-bottom: 2rem;
 	padding: 2.5rem 0;
 	border-radius: $default-radius;
@@ -305,23 +345,12 @@ $c-font-answer: #D4D4D4;
 	font-size: 1.7rem;
 	background-color: white;
 
-	.Question-button {
-		margin-top: .5rem;
-		background-color: $c-bg-navbar;
-		&, &:hover { color: white; }
-	}
-
-	.Question-topics {
-		margin-top: 5rem;
-		font-size: 1.5rem;
-
-		a {
-			margin-right: .5rem;
-		}
-	}
-
 	.UserBox {
 		border-left: 1px solid $c-font-gray-light;
+	}
+
+	.PointerToAnswer {
+		display: none;
 	}
 }
 .Question--withAnswer {
@@ -330,7 +359,34 @@ $c-font-answer: #D4D4D4;
 	border-bottom-right-radius: 0;
 	border: 1px solid $c-font-gray;
 	border-bottom: 0;
+
+	.PointerToAnswer {
+		display: block;
+		font-size: 4rem;
+		position: absolute;
+		left: 50%;
+		bottom: 0;
+		top: auto;
+	}
 }
+
+.Question-button {
+	margin-top: .5rem;
+	background-color: $c-bg-navbar;
+	&, &:hover { color: white; }
+}
+
+.Question-info, .Answer-info {
+	font-size: .9em;
+	a {	margin-right: .5rem; }
+}
+.Question-info {
+	margin-top: 3.5rem;
+}
+.Answer-info {
+	margin-top: 5rem;
+}
+
 
 .VoteArea {
 	text-align: center;
@@ -462,6 +518,12 @@ $c-font-answer: #D4D4D4;
 	border-color: $c-font-gray-light;
 }
 
+.UserActivity {
+	ul {
+		margin-bottom: 8rem;
+	}
+}
+
 
 /******************/
 /*** Hot Topics ***/
@@ -479,10 +541,6 @@ $c-hot: #DC0202;
 		text-align: center;
 		
 		padding: 1rem 0;
-		border-width: 3px 0px;
-		border-color: $c-bg-navbar;
-		border-style: solid;
-
 	}
 	
 }

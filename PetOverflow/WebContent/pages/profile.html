@@ -21,14 +21,21 @@
 		</div>
 	</div>
 	<hr />
-	<div class="container">
+	<div class="container UserActivity">
 		<h3>{{ prCtrl.user.nickname }}'s Recent Questions</h3>
+		<p class="BigMessage" ng-hide="prCtrl.newestQuestions.length > 0">
+			They haven't asked anything! There has to be something they doesn't know...
+		</p>
 		<ul>
 			<li ng-repeat="question in prCtrl.newestQuestions">
 				<question question-id="question.id"></question>
 			</li>
 		</ul>
+		
 		<h3>{{ prCtrl.user.nickname }}'s Recent Answers</h3>
+		<p class="BigMessage" ng-hide="prCtrl.newestAnswers.length > 0">
+			They haven't answered anything! They should go share their knowledge with the world!
+		</p>
 		<ul>
 			<li ng-repeat="answer in prCtrl.newestAnswers">
 				<question question-id="answer.questionId" with-answer="true"></question>

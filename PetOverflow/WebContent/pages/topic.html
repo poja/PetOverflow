@@ -3,7 +3,7 @@
 
 	<div class="container" ng-controller="TopicController as tpCtrl">
 		<h2>Topics > <span class="u-bold">{{ tpCtrl.name }}</span> </h2>
-
+		<p class="BigMessage" ng-hide="tpCtrl.questions.length > 0">Sorry, no questions in this topic.</p>
 		<ul class="QuestionList container">
 			<li ng-repeat="question in tpCtrl.questions">
 				<question question-id="question.id"></question>

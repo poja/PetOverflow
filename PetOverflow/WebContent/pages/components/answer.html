@@ -8,6 +8,10 @@
 		<p class="Answer-text">
 			{{ answer.text }}
 		</p>
+		<p class="Answer-info">
+			Posted at:
+			{{ answer.timestamp | date:'dd/MM/yyyy hh:mm:ss' }}
+		</p>
 	</div>
 	<div class="col-sm-2">
 		<user-box user-id="answer.answererId"></user-box>

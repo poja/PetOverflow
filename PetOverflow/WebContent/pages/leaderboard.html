@@ -2,13 +2,18 @@
 	<pet-nav></pet-nav>
 	<div class="container">
 		<h2>Current Pet Leaders</h2>
-		<nvd3 data="lbCtrl.graphData" options="lbCtrl.graphOptions" class="BarGraph"></nvd3>
+		<p class="BigMessage" ng-hide="lbCtrl.leaders.length > 0">Uh oh! No leaders...</p>
+		<nvd3 class="BarGraph"
+			data="lbCtrl.graphData" 
+			options="lbCtrl.graphOptions" 
+			ng-show="lbCtrl.leaders.length > 0"></nvd3>
 		<ol class="Leaderboard-list">
 			<li ng-repeat="leader in lbCtrl.leaders">
-				<div class="LeaderIndex"><p>{{ $index + 1 }}</p></div>
+				<div class="LeaderIndex"><p>{{ $index + lbCtrl.firstIndex() }}</p></div>
 				<div leader></div>
 			</li>
-		</ol>	
+		</ol>
+		<page-turner text="'View More Leaders'" ng-show="lbCtrl.leaders.length > 0"></page-turner>	
 	</div>
 	
 </main>

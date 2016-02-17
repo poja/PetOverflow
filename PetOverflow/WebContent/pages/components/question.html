@@ -11,7 +11,12 @@
 		<p class="Question-text">
 			{{ question.text }}
 		</p>
-		<p class="Question-topics">
+		<p class="Question-info">
+			<span>
+				Posted at:
+				{{ question.timestamp | date:'dd/MM/yyyy hh:mm:ss' }}
+			</span>
+			<br />
 			Topics: 
 			<span ng-hide="question.topics">(none)</span>
 			<a ng-href="#/topics/{{ topic.id }}" ng-repeat="topic in question.topics">{{ topic.name }}</a>
@@ -35,4 +40,7 @@
 	<div class="col-sm-2">
 		<user-box user-id="question.askerId"></user-box>
 	</div>
+
+	<!-- Arrow to answer -->
+	<i class="glyphicon glyphicon-chevron-down PointerToAnswer"></i>
 </div>
