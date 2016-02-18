@@ -454,6 +454,10 @@ $c-font-answer: #D4D4D4;
 		margin-top: 5rem;
 	}
 
+	label {
+		font-size: 1.3em;
+	}
+
 }
 .TopicError {
 	display: inline-block;
@@ -558,7 +562,7 @@ $c-hot: #DC0202;
 		a, a:hover { text-decoration: none; }
 	
 		text {
-			fill: $c-bg-navbar;
+			fill: lighten($c-bg-navbar, 20%);
 			transition: .5s fill ease;
 
 			&:hover { fill: lighten($c-bg-navbar, 50%); }

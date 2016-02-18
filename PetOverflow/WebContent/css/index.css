@@ -333,6 +333,8 @@ input[type="tel"] {
   display: inline-block; }
 .QuestionCreateForm .LargeButton {
   margin-top: 5rem; }
+.QuestionCreateForm label {
+  font-size: 1.3em; }
 
 .TopicError {
   display: inline-block;
@@ -402,7 +404,7 @@ input[type="tel"] {
     .TagCloud svg a, .TagCloud svg a:hover {
       text-decoration: none; }
     .TagCloud svg text {
-      fill: #3D3961;
+      fill: #665fa1;
       transition: .5s fill ease; }
       .TagCloud svg text:hover {
         fill: #c2bfda; }

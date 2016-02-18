@@ -1,46 +1,48 @@
-<div class="Question row">
-	<!-- Voting -->
-	<div class="col-sm-1 VoteArea">
-		<i class="Vote glyphicon glyphicon-triangle-top" ng-class="{selected: question.hasVote > 0}"></i>
-		<p>{{ question.voteCount }}</p>
-		<i class="Vote glyphicon glyphicon-triangle-bottom" ng-class="{selected: question.hasVote < 0}"></i>
-	</div>
+<div>	
+	<div class="Question row">
+		<!-- Voting -->
+		<div class="col-sm-1 VoteArea">
+			<i class="Vote glyphicon glyphicon-triangle-top" ng-class="{selected: question.hasVote > 0}"></i>
+			<p>{{ question.voteCount }}</p>
+			<i class="Vote glyphicon glyphicon-triangle-bottom" ng-class="{selected: question.hasVote < 0}"></i>
+		</div>
 
-	<!-- Text -->
-	<div class="col-sm-7">
-		<p class="Question-text">
-			{{ question.text }}
-		</p>
-		<p class="Question-info">
-			<span>
-				Posted at:
-				{{ question.timestamp | date:'dd/MM/yyyy hh:mm:ss' }}
-			</span>
-			<br />
-			Topics: 
-			<span ng-hide="question.topics">(none)</span>
-			<a ng-href="#/topics/{{ topic.id }}" ng-repeat="topic in question.topics">{{ topic.name }}</a>
-		</p>
-	</div>
+		<!-- Text -->
+		<div class="col-sm-7">
+			<p class="Question-text">
+				{{ question.text }}
+			</p>
+			<p class="Question-info">
+				<span>
+					Posted at:
+					{{ question.timestamp | date:'dd/MM/yyyy hh:mm:ss' }}
+				</span>
+				<br />
+				Topics: 
+				<span ng-hide="question.topics">(none)</span>
+				<a ng-href="#/topics/{{ topic.id }}" ng-repeat="topic in question.topics">{{ topic.name }}</a>
+			</p>
+		</div>
 
-	<!-- Butttons -->
-	<div class="col-sm-2" ng-hide="fullPageMode">
-		<a class="Question-button btn" ng-href="#/questions/{{ question.id }}">View Answers</a>
-		<a class="Question-button btn" 
-			ng-href="#/questions/{{ question.id }}/answer">
-			Answer this Question</a>
-	</div>
-	<div class="col-sm-2" ng-show="fullPageMode">
-		<a class="Question-button btn"
-			ng-click="$emit('answerRequest')">
-			Answer this Question</a>
-	</div>
+		<!-- Butttons -->
+		<div class="col-sm-2" ng-hide="fullPageMode">
+			<a class="Question-button btn" ng-href="#/questions/{{ question.id }}">View Answers</a>
+			<a class="Question-button btn" 
+				ng-href="#/questions/{{ question.id }}/answer">
+				Answer this Question</a>
+		</div>
+		<div class="col-sm-2" ng-show="fullPageMode">
+			<a class="Question-button btn"
+				ng-click="$emit('answerRequest')">
+				Answer this Question</a>
+		</div>
 
-	<!-- Asker -->
-	<div class="col-sm-2">
-		<user-box user-id="question.askerId"></user-box>
-	</div>
+		<!-- Asker -->
+		<div class="col-sm-2">
+			<user-box user-id="question.askerId"></user-box>
+		</div>
 
-	<!-- Arrow to answer -->
-	<i class="glyphicon glyphicon-chevron-down PointerToAnswer"></i>
+		<!-- Arrow to answer -->
+		<i class="glyphicon glyphicon-chevron-down PointerToAnswer"></i>
+	</div>
 </div>

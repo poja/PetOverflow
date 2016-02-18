@@ -1,6 +1,6 @@
 
 
-(function (angular) {
+(function (angular, $) {
 
 	var app = angular.module('petOverflow', ['ngRoute', 'ngCookies', 'petd3', 'petData']);
 
@@ -116,6 +116,7 @@
 		questCtrl.questions = [];
 		questCtrl.currentPage = 0;
 		questCtrl.PAGE_SIZE = 10;
+		questCtrl.type = $routeParams.type;
 
 		function init() {
 			questCtrl.updateQuestions();
@@ -130,8 +131,8 @@
 
 		questCtrl.updateQuestions = function () {
 			var updater;
-			if ($routeParams.type === 'existing') updater = PetData.getExistingQuestions;
-			else if ($routeParams.type === 'newest') updater = PetData.getNewestQuestions;
+			if (questCtrl.type === 'existing') updater = PetData.getExistingQuestions;
+			else if (questCtrl.type === 'newest') updater = PetData.getNewestQuestions;
 
 			updater(this.firstIndex(), this.lastIndex()).then(
 				function (response) {
@@ -388,8 +389,8 @@
 			templateUrl: './pages/components/question.html',
 			scope: {
 				id: '=questionId',
-				withAnswer: '=',
-				fullPageMode: '=fullPage'
+				fullPageMode: '=fullPage',
+				withAnswer: '='
 			},
 			link: function (scope, element, attrs, controller) {
 				PetData.getQuestionById(scope.id).then(function (response) {
@@ -454,7 +455,17 @@
 	   		restrict: 'A',
 	   		link: function(scope, elem, attr) {
 		    	scope.$on(attr.focusOn, function(e) {
-		        	elem[0].focus();
+		    		if (attr.scrollTime) {
+		    			// Smooth scroll then focus
+		    			$('html, body').animate({
+				            scrollTop: $(elem).offset().top
+				        }, attr.scrollTime, 'swing', function () {
+				        	elem[0].focus();	
+				        });
+		    		}
+		    		else
+		    			// Just focus
+		        		elem[0].focus();
 		    	});
 		    }
 	   };
@@ -537,4 +548,4 @@
 	}]);
 
 
-}(angular));
+}(angular, jQuery));

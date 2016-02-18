@@ -19,7 +19,11 @@
 
 		<ul class="QuestionList container">
 			<li ng-repeat="question in questCtrl.questions">
-				<question question-id="question.id"></question>
+				<question question-id="question.id" 
+					with-answer="question.bestAnswer && questCtrl.type == 'existing'"></question>
+				<answer answer-id="question.bestAnswer" 
+					ng-show="question.bestAnswer && questCtrl.type == 'existing'" 
+					with-question="true"></answer>
 			</li>
 		</ul>
 		<p class="BigMessage" 

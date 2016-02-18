@@ -20,15 +20,21 @@
 
 		function getNewestQuestions() {
 			return mockPromise([{
-				id: 62, 	}, {
-				id: 23
+				id: 62,
+				bestAnswer: 92
+		 	}, {
+				id: 23,
+				bestAnswer: 75
 			}]);
 		}
 
 		function getExistingQuestions() {
 			return mockPromise([{
-				id: 62, 	}, {
-				id: 23
+				id: 62,
+				bestAnswer: 92
+		 	}, {
+				id: 23,
+				bestAnswer: 75
 			}]);
 		}
 
