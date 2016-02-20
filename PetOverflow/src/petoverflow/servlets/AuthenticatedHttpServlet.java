@@ -262,7 +262,7 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 		String username = null;
 		for (Cookie c : cookies) {
 			if (c.getName().equals("username")) {
-				username = c.getValue();
+				username = c.getValue().toLowerCase();
 			}
 		}
 		if (username == null) {
@@ -289,9 +289,9 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 		}
 
 		for (Cookie c : cookies) {
-			if (c.getName().equals("username")) {
+			if (c.getName().equals(ParametersConfig.USERNAME)) {
 				username = c.getValue();
-			} else if (c.getName().equals("password")) {
+			} else if (c.getName().equals(ParametersConfig.PASSWORD)) {
 				password = c.getValue();
 			}
 		}

@@ -2,6 +2,7 @@ package petoverflow.dao;
 
 import java.util.List;
 
+import petoverflow.dao.items.Topic;
 import petoverflow.dao.items.User;
 
 /**
@@ -130,7 +131,7 @@ public interface UserDao {
 	 *             if fail
 	 */
 	public String getUserPhoneNum(int userId) throws Exception;
-	
+
 	/**
 	 * Check if this user wants SMS notifications.
 	 * 
@@ -139,6 +140,8 @@ public interface UserDao {
 	 * @throws Exception
 	 */
 	public boolean getUserWantsSms(int userId) throws Exception;
+
+	public List<Topic> getUserBestTopics(int userId, int size) throws Exception;
 
 	/**
 	 * Set a user's password to a new one
@@ -187,8 +190,6 @@ public interface UserDao {
 	 *             if fail
 	 */
 	public void setUserPhoneNum(int userId, String phoneNum) throws Exception;
-	
-	
 
 	/**
 	 * Get a list of the users with the highest rating

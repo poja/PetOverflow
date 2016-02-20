@@ -2,8 +2,6 @@ package petoverflow.authentication;
 
 /**
  * Validates data coming from the user.
- * 
- * TODO UnitTest
  */
 public class DataValidator {
 

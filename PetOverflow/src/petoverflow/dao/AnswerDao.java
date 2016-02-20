@@ -125,5 +125,7 @@ public interface AnswerDao {
 	 *             if fail
 	 */
 	public List<Answer> getQuestionAnswers(int questionId, int size, int offset) throws Exception;
+	
+	public List<Answer> getQuestionAnswersAll(int questionId) throws Exception;
 
 }

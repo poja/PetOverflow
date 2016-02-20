@@ -6,12 +6,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import petoverflow.Utility;
 import petoverflow.dao.DaoManager;
 import petoverflow.dao.DaoObject;
 import petoverflow.dao.UserDao;
+import petoverflow.dao.items.Answer;
+import petoverflow.dao.items.Question;
+import petoverflow.dao.items.Topic;
 import petoverflow.dao.items.User;
 import petoverflow.dao.utility.exception.ExistingUsernameException;
 import petoverflow.dao.utility.exception.NoSuchUserException;
@@ -191,11 +197,10 @@ public class UserDaoDerby extends DaoObject implements UserDao {
 
 		try {
 			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
-			PreparedStatement s = conn.prepareStatement(
-					"INSERT INTO " + DerbyConfig.USER_TABLE_NAME + " (" + DerbyConfig.USERNAME + ", "
-							+ DerbyConfig.PASSWORD + ", " + DerbyConfig.NICKNAME + ", " + DerbyConfig.DESCRIPTION + ", "
-							+ DerbyConfig.PHOTO_URL + ", " + DerbyConfig.PHONE_NUM + ", " + DerbyConfig.WANTS_SMS + ") VALUES (?, ?, ?, ?, ?, ?, ?)",
-					new String[] { DerbyConfig.ID });
+			PreparedStatement s = conn.prepareStatement("INSERT INTO " + DerbyConfig.USER_TABLE_NAME + " ("
+					+ DerbyConfig.USERNAME + ", " + DerbyConfig.PASSWORD + ", " + DerbyConfig.NICKNAME + ", "
+					+ DerbyConfig.DESCRIPTION + ", " + DerbyConfig.PHOTO_URL + ", " + DerbyConfig.PHONE_NUM + ", "
+					+ DerbyConfig.WANTS_SMS + ") VALUES (?, ?, ?, ?, ?, ?, ?)", new String[] { DerbyConfig.ID });
 			statements.add(s);
 			s.setString(1, username);
 			s.setString(2, password);
@@ -394,7 +399,7 @@ public class UserDaoDerby extends DaoObject implements UserDao {
 			DerbyUtils.cleanUp(rs, statements, conn);
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -428,6 +433,53 @@ public class UserDaoDerby extends DaoObject implements UserDao {
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
 		}
+	}
+
+	@Override
+	public List<Topic> getUserBestTopics(int userId, int size) throws Exception {
+		final HashMap<Topic, Double> topicsRating = new HashMap<Topic, Double>();
+		List<Answer> userAnswers = m_daoManager.getAnswerDao().getAnswersByAuthorAll(userId);
+		for (Answer answer : userAnswers) {
+			try {
+				double answerRating = answer.getRating();
+				Question question = answer.getQuestion();
+				List<Topic> questionTopics = question.getTopics();
+
+				for (Topic topic : questionTopics) {
+					Double oldValue = topicsRating.get(topic);
+					if (oldValue == null) {
+						oldValue = 0.0;
+					}
+					oldValue += answerRating;
+					topicsRating.put(topic, oldValue);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		List<Topic> topics = new ArrayList<Topic>(topicsRating.keySet());
+		Collections.sort(topics, new Comparator<Topic>() {
+
+			@Override
+			public int compare(Topic o1, Topic o2) {
+				Double r1 = topicsRating.get(o1);
+				Double r2 = topicsRating.get(o2);
+				if (r1 == null || r2 == null) {
+					return 0;
+				}
+				if (r1 > r2) {
+					return 1;
+				} else if (r1 < r2) {
+					return -1;
+				} else {
+					return 0;
+				}
+			}
+		});
+		Collections.reverse(topics);
+
+		return Utility.cutList(topics, size, 0);
 	}
 
 	/*

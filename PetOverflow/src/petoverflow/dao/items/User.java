@@ -1,5 +1,6 @@
 package petoverflow.dao.items;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import petoverflow.dao.AnswerDao;
@@ -8,6 +9,7 @@ import petoverflow.dao.DaoObject;
 import petoverflow.dao.QuestionDao;
 import petoverflow.dao.UserDao;
 import petoverflow.dao.utility.Rated;
+import petoverflow.dto.TopicDto;
 import petoverflow.dto.UserDto;
 
 /**
@@ -25,6 +27,8 @@ public class User extends DaoObject implements Rated {
 	 * Id of this user
 	 */
 	private final int m_id;
+
+	private static final int BEST_TOPICS_SIZE = 5;
 
 	/**
 	 * Constructor
@@ -109,7 +113,7 @@ public class User extends DaoObject implements Rated {
 	public String getPhoneNum() throws Exception {
 		return m_daoManager.getUserDao().getUserPhoneNum(m_id);
 	}
-	
+
 	/**
 	 * Check if the user wants SMS notifications
 	 * 
@@ -142,6 +146,10 @@ public class User extends DaoObject implements Rated {
 		}
 
 		return 0.2 * averageQuestionsRating + 0.8 * averageAnswersRating;
+	}
+
+	public List<Topic> getBestTopics() throws Exception {
+		return m_daoManager.getUserDao().getUserBestTopics(m_id, BEST_TOPICS_SIZE);
 	}
 
 	/**
@@ -207,6 +215,17 @@ public class User extends DaoObject implements Rated {
 		user.description = getDescription();
 		user.photoUrl = getPhotoUrl();
 		user.rating = getRating();
+		user.phone = getPhoneNum();
+		user.wantSms = getWantsSms();
+
+		List<Topic> bestTopics = getBestTopics();
+		List<TopicDto> bestTopicsDto = new ArrayList<TopicDto>();
+		for (Topic topic : bestTopics) {
+			TopicDto topicDto = topic.toTopicDto();
+			bestTopicsDto.add(topicDto);
+		}
+		user.expertise = bestTopicsDto;
+
 		return user;
 	}
 

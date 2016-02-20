@@ -40,11 +40,11 @@ public class LoginServlet extends HttpServlet {
 		// Parse the authentication information
 		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
 
-		String username = params.get(ParametersConfig.USERNAME).toString();
+		String username = params.get(ParametersConfig.USERNAME).toString().toLowerCase();
 		String password = params.get(ParametersConfig.PASSWORD).toString();
 		if (username == null || password == null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-			return; 
+			return;
 		}
 
 		try {
@@ -52,8 +52,8 @@ public class LoginServlet extends HttpServlet {
 			if (userId != null) {
 				AuthenticationDto auth = new AuthenticationDto(userId, username, password, true);
 				response.getWriter().write(gson.toJson(auth));
-				Cookie usernameCookie = new Cookie("username", auth.getUsername());
-				Cookie passwordCookie = new Cookie("password", auth.getPassword());
+				Cookie usernameCookie = new Cookie(ParametersConfig.USERNAME, auth.getUsername());
+				Cookie passwordCookie = new Cookie(ParametersConfig.PASSWORD, auth.getPassword());
 				Cookie idCookie = new Cookie("userId", userId.toString());
 				response.addCookie(usernameCookie);
 				response.addCookie(passwordCookie);
@@ -64,9 +64,9 @@ public class LoginServlet extends HttpServlet {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			Cookie usernameCookie = new Cookie("username", "");
-			Cookie passwordCookie = new Cookie("password", "");
-			Cookie idCookie = new Cookie("userId", "");
+			Cookie usernameCookie = new Cookie(ParametersConfig.USERNAME, "");
+			Cookie passwordCookie = new Cookie(ParametersConfig.PASSWORD, "");
+			Cookie idCookie = new Cookie(ParametersConfig.USER_ID, "");
 			response.addCookie(usernameCookie);
 			response.addCookie(passwordCookie);
 			response.addCookie(idCookie);

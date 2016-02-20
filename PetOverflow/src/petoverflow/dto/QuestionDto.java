@@ -16,13 +16,14 @@ public class QuestionDto {
 
 	public double rating;
 
-	// timestamp in milliseconds since Jan 1990
+	public double voteCount;
+
 	public long timestamp;
 
 	public List<String> topics;
 
 	public int voteStatus;
-	
+
 	public Integer bestAnswerId;
 
 }

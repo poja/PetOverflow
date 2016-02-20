@@ -52,7 +52,6 @@ public class AnswerServlet extends AuthenticatedHttpServlet {
 		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
 		String voteType = Integer.toString(((Double) params.get(ParametersConfig.VOTE_TYPE)).intValue());
 
-		// TODO check own vote
 		try {
 			if (voteType.equals(ParametersConfig.VOTE_TYPE_NONE)) {
 				m_daoManager.getAnswerVoteDao().removeVote(answerId, user.getId());
@@ -102,13 +101,14 @@ public class AnswerServlet extends AuthenticatedHttpServlet {
 	 * Check whether the asker of the question requested notifications, and if
 	 * so, send them the notifications.
 	 * 
-	 * @param questionId The id of the question that was answered
+	 * @param questionId
+	 *            The id of the question that was answered
 	 */
 	private void notifyAsker(int questionId) throws Exception {
 		Question q = m_daoManager.getQuestionDao().getQuestion(questionId);
 		User asker = q.getAuthor();
 		List<Topic> topics = q.getTopics();
-		
+
 		if (asker.getWantsSms()) {
 			String message = "Your question on PetOverflow";
 			if (topics.size() > 0) {

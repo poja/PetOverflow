@@ -57,4 +57,26 @@ public class Vote {
 		return m_type;
 	}
 
+	public int hashCode() {
+		return m_voterId ^ ((m_type == VoteType.Up ? 1 : -1) << 16);
+	}
+
+	public boolean equals(Object o) {
+		if (o == null) {
+			return false;
+		} else if (o == this) {
+			return true;
+		} else if (!(o instanceof Vote)) {
+			return false;
+		}
+
+		Vote other = (Vote) o;
+		if (m_voterId != other.m_voterId) {
+			return false;
+		} else if (!m_type.equals(other.m_type)) {
+			return false;
+		}
+		return true;
+	}
+
 }

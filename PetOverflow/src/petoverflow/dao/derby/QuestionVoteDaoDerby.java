@@ -66,6 +66,15 @@ public class QuestionVoteDaoDerby extends DaoObject implements QuestionVoteDao {
 	 * @see petoverflow.dao.QuestionVoteDao#addVote(int, petoverflow.dao.Vote)
 	 */
 	public void addVote(int questionId, Vote vote) throws SQLException {
+		try {
+			if (m_daoManager.getQuestionDao().getQuestion(questionId).getAuthor().getId() == vote.getVoterId()) {
+				// Can vote to yourself
+				return;
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			return;
+		}
 		// Remove previous vote
 		removeVote(questionId, vote.getVoterId());
 

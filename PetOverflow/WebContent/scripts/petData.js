@@ -4,20 +4,6 @@
 
 	app.factory('PetData', ['$http', '$log', function ($http, $log) {
 
-		/**
-		 *	Creates a fake Promise, that always works, 
-		 *	and calls the "success" callback with the given data
-		 */
-		function mockPromise(data) {
-			return {
-				then: function (success, failure) {
-					success({ 
-						'data': data 
-					});
-				}
-			};
-		}
-
 		function postQuestion(text, topics) {
 			return $http({
 				method: 'POST',

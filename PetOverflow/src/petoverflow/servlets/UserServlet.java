@@ -50,16 +50,15 @@ public class UserServlet extends AuthenticatedHttpServlet {
 			throw new ServletException("Invalid URI");
 		}
 
-		// TODO lowercase username
 		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
-		String username = params.get(ParametersConfig.USERNAME).toString();
+		String username = params.get(ParametersConfig.USERNAME).toString().toLowerCase();
 		String password = params.get(ParametersConfig.PASSWORD).toString();
 		String nickname = params.get(ParametersConfig.NICKNAME).toString();
 		String description = params.get(ParametersConfig.DESCRIPTION).toString();
 		String photoUrl = params.get(ParametersConfig.PHOTO_URL).toString();
 		String phoneNum = params.get(ParametersConfig.PHONE_NUM).toString();
 		boolean wantsSms = (boolean) params.get(ParametersConfig.WANTS_SMS);
-		
+
 		Gson gson = new Gson();
 		PrintWriter out = response.getWriter();
 
@@ -85,7 +84,7 @@ public class UserServlet extends AuthenticatedHttpServlet {
 		response.addCookie(passwordCookie);
 		response.addCookie(idCookie);
 		response.setContentType("application/json");
-		
+
 		if (newUser != null) {
 			try {
 				out.append(gson.toJson(newUser.toUserDto()));
@@ -94,7 +93,6 @@ public class UserServlet extends AuthenticatedHttpServlet {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				// TODO send back error
 			}
 		}
 	}
@@ -238,7 +236,7 @@ public class UserServlet extends AuthenticatedHttpServlet {
 			int requestedUserId) throws IOException, ServletException {
 		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
 		int size = (((Double) params.get(ParametersConfig.SIZE))).intValue();
-		int offset = ((Double) (params.get(ParametersConfig.OFFSET))).intValue();
+		int offset = ((Double) params.get(ParametersConfig.OFFSET)).intValue();
 
 		List<Answer> answers;
 		try {

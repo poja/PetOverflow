@@ -67,6 +67,15 @@ public class AnswerVoteDaoDerby extends DaoObject implements AnswerVoteDao {
 	 */
 	public void addVote(int answerId, Vote vote) throws SQLException {
 		// Remove previous vote
+		try {
+			if (m_daoManager.getAnswerDao().getAnswer(answerId).getAuthor().getId() == vote.getVoterId()) {
+				// Can vote to yourself
+				return;
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			return;
+		}
 		removeVote(answerId, vote.getVoterId());
 
 		Connection conn = null;
@@ -185,7 +194,7 @@ public class AnswerVoteDaoDerby extends DaoObject implements AnswerVoteDao {
 			}
 			return bestAnswer;
 		} catch (Exception e) {
-			throw new SQLException(e.getMessage()); // TODO is this OK?
+			throw new SQLException(e.getMessage());
 		} finally {
 			DerbyUtils.cleanUp(rs, statements, conn);
 		}

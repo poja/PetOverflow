@@ -77,19 +77,34 @@ public class Utility {
 	}
 
 	public static void sortByTimestamp(List<? extends Timestampable> list) {
+		final HashMap<Timestampable, Timestamp> timestamps = new HashMap<Timestampable, Timestamp>();
+		for (Timestampable e : list) {
+			Timestamp timestamp;
+			try {
+				timestamp = e.getTimestamp();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+				timestamp = null;
+			}
+			timestamps.put(e, timestamp);
+		}
+
 		Collections.sort(list, new Comparator<Timestampable>() {
 
 			@Override
 			public int compare(Timestampable o1, Timestampable o2) {
 				try {
-					Timestamp t1 = o1.getTimestamp();
-					Timestamp t2 = o2.getTimestamp();
+					Timestamp t1 = timestamps.get(o1);
+					Timestamp t2 = timestamps.get(o2);
+					if (t1 == null || t2 == null) {
+						return 0;
+					}
 					if (t1.equals(t2)) {
 						return 0;
-					} else if (t1.after(t2)) {
-						return -1;
-					} else
+					} else if (t1.before(t2)) {
 						return 1;
+					} else
+						return -1;
 
 				} catch (Exception e) {
 					return 0;

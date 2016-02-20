@@ -1,5 +1,7 @@
 package petoverflow.dto;
 
+import java.util.List;
+
 /**
  * The UserDto holds information about a user. This object is used to transfer
  * that data easily.
@@ -17,5 +19,11 @@ public class UserDto {
 	public String photoUrl;
 
 	public double rating;
+	
+	public String phone;
+	
+	public boolean wantSms;
+	
+	public List<TopicDto> expertise;
 
 }

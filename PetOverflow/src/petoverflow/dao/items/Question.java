@@ -78,7 +78,6 @@ public class Question extends DaoObject implements Rated, Timestampable {
 		return m_daoManager.getQuestionDao().getQuestionAuthor(m_id);
 	}
 
-	// TODO IMPORTANT!!! Rating is NOT the same as vote count!
 	/**
 	 * Get the rating of this question
 	 * 
@@ -87,6 +86,31 @@ public class Question extends DaoObject implements Rated, Timestampable {
 	 *             if the DAO fails
 	 */
 	public double getRating() throws Exception {
+		double ownQuestionRating = getVoteCount();
+		if (Double.isNaN(ownQuestionRating)) {
+			ownQuestionRating = 0;
+		}
+		double averageAnswerRating = 0;
+
+		List<Answer> answers = m_daoManager.getAnswerDao().getQuestionAnswersAll(m_id);
+		for (Answer answer : answers) {
+			double answerRating = answer.getRating();
+			if (Double.isNaN(answerRating)) {
+				answerRating = 0;
+			}
+			averageAnswerRating += answerRating;
+		}
+		if (answers.size() != 0) {
+			averageAnswerRating /= answers.size();
+		}
+		if (Double.isNaN(averageAnswerRating)) {
+			averageAnswerRating = 0;
+		}
+
+		return 0.2 * ownQuestionRating + 0.8 * averageAnswerRating;
+	}
+
+	public double getVoteCount() throws Exception {
 		List<Vote> questionVotes = m_daoManager.getQuestionVoteDao().getQuestionVotes(m_id);
 
 		double rating = 0;
@@ -143,6 +167,7 @@ public class Question extends DaoObject implements Rated, Timestampable {
 		question.text = getText();
 		question.authorId = getAuthor().getId();
 		question.rating = getRating();
+		question.voteCount = getVoteCount();
 		question.timestamp = getTimestamp().getTime();
 		question.bestAnswerId = getBestAnswer();
 

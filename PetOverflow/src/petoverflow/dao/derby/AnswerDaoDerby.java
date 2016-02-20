@@ -329,6 +329,11 @@ public class AnswerDaoDerby extends DaoObject implements AnswerDao {
 	 */
 	@Override
 	public List<Answer> getQuestionAnswers(int questionId, int size, int offset) throws SQLException {
+		List<Answer> questionAnswers = getQuestionAnswersAll(questionId);
+		return Utility.cutList(questionAnswers, size, offset);
+	}
+
+	public List<Answer> getQuestionAnswersAll(int questionId) throws SQLException {
 		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
@@ -346,7 +351,9 @@ public class AnswerDaoDerby extends DaoObject implements AnswerDao {
 				int answerId = rs.getInt(DerbyConfig.ID);
 				questionAnswers.add(new Answer(m_daoManager, answerId));
 			}
-			return Utility.cutList(questionAnswers, size, offset);
+
+			Utility.sortByRating(questionAnswers);
+			return questionAnswers;
 
 		} catch (SQLException e) {
 			throw e;

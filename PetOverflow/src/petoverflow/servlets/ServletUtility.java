@@ -27,10 +27,9 @@ public class ServletUtility {
 		return Arrays.asList(array);
 	}
 
-	
 	private static String getRequestData(HttpServletRequest request) throws IOException {
 		String method = request.getMethod();
-		if (method == "GET") {
+		if (method.equals("GET")) {
 			return request.getParameter("data");
 		} else {
 			StringBuilder sb = new StringBuilder();

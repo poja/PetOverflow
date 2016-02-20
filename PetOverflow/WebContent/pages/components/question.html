@@ -6,7 +6,7 @@
 				class="Vote glyphicon glyphicon-triangle-top" 
 				ng-class="{selected: questionInfo.voteStatus > 0, disabled: isMyQuestion}" 
 				ng-click="setVote(1)"></i>
-			<p>{{ questionInfo.rating }}</p>
+			<p>{{ questionInfo.voteCount }}</p>
 			<i 
 				class="Vote glyphicon glyphicon-triangle-bottom" 
 				ng-class="{selected: questionInfo.voteStatus < 0, disabled: isMyQuestion}" 
