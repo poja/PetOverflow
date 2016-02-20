@@ -12,19 +12,13 @@
 				templateUrl: 'pages/browseQuestions.html' , 
 				controller: 'BrowseQuestionsController as questCtrl'})
 			.when('/questions/ask', { templateUrl: 'pages/askQuestion.html'})
-			.when('/questions/:qId', { 
-				templateUrl: 'pages/questionView.html', 
-				controller: 'QuestionController', 
-				controllerAs: 'qCtrl' })
-			.when('/questions/:qId/:mode', { 
-				templateUrl: 'pages/questionView.html', 
-				controller: 'QuestionController', 
-				controllerAs: 'qCtrl' })
+			.when('/questions/:qId', { templateUrl: 'pages/questionView.html' })
+			.when('/questions/:qId/:mode', { templateUrl: 'pages/questionView.html' })
 			.when('/users/new', { templateUrl: 'pages/signUp.html' })
 			.when('/users/leading', { templateUrl: 'pages/leaderboard.html' })
 			.when('/users/:uId', { templateUrl: 'pages/profile.html' })
 			.when('/topics/hot', { templateUrl: 'pages/hotTopics.html'})
-			.when('/topics/:tId', { templateUrl: 'pages/topic.html' })
+			.when('/topics/:tName', { templateUrl: 'pages/topic.html' })
 			.otherwise({ templateUrl: 'pages/404.html' });
 
 	}]);
@@ -36,6 +30,9 @@
 		})
 		$rootScope.$on('logout', function () {
 			$location.url('/');
+		});
+		$rootScope.$on('questionPosted', function () {
+			$location.url('/questions/browse/newest');
 		});
 
 		$rootScope.contants = {
@@ -67,6 +64,7 @@
 			}).success(function (data) {
 				if (data.success) {
 					session.username = username;
+					session.userId = data.id;
 					$rootScope.$emit('login');
 				}
 				else {
@@ -86,7 +84,10 @@
 		return {
 			'authenticate': authenticate,
 			'getUsername': function () {
-				return this.username;
+				return session.username;
+			},
+			'getUserId': function () {
+				return $cookies.get('userId');
 			},
 			'logout': logout
 		};
@@ -115,7 +116,7 @@
 		var questCtrl = this;
 		questCtrl.questions = [];
 		questCtrl.currentPage = 0;
-		questCtrl.PAGE_SIZE = 10;
+		questCtrl.PAGE_SIZE = 20;
 		questCtrl.type = $routeParams.type;
 
 		function init() {
@@ -123,23 +124,24 @@
 		}
 
 		questCtrl.firstIndex = function () {
-			return questCtrl.currentPage * questCtrl.PAGE_SIZE + 1;
+			return questCtrl.currentPage * questCtrl.PAGE_SIZE;
 		}
 		questCtrl.lastIndex = function () {
 			return questCtrl.firstIndex() + questCtrl.questions.length - 1;
 		}
 
 		questCtrl.updateQuestions = function () {
-			var updater;
-			if (questCtrl.type === 'existing') updater = PetData.getExistingQuestions;
-			else if (questCtrl.type === 'newest') updater = PetData.getNewestQuestions;
+			var getQuestions;
+			if (questCtrl.type === 'existing') getQuestions = PetData.getQuestionsExisting;
+			else if (questCtrl.type === 'newest') getQuestions = PetData.getQuestionsNewest;
 
-			updater(this.firstIndex(), this.lastIndex()).then(
+			getQuestions(this.firstIndex(), this.firstIndex() + this.PAGE_SIZE - 1).then(
 				function (response) {
 					if (response.data.length == 0 && questCtrl.currentPage > 0) { // Went too far
 						questCtrl.previousPage();
 						return;
 					}
+					console.dir(response.data);
 					questCtrl.questions = response.data;
 				},
 				HttpFailHandler
@@ -163,7 +165,7 @@
 	}]);
 
 
-	app.controller('SignUpController', ['PetData', '$rootScope', function (PetData, $rootScope) {
+	app.controller('SignUpController', ['$scope', 'PetData', '$rootScope', function ($scope, PetData, $rootScope) {
 
 		this.wantsSms = false;
 		this.photoUrl = '';
@@ -190,7 +192,7 @@
 
 	}]);
 
-	app.controller('QuestionAskingController', ['$scope', function ($scope) {
+	app.controller('QuestionAskingController', ['PetData', '$scope', function (PetData, $scope) {
 
 		var TOPIC_REGEX = /^[a-zA-Z0-9]+$/,
 			MAX_TOPIC_LENGTH = 50;
@@ -212,6 +214,12 @@
 			}
 		};
 
+		this.submitQuestion = function () {
+			PetData.postQuestion(this.text, this.topics).then(function () {
+				$scope.$emit('questionPosted');
+			});
+		};
+
 	}]);
 
 	app.controller('ProfileController', ['$routeParams', 'Session', 'PetData', 'HttpFailHandler', 'DEFAULT_PROFILE', function ($routeParams, Session, PetData, HttpFailHandler, DEFAULT_PROFILE) {
@@ -221,19 +229,21 @@
 		prCtrl.newestAnswers = [];
 		prCtrl.DEFAULT_PROFILE = DEFAULT_PROFILE;
 
+		var DISPLAY_SIZE = 5; // the number of questions / answers to display
+
 		var userId;
-		if ($routeParams.uId == 'me') userId = Session.userId;
+		if ($routeParams.uId == 'me') userId = Session.getUserId();
 		else userId = $routeParams.uId;		
 		
 		PetData.getUser(userId).then(function (response) {
 			prCtrl.user = response.data;
 		}, HttpFailHandler);
 
-		PetData.getUserQuestions(userId).then(function (response) {
+		PetData.getUserQuestions(userId, DISPLAY_SIZE, 0).then(function (response) {
 			prCtrl.newestQuestions = response.data;
 		}, HttpFailHandler);
 
-		PetData.getUserAnswers(userId).then(function (response) {
+		PetData.getUserAnswers(userId, DISPLAY_SIZE, 0).then(function (response) {
 			prCtrl.newestAnswers = response.data;
 		}, HttpFailHandler);
 
@@ -246,20 +256,32 @@
 	app.controller('HotTopicsController', ['PetData', 'HttpFailHandler', function (PetData, HttpFailHandler) {
 		var htpCtrl = this;
 		htpCtrl.topics = [];
+		htpCtrl.cloudData = [];
 
-		PetData.getTopicsPopular().then(function (response) {
+		var MAX_CLOUD_SIZE = 200;
+
+		PetData.getTopicsPopular(MAX_CLOUD_SIZE, 0).then(function (response) {
 			htpCtrl.topics = response.data;
+			htpCtrl.cloudData = htpCtrl.topics.map(function (topic) {
+				return {
+					text: topic.name,
+					size: topic.rating,
+					url: '#/topics/' + topic.name
+				}
+			});
 		}, HttpFailHandler);
 	}]);
 
 	app.controller('TopicController', ['PetData', 'HttpFailHandler', '$routeParams', function (PetData, HttpFailHandler, $routeParams) {
 		var tpCtrl = this;
-		tpCtrl.name = '';
+		tpCtrl.name = $routeParams.tName;
 		tpCtrl.questions = [];
 
-		PetData.getTopicById($routeParams.tId).then(function (response) {
-			tpCtrl.name = response.data.name;
-			tpCtrl.questions = response.data.questions;
+		// TODO add paging
+
+		PetData.getTopicQuestions(tpCtrl.name, 20, 0).then(function (response) {
+			tpCtrl.questions = response.data;
+			console.dir(tpCtrl.questions);
 		}, HttpFailHandler);
 
 	}]);
@@ -276,7 +298,7 @@
 		}
 
 		lbCtrl.updateData = function () {
-			PetData.getUsersLeaders(this.firstIndex(), this.lastIndex()).then(function (response) {
+			PetData.getUsersLeaders(this.PAGE_SIZE, this.firstIndex()).then(function (response) {
 				if (response.data.length === 0 && lbCtrl.currentPage > 0) {
 					lbCtrl.previousPage();
 					return;
@@ -324,7 +346,7 @@
 		}
 
 		lbCtrl.firstIndex = function () {
-			return lbCtrl.currentPage * lbCtrl.PAGE_SIZE + 1;
+			return lbCtrl.currentPage * lbCtrl.PAGE_SIZE;
 		}
 		lbCtrl.lastIndex = function () {
 			return lbCtrl.firstIndex() + lbCtrl.leaders.length - 1;
@@ -348,23 +370,39 @@
 		var qCtrl = this;
 		qCtrl.qId = $routeParams.qId;
 
-		PetData.getQuestionAnswers(qCtrl.qId).then(function (response) {
-			qCtrl.answers = response.data;
-		}, HttpFailHandler);
+		// TODO add a page turner
 
-		$timeout(function () {
-			if ($routeParams.mode == 'answer') {
-				$scope.$emit('answerRequest');
-				window.setTimeout(function() {$scope.$emit('answerRequest');}, 30);
-			}
-		}, 1000);	
+		function init() {
+			qCtrl.updateAnswers();
+
+			$timeout(function () {
+				if ($routeParams.mode == 'answer')
+					$scope.$emit('answerRequest');
+			}, 1000);	
+		}
+
+		qCtrl.updateAnswers = function () {
+			PetData.getQuestionAnswers(qCtrl.qId, 0, 19).then(function (response) {
+				qCtrl.answers = response.data;
+			}, HttpFailHandler);	
+		}
+
+		qCtrl.postAnswer = function () {
+			PetData.postAnswer(qCtrl.newAnswer, Number(qCtrl.qId)).then(function () {
+				qCtrl.updateAnswers();
+				qCtrl.newAnswer = '';
+			});
+		};
+
+		init();
+
 	}]);
 
 	app.directive('userBox', ['PetData', 'HttpFailHandler', 'DEFAULT_PROFILE', function (PetData, HttpFailHandler, DEFAULT_PROFILE) {
 		return {
 			restrict: 'E',
 			scope: {
-				userId: '='
+				userId: '=userId'
 			},
 			link: function (scope, element, attr) {
 				PetData.getUser(scope.userId).then(function (response) {
@@ -383,7 +421,7 @@
 		};
 	});
 
-	app.directive('question', ['PetData', 'HttpFailHandler', function (PetData, HttpFailHandler) {
+	app.directive('question', ['Session', 'PetData', 'HttpFailHandler', function (Session, PetData, HttpFailHandler) {
 		return {
 			restrict: 'E',
 			templateUrl: './pages/components/question.html',
@@ -393,18 +431,29 @@
 				withAnswer: '='
 			},
 			link: function (scope, element, attrs, controller) {
-				PetData.getQuestion(scope.id).then(function (response) {
-					scope.question = response.data;
-				}, HttpFailHandler);
-
-				if (scope.withAnswer)
-					element[0].querySelector('.Question')
-						.classList.add('Question--withAnswer');
+				function updateInfo() {
+					PetData.getQuestion(scope.id).then(function (response) {
+						scope.questionInfo = response.data;
+						if (scope.questionInfo.authorId == Session.getUserId())
+							scope.isMyQuestion = true;
+					}, HttpFailHandler);
+				}
+				scope.setVote = function (newStatus) {
+					if (scope.isMyQuestion)
+						console.log('You cannot vote your own item, silly!');
+					else
+						PetData.putQuestionVote(scope.id, newStatus).then(function (data) {
+							updateInfo();
+						});	
+				};
+				
+				scope.isMyQuestion = false;
+				updateInfo();
 			}
 		};
 	}]);
 
-	app.directive('answer', ['PetData', 'HttpFailHandler', function (PetData, HttpFailHandler) {
+	app.directive('answer', ['Session', 'PetData', 'HttpFailHandler', function (Session, PetData, HttpFailHandler) {
 		return {
 			restrict: 'E',
 			templateUrl: './pages/components/answer.html',
@@ -413,13 +462,24 @@
 				withQuestion: '='
 			},
 			link: function (scope, element, attrs, controller) {
-				PetData.getAnswer(scope.id).then(function (response) {
-					scope.answer = response.data;
-				}, HttpFailHandler);
+				function updateInfo() {
+					PetData.getAnswer(scope.id).then(function (response) {
+						scope.answerInfo = response.data;
+						if (scope.answerInfo.authorId == Session.getUserId())
+							scope.isMyAnswer = true;
+					}, HttpFailHandler);
+				}
+				scope.setVote = function (newStatus) {
+					if (scope.isMyAnswer)
+						console.log('You cannot vote your own item, silly!');
+					else 
+						PetData.putAnswerVote(scope.id, newStatus).then(function () {
+							updateInfo();
+						});
+				}
 				
-				if (scope.withQuestion)
-					element[0].querySelector('.Answer')
-						.classList.add('Answer--withQuestion');
+				scope.isMyAnswer = false;
+				updateInfo();
 			}
 		};
 	}]);
@@ -430,6 +490,7 @@
 			templateUrl: './pages/components/leader.html'
 		};
 	});
+
 
 	app.directive('activeLink', ['$location', function (location) {
 	    return {

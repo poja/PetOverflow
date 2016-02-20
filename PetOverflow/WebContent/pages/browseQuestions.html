@@ -20,9 +20,9 @@
 		<ul class="QuestionList container">
 			<li ng-repeat="question in questCtrl.questions">
 				<question question-id="question.id" 
-					with-answer="question.bestAnswer && questCtrl.type == 'existing'"></question>
-				<answer answer-id="question.bestAnswer" 
-					ng-show="question.bestAnswer && questCtrl.type == 'existing'" 
+					with-answer="question.bestAnswerId && questCtrl.type == 'existing'"></question>
+				<answer answer-id="question.bestAnswerId" 
+					ng-if="question.bestAnswerId && questCtrl.type == 'existing'" 
 					with-question="true"></answer>
 			</li>
 		</ul>
@@ -32,8 +32,8 @@
 		</p>	
 		
 		<page-turner 
-			text="'Viewing Questions ' + questCtrl.firstIndex() + '-' + questCtrl.lastIndex()"
-			ng-show="questCtrl.questions.length > 0">
+			text="'Viewing Questions ' + (questCtrl.firstIndex() + 1) + '-' + (questCtrl.lastIndex() + 1)"
+			ng-if="questCtrl.questions.length > 0">
 		</page-turner>
 	</div>	
 </main>

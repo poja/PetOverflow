@@ -45,9 +45,10 @@ public class AnswerServlet extends AuthenticatedHttpServlet {
 		}
 		int answerId = Integer.parseInt(m.group(1));
 
-		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
-		String voteType = params.get(ParametersConfig.VOTE_TYPE);
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		String voteType = Integer.toString(((Double) params.get(ParametersConfig.VOTE_TYPE)).intValue());
 
+		// TODO check own vote
 		try {
 			if (voteType.equals(ParametersConfig.VOTE_TYPE_NONE)) {
 				m_daoManager.getAnswerVoteDao().removeVote(answerId, user.getId());
@@ -55,8 +56,9 @@ public class AnswerServlet extends AuthenticatedHttpServlet {
 				m_daoManager.getAnswerVoteDao().addVote(answerId, new Vote(user.getId(), VoteType.Up));
 			} else if (voteType.equals(ParametersConfig.VOTE_TYPE_DOWN)) {
 				m_daoManager.getAnswerVoteDao().addVote(answerId, new Vote(user.getId(), VoteType.Down));
+			} else {
+				throw new ServletException("The vote is not one of the required types.");
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException();
@@ -73,17 +75,16 @@ public class AnswerServlet extends AuthenticatedHttpServlet {
 		// Map this request to:
 		// - /answer
 		Pattern p = Pattern.compile("/answer");
-
 		String path = ServletUtility.getPath(request);
 		Matcher m = p.matcher(path);
 		if (!m.find()) {
 			throw new ServletException("Invalid URI");
 		}
 
-		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
-		String text = params.get(ParametersConfig.TEXT);
-		int questionId = Integer.parseInt(params.get(ParametersConfig.QUESTION_ID));
-		
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		String text = params.get(ParametersConfig.TEXT).toString();
+		int questionId = ((Double) params.get(ParametersConfig.QUESTION_ID)).intValue();
+
 		try {
 			m_daoManager.getAnswerDao().createAnswer(text, user.getId(), questionId);
 		} catch (Exception e) {

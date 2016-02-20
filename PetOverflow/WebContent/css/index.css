@@ -28,7 +28,7 @@ div[ng-view], main {
 
 main {
   padding: 0;
-  background: url("../img/bg-gray.jpg"); }
+  background-color: #E0E0E0; }
 
 h2 {
   font-size: 2rem; }
@@ -127,7 +127,7 @@ input[type="tel"] {
   background: #3D3961;
   margin: 1rem auto;
   display: block; }
-  .LargeButton, .LargeButton:hover {
+  .LargeButton, .LargeButton:hover, .LargeButton:focus {
     color: white; }
 
 .PageTurner {
@@ -298,6 +298,9 @@ input[type="tel"] {
   .Vote.selected {
     color: orange; }
 
+.Vote.disabled {
+  cursor: not-allowed; }
+
 .UserBox {
   text-align: center; }
   .UserBox img, .UserBox p, .UserBox a {
@@ -377,7 +380,7 @@ input[type="tel"] {
       content: ""; }
 
 .Profile hr {
-  border-color: #C0C0C0; }
+  border-color: #505050; }
 
 .UserActivity ul {
   margin-bottom: 8rem; }

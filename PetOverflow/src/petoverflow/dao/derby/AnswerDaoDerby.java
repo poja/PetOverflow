@@ -7,9 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
-
-import org.apache.tomcat.jni.Time;
 
 import petoverflow.Utility;
 import petoverflow.dao.AnswerDao;
@@ -124,14 +123,15 @@ public class AnswerDaoDerby extends DaoObject implements AnswerDao {
 			s.setString(1, text);
 			s.setInt(2, authorId);
 			s.setInt(3, questionId);
-			s.setTimestamp(4, new Timestamp(Time.now()));
+			Timestamp now = new Timestamp(Calendar.getInstance().getTime().getTime());
+			s.setTimestamp(4, now);
 			s.executeUpdate();
 			rs = s.getGeneratedKeys();
 
 			if (!rs.next()) {
 				throw new SQLException("Unexpected error");
 			}
-			int id = rs.getInt(0);
+			int id = rs.getInt(1);
 			return new Answer(m_daoManager, id);
 
 		} catch (SQLException e) {

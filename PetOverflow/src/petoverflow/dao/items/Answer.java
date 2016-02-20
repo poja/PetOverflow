@@ -122,7 +122,7 @@ public class Answer extends DaoObject implements Rated, Timestampable {
 		answer.text = getText();
 		answer.authorId = getAuthor().getId();
 		answer.rating = getRating();
-		answer.timestamp = getTimestamp();
+		answer.timestamp = getTimestamp().getTime();
 		answer.questionId = getQuestion().getId();
 
 		int voteStatus = 0;

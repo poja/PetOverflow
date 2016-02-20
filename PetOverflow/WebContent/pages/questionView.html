@@ -1,4 +1,4 @@
-<main class="QuestionView">
+<main class="QuestionView" ng-controller="QuestionController as qCtrl">
 	<pet-nav></pet-nav>
 
 	<div class="container">
@@ -8,10 +8,11 @@
 			</div>
 		</div>
 		<answer ng-repeat="answer in qCtrl.answers" answer-id="answer.id"></answer>
-		<form>
+		<form ng-submit="qCtrl.postAnswer()">
 			<label for="new-answer"> Submit an answer to this question:</label> 
 			<textarea id="new-answer" 
 				class="form-control" 
+				ng-model="qCtrl.newAnswer"
 				rows="5"
 				focus-on="answerRequest"
 				scroll-time="1000"></textarea>

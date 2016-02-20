@@ -21,7 +21,7 @@
 		function postQuestion(text, topics) {
 			return $http({
 				method: 'POST',
-				url: '/PetOverflow/question'
+				url: '/PetOverflow/question',
 				data: {
 					text: text,
 					topics: topics
@@ -36,24 +36,48 @@
 			});
 		}
 
-		function getQuestionAnswers(id, size, offset) {
+		function getQuestionAnswers(id, beginIndex, endIndex) {
+			var size = endIndex - beginIndex + 1,
+				offset = beginIndex;
+
 			return $http({
 				method: 'GET',
 				url: '/PetOverflow/question/' + id + '/answers',
-				data: {
-					size: size,
-					offset, offset
+				params: {
+					data: JSON.stringify({
+						size: size,
+						offset: offset	
+					})
 				}
 			});
 		}
 
-		function getQuestionsNewest(size, offset) {
+		function getQuestionsNewest(beginIndex, endIndex) {
+			var size = endIndex - beginIndex + 1,
+				offset = beginIndex;
 			return $http({
 				method: 'GET',
-				url: '/PetOverflow/question/newest'
-				data: {
-					size: size,
-					offset: offset
+				url: '/PetOverflow/question/newest',
+				params: {
+					data: JSON.stringify({
+						size: size,
+						offset: offset	
+					})
+				}
+			});
+		}
+
+		function getQuestionsExisting(beginIndex, endIndex) {
+			var size = endIndex - beginIndex + 1,
+				offset = beginIndex;
+			return $http({
+				method: 'GET',
+				url: '/PetOverflow/question/best',
+				params: {
+					data: JSON.stringify({
+						size: size,
+						offset: offset	
+					})
 				}
 			});
 		}
@@ -82,7 +106,7 @@
 		function getAnswer(id) {
 			return $http({
 				method: 'GET',
-				url: '/PetOverflow/answer/' + id;
+				url: '/PetOverflow/answer/' + id
 			});
 		}
 
@@ -97,6 +121,7 @@
 		}
 
 		function postUser(userInfo) {
+			console.dir(userInfo);
 			return $http({
 				method: 'POST',
 				url: '/PetOverflow/user',
@@ -107,7 +132,7 @@
 		function getUser(id) {
 			return $http({
 				method: 'GET',
-				url: '/PetOverflow/user/' + id;
+				url: '/PetOverflow/user/' + id
 			});
 		}
 
@@ -115,9 +140,11 @@
 			return $http({
 				method: 'GET',
 				url: '/PetOverflow/user/' + id + '/answers',
-				data: {
-					size: size,
-					offset: offset
+				params: { 
+					data: JSON.stringify({
+						size: size,
+						offset: offset
+					})
 				}
 			});
 		}
@@ -125,10 +152,12 @@
 		function getUserQuestions(id, size, offset) {
 			return $http({
 				method: 'GET',
-				url: '/PetOverflow/user/' + id + 'questions',
-				data: {
-					size: size,
-					offset: offset
+				url: '/PetOverflow/user/' + id + '/questions',
+				params: {
+					data: JSON.stringify({
+						size: size,
+						offset: offset
+					})
 				}
 			});
 		}
@@ -137,9 +166,11 @@
 			return $http({
 				method: 'GET',
 				url: '/PetOverflow/user/leaders',
-				data: {
-					size: size,
-					offset: offset
+				params: {
+					data: JSON.stringify({
+						size: size,
+						offset: offset
+					})
 				}
 			});
 		}
@@ -147,7 +178,13 @@
 		function getTopicsPopular(size, offset) {
 			return $http({
 				method: 'GET',
-				url: '/PetOverflow/topic/popular'
+				url: '/PetOverflow/topic/popular',
+				params: {
+					data: JSON.stringify({
+						size: size,
+						offset: offset
+					})
+				}
 			});
 		}
 
@@ -155,9 +192,11 @@
 			return $http({
 				method: 'GET',
 				url: '/PetOverflow/topic/' + topic + '/questions',
-				data: {
-					size: size,
-					offset: offset
+				params: {
+					data: JSON.stringify({
+						size: size,
+						offset: offset
+					})
 				}
 			});
 		}
@@ -168,6 +207,7 @@
 			getQuestion: getQuestion,
 			getQuestionAnswers: getQuestionAnswers,
 			getQuestionsNewest: getQuestionsNewest,
+			getQuestionsExisting: getQuestionsExisting,
 			putQuestionVote: putQuestionVote,
 
 			// Answers
@@ -185,9 +225,6 @@
 			// Topics
 			getTopicsPopular: getTopicsPopular,
 			getTopicQuestions: getTopicQuestions,
-
-			getExistingQuestions: getExistingQuestions,
-			getTopicById: getTopicById
 		};
 
 	}]);

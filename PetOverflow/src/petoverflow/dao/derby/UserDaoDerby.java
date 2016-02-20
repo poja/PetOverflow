@@ -557,27 +557,27 @@ public class UserDaoDerby extends DaoObject implements UserDao {
 	 * java.lang.String)
 	 */
 	@Override
-	public boolean isAuthenticationPair(String username, String password) throws SQLException {
+	public Integer isAuthenticationPair(String username, String password) throws SQLException {
 		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
 
 		try {
 			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
-			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.PASSWORD + " FROM "
-					+ DerbyConfig.USER_TABLE_NAME + " WHERE " + DerbyConfig.USERNAME + " = ?");
+			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.ID + ", " + DerbyConfig.PASSWORD
+					+ " FROM " + DerbyConfig.USER_TABLE_NAME + " WHERE " + DerbyConfig.USERNAME + " = ?");
 			statements.add(s);
 			s.setString(1, username);
 			rs = s.executeQuery();
 
 			if (!rs.next()) {
 				DerbyUtils.reportFailure("No such user");
-				return false;
+				return null;
 			} else if (rs.getString(DerbyConfig.PASSWORD).equals(password)) {
-				return true;
+				return rs.getInt(DerbyConfig.ID);
 			} else {
 				DerbyUtils.reportFailure("User and password do not match");
-				return false;
+				return null;
 			}
 
 		} catch (SQLException e) {

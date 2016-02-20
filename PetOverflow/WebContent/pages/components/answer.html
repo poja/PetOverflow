@@ -1,19 +1,25 @@
-<div class="Answer row">
+<div class="Answer row" ng-class="{'Answer--withQuestion': withQuestion}">
 	<div class="col-sm-1 VoteArea">
-		<i class="Vote glyphicon glyphicon-triangle-top" ng-class="{selected: answer.hasVote > 0}"></i>
-		<p>{{ answer.voteCount }}</p>
-		<i class="Vote glyphicon glyphicon-triangle-bottom" ng-class="{selected: answer.hasVote < 0}"></i>
+		<i 
+			class="Vote glyphicon glyphicon-triangle-top" 
+			ng-class="{selected: answerInfo.voteStatus > 0, disabled: isMyAnswer}" 
+			ng-click="setVote(1)"></i>
+		<p>{{ answerInfo.rating }}</p>
+		<i 
+			class="Vote glyphicon glyphicon-triangle-bottom" 
+			ng-class="{selected: answerInfo.voteStatus < 0, disabled: isMyAnswer}" 
+			ng-click="setVote(-1)"></i>
 	</div>
 	<div class="col-sm-9">
 		<p class="Answer-text">
-			{{ answer.text }}
+			{{ answerInfo.text }}
 		</p>
 		<p class="Answer-info">
 			Posted at:
-			{{ answer.timestamp | date:'dd/MM/yyyy hh:mm:ss' }}
+			{{ answerInfo.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}
 		</p>
 	</div>
-	<div class="col-sm-2">
-		<user-box user-id="answer.answererId"></user-box>
+	<div class="col-sm-2" ng-if="answerInfo">
+		<user-box user-id="answerInfo.authorId"></user-box>
 	</div>
 </div>

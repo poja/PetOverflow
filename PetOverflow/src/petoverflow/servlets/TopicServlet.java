@@ -65,9 +65,9 @@ public class TopicServlet extends AuthenticatedHttpServlet {
 	 */
 	private void getPopularTopics(HttpServletRequest request, HttpServletResponse response, User user)
 			throws IOException, ServletException {
-		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
-		int size = Integer.parseInt(params.get(ParametersConfig.SIZE));
-		int offset = Integer.parseInt(params.get(ParametersConfig.OFFSET));
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		int size = (((Double) params.get(ParametersConfig.SIZE))).intValue();
+		int offset = ((Double) (params.get(ParametersConfig.OFFSET))).intValue();
 
 		List<Topic> topics;
 		try {
@@ -110,9 +110,9 @@ public class TopicServlet extends AuthenticatedHttpServlet {
 	 */
 	private void getBestQuestionInTopic(HttpServletRequest request, HttpServletResponse response, User user,
 			String topic) throws ServletException, IOException {
-		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
-		int size = Integer.parseInt(params.get(ParametersConfig.SIZE));
-		int offset = Integer.parseInt(params.get(ParametersConfig.OFFSET));
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		int size = (((Double) params.get(ParametersConfig.SIZE))).intValue();
+		int offset = ((Double) (params.get(ParametersConfig.OFFSET))).intValue();
 
 		List<Question> bestQuestions;
 		try {

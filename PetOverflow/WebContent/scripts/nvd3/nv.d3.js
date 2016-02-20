@@ -1556,7 +1556,7 @@ nv.models.axis = function() {
         , width = 75 //only used for tickLabel currently
         , height = 60 //only used for tickLabel currently
         , axisLabelText = null
-        , showMaxMin = true //TODO: showMaxMin should be disabled on all ordinal scaled axes
+        , showMaxMin = true 
         , rotateLabels = 0
         , rotateYLabel = true
         , staggerLabels = false
@@ -1596,7 +1596,7 @@ nv.models.axis = function() {
             else if (axis.orient() == 'top' || axis.orient() == 'bottom')
                 axis.ticks(Math.abs(scale.range()[1] - scale.range()[0]) / 100);
 
-            //TODO: consider calculating width/height based on whether or not label is added, for reference in charts using this component
+            
             g.watchTransition(renderWatch, 'axis').call(axis);
 
             scale0 = scale0 || axis.scale();
@@ -1726,7 +1726,7 @@ nv.models.axis = function() {
                     axisLabel
                         .style('text-anchor', rotateYLabel ? 'middle' : 'begin')
                         .attr('transform', rotateYLabel ? 'rotate(90)' : '')
-                        .attr('y', rotateYLabel ? (-Math.max(margin.right, width) + 12) : -10) //TODO: consider calculating this based on largest tick width... OR at least expose this on chart
+                        .attr('y', rotateYLabel ? (-Math.max(margin.right, width) + 12) : -10) 
                         .attr('x', rotateYLabel ? (d3.max(scale.range()) / 2) : axis.tickPadding());
                     if (showMaxMin) {
                         axisMaxMin = wrap.selectAll('g.nv-axisMaxMin')
@@ -2043,7 +2043,7 @@ nv.models.boxPlot = function() {
             });
 
             // outliers
-            // TODO: support custom colors here
+            
             var outliers = boxplots.selectAll('.nv-boxplot-outlier').data(function(d) {
                 if (d.values.hasOwnProperty('outliers') && d.values.outliers !== null) { return d.values.outliers; }
                 else { return []; }
@@ -2486,7 +2486,7 @@ nv.models.bullet = function() {
     //------------------------------------------------------------
 
     var margin = {top: 0, right: 0, bottom: 0, left: 0}
-        , orient = 'left' // TODO top & bottom
+        , orient = 'left' 
         , reverse = false
         , ranges = function(d) { return d.ranges }
         , markers = function(d) { return d.markers ? d.markers : [0] }
@@ -2549,7 +2549,7 @@ nv.models.bullet = function() {
 
             wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-            var w0 = function(d) { return Math.abs(x0(d) - x0(0)) }, // TODO: could optimize by precalculating x0(0) and x1(0)
+            var w0 = function(d) { return Math.abs(x0(d) - x0(0)) }, 
                 w1 = function(d) { return Math.abs(x1(d) - x1(0)) };
             var xp0 = function(d) { return d < 0 ? x0(d) : x0(0) },
                 xp1 = function(d) { return d < 0 ? x1(d) : x1(0) };
@@ -2722,7 +2722,7 @@ nv.models.bulletChart = function() {
     var bullet = nv.models.bullet();
     var tooltip = nv.models.tooltip();
 
-    var orient = 'left' // TODO top & bottom
+    var orient = 'left' 
         , reverse = false
         , margin = {top: 5, right: 40, bottom: 20, left: 120}
         , ranges = function(d) { return d.ranges }
@@ -2775,7 +2775,7 @@ nv.models.bulletChart = function() {
 
             // Compute the new x-scale.
             var x1 = d3.scale.linear()
-                .domain([0, Math.max(rangez[0], markerz[0], measurez[0])])  // TODO: need to allow forceX and forceY, and xDomain, yDomain
+                .domain([0, Math.max(rangez[0], markerz[0], measurez[0])])  
                 .range(reverse ? [availableWidth, 0] : [0, availableWidth]);
 
             // Retrieve the old x-scale, if this is an update.
@@ -2786,7 +2786,7 @@ nv.models.bulletChart = function() {
             // Stash the new scale.
             this.__chart__ = x1;
 
-            var w0 = function(d) { return Math.abs(x0(d) - x0(0)) }, // TODO: could optimize by precalculating x0(0) and x1(0)
+            var w0 = function(d) { return Math.abs(x0(d) - x0(0)) }, 
                 w1 = function(d) { return Math.abs(x1(d) - x1(0)) };
 
             var title = gEnter.select('.nv-titles').append('g')
@@ -3716,7 +3716,7 @@ nv.models.cumulativeLineChart = function() {
             }
             var v = indexifyYGetter(indexValue, idx);
 
-            //TODO: implement check below, and disable series if series loses 100% or more cause divide by 0 issue
+            
             if (v < -.95 && !noErrorCheck) {
                 //if a series loses more than 100%, calculations fail.. anything close can cause major distortion (but is mathematically correct till it hits 100)
 
@@ -3814,7 +3814,7 @@ nv.models.cumulativeLineChart = function() {
 
     return chart;
 };
-//TODO: consider deprecating by adding necessary features to multiBar model
+
 nv.models.discreteBar = function() {
     "use strict";
 
@@ -3897,7 +3897,7 @@ nv.models.discreteBar = function() {
             gEnter.append('g').attr('class', 'nv-groups');
             wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-            //TODO: by definition, the discrete bar should not have multiple groups, will modify/remove later
+            
             var groups = wrap.select('.nv-groups').selectAll('.nv-group')
                 .data(function(d) { return d }, function(d) { return d.key });
             groups.enter().append('g')
@@ -3924,7 +3924,7 @@ nv.models.discreteBar = function() {
                 .attr('transform', function(d,i,j) {
                     return 'translate(' + (x(getX(d,i)) + x.rangeBand() * .05 ) + ', ' + y(0) + ')'
                 })
-                .on('mouseover', function(d,i) { //TODO: figure out why j works above, but not here
+                .on('mouseover', function(d,i) { 
                     d3.select(this).classed('hover', true);
                     dispatch.elementMouseover({
                         data: d,
@@ -4561,7 +4561,7 @@ nv.models.furiousLegend = function() {
 
             series
                 .on('mouseover', function(d,i) {
-                    dispatch.legendMouseover(d,i);  //TODO: Make consistent with other event objects
+                    dispatch.legendMouseover(d,i);  
                 })
                 .on('mouseout', function(d,i) {
                     dispatch.legendMouseout(d,i);
@@ -4638,8 +4638,8 @@ nv.models.furiousLegend = function() {
                 .attr('fill', setTextColor)
                 .text(getKey);
 
-            //TODO: implement fixed-width and max-width options (max-width is especially useful with the align option)
-            // NEW ALIGNING CODE, TODO: clean up
+            
+            
 
             var versPadding;
             switch(vers) {
@@ -4813,7 +4813,7 @@ nv.models.furiousLegend = function() {
 
     return chart;
 };
-//TODO: consider deprecating and using multibar with single series for this
+
 nv.models.historicalBar = function() {
     "use strict";
 
@@ -4967,7 +4967,7 @@ nv.models.historicalBar = function() {
                 .attr('class', function(d,i,j) { return (getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive') + ' nv-bar-' + j + '-' + i })
                 .watchTransition(renderWatch, 'bars')
                 .attr('transform', function(d,i) { return 'translate(' + (x(getX(d,i)) - availableWidth / data[0].values.length * .45) + ',0)'; })
-                //TODO: better width calculations that don't assume always uniform data spacing;w
+                
                 .attr('width', (availableWidth / data[0].values.length) * .9 );
 
             bars.watchTransition(renderWatch, 'bars')
@@ -5551,7 +5551,7 @@ nv.models.legend = function() {
 
             series
                 .on('mouseover', function(d,i) {
-                    dispatch.legendMouseover(d,i);  //TODO: Make consistent with other event objects
+                    dispatch.legendMouseover(d,i);  
                 })
                 .on('mouseout', function(d,i) {
                     dispatch.legendMouseout(d,i);
@@ -5628,8 +5628,8 @@ nv.models.legend = function() {
                 .attr('fill', setTextColor)
                 .text(getKey);
 
-            //TODO: implement fixed-width and max-width options (max-width is especially useful with the align option)
-            // NEW ALIGNING CODE, TODO: clean up
+            
+            
             var legendWidth = 0;
             if (align) {
 
@@ -7834,7 +7834,7 @@ nv.models.multiBar = function() {
             bars
                 .style('fill', function(d,i,j){ return color(d, j, i);  })
                 .style('stroke', function(d,i,j){ return color(d, j, i); })
-                .on('mouseover', function(d,i) { //TODO: figure out why j works above, but not here
+                .on('mouseover', function(d,i) { 
                     d3.select(this).classed('hover', true);
                     dispatch.elementMouseover({
                         data: d,
@@ -8604,7 +8604,7 @@ nv.models.multiBarHorizontal = function() {
                 .attr('height', x.rangeBand() / (stacked ? 1 : data.length) )
 
             bars
-                .on('mouseover', function(d,i) { //TODO: figure out why j works above, but not here
+                .on('mouseover', function(d,i) { 
                     d3.select(this).classed('hover', true);
                     dispatch.elementMouseover({
                         data: d,
@@ -8731,7 +8731,7 @@ nv.models.multiBarHorizontal = function() {
             else
                 bars.watchTransition(renderWatch, 'multibarhorizontal: bars')
                     .attr('transform', function(d,i) {
-                        //TODO: stacked must be all positive or all negative, not both?
+                        
                         return 'translate(' +
                             (getY(d,i) < 0 ? y(getY(d,i)) : y(0))
                             + ',' +
@@ -11798,7 +11798,7 @@ nv.models.sparkline = function() {
                     .y(function(d,i) { return y(getY(d,i)) })
             );
 
-            // TODO: Add CURRENT data point (Need Min, Mac, Current / Most recent)
+            
             var points = wrap.selectAll('circle.nv-point')
                 .data(function(data) {
                     var yValues = data.map(function(d, i) { return getY(d,i); });
@@ -12154,7 +12154,7 @@ nv.models.stackedArea = function() {
             data = d3.layout.stack()
                 .order(order)
                 .offset(offset)
-                .values(function(d) { return d.values })  //TODO: make values customizeable in EVERY model in this fashion
+                .values(function(d) { return d.values })  
                 .x(getX)
                 .y(getY)
                 .out(function(d, y0, y) {

@@ -1,5 +1,8 @@
 <main class="SignUpPage container-fluid">
-	<form class="SignUpForm" ng-controller="SignUpController as suCtrl" ng-submit="suCtrl.submit()">
+	<form name="sign-up-form"
+		class="SignUpForm" 
+		ng-controller="SignUpController as suCtrl" 
+		ng-submit="suCtrl.submit()">
 		<h2>Welcome!</h2>
 		<p>Before we start, you will have to enter some information.</p>
 
@@ -20,7 +23,6 @@
 				class="form-control" 
 				placeholder="password" 
 				ng-model="suCtrl.password"
-				ng-minlength="5"
 				required />
 		</div>
 		<div class="form-group">

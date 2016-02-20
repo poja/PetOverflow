@@ -1,5 +1,5 @@
 <div class="UserBox">
-	<img ng-src="{{ user.photoUrl || DEFAULT_PROFILE }}" alt="" />
+	<img ng-src="{{ user.photoUrl || DEFAULT_PROFILE }}" alt="User Profile Image" />
 	<a ng-href="{{'#/users/' + user.id}}">{{ user.nickname }}</a>
-	<p>User Rating: {{ user.rating }}</p>
+	<p>User Rating: {{ user.rating | number:2 }}</p>
 </div>

@@ -1,5 +1,7 @@
 package petoverflow.dto;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * A DTO for authentication
  * 
@@ -8,12 +10,19 @@ package petoverflow.dto;
  */
 public class AuthenticationDto {
 
+	@SerializedName("id")
+	private int m_id;
+
+	@SerializedName("username")
 	private String m_username;
 
+	@SerializedName("password")
 	private String m_password;
 
+	@SerializedName("message")
 	private String m_message;
 
+	@SerializedName("success")
 	private boolean m_success;
 
 	private static String BAD_PASS_MESSAGE = "The username and password do not match.";
@@ -28,7 +37,8 @@ public class AuthenticationDto {
 	 * @param success
 	 *            true if the authentication succeeded
 	 */
-	public AuthenticationDto(String username, String password, boolean success) {
+	public AuthenticationDto(int id, String username, String password, boolean success) {
+		m_id = id;
 		m_username = username;
 		m_password = password;
 		m_success = success;

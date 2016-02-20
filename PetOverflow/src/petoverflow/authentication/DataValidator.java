@@ -13,7 +13,7 @@ public class DataValidator {
 	private static final int MIN_USERNAME_LENGTH = 1;
 
 	/**
-	 * Minimum passworc length
+	 * Minimum password length
 	 */
 	private static final int MIN_PASSWORD_LENGTH = 1;
 

@@ -13,11 +13,11 @@ import com.google.gson.Gson;
 
 public class ServletUtility {
 
-	public static HashMap<String, String> getRequestParameters(HttpServletRequest request) throws IOException {
+	public static HashMap<String, Object> getRequestParameters(HttpServletRequest request) throws IOException {
 		String data = getRequestData(request);
 		Gson gson = new Gson();
 		@SuppressWarnings("unchecked")
-		HashMap<String, String> params = gson.fromJson(data, HashMap.class);
+		HashMap<String, Object> params = gson.fromJson(data, HashMap.class);
 		return params;
 	}
 
@@ -27,15 +27,20 @@ public class ServletUtility {
 		return Arrays.asList(array);
 	}
 
-	@Deprecated
-	public static String getRequestData(HttpServletRequest request) throws IOException {
-		StringBuilder sb = new StringBuilder();
-		BufferedReader reader = request.getReader();
-		String line;
-		while ((line = reader.readLine()) != null) {
-			sb.append(line);
+	
+	private static String getRequestData(HttpServletRequest request) throws IOException {
+		String method = request.getMethod();
+		if (method == "GET") {
+			return request.getParameter("data");
+		} else {
+			StringBuilder sb = new StringBuilder();
+			BufferedReader reader = request.getReader();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line);
+			}
+			return sb.toString();
 		}
-		return sb.toString();
 	}
 
 	public static String getPath(HttpServletRequest request) throws ServletException {

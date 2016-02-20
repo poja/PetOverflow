@@ -8,7 +8,7 @@
 		<div class="col-sm-9">
 			<p>
 				<a ng-href="#/users/{{ leader.id }}">{{ leader.nickname }}</a>
-				 - <span class="u-bold">User Rating</span>: {{ leader.rating }} 
+				 - <span class="u-bold">User Rating</span>: {{ leader.rating | number:2 }} 
 			</p>
 			<p class="u-bold">Expertise:</p>
 			<ol class="ExpertiseList">

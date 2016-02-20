@@ -199,10 +199,11 @@ public interface UserDao {
 	 *            the user's username
 	 * @param password
 	 *            the user's password
-	 * @return true if the pair is authenticated, else - false
+	 * @return id of the user, if a user exists with this (username, password)
+	 *         pair. Else - null.
 	 * @throws Exception
 	 *             if fail
 	 */
-	public boolean isAuthenticationPair(String username, String password) throws Exception;
+	public Integer isAuthenticationPair(String username, String password) throws Exception;
 
 }

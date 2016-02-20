@@ -8,10 +8,18 @@
 			<a href="#/questions/ask" class="col-sm-4" active-link="active">Ask a Question</a>
 		</div>
 
-		<form action="" class="QuestionCreateForm" ng-controller="QuestionAskingController as qCtrl">
+		<form 
+			class="QuestionCreateForm" 
+			ng-controller="QuestionAskingController as qCtrl" 
+			ng-submit="qCtrl.submitQuestion()">
 			<div class="form-group">
 				<label for="qtext" class="control-label">Question Text:</label>
-				<textarea name="qtext" id="qtext" rows="6" class="form-control" required></textarea>
+				<textarea name="qtext" 
+					id="qtext"
+					rows="6" 
+					class="form-control" 
+					ng-model="qCtrl.text"
+					required></textarea>
 			</div>
 			<label for="qtopics" class="control-label">Topics:</label>
 			<span>{{ (qCtrl.topics | arrayPrint) || 'None' }}</span>

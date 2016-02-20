@@ -6,7 +6,6 @@ $c-font-gray: #505050;
 $c-font-gray-light: #C0C0C0;
 
 $c-bg-gray: #E0E0E0;
-$u-bg-gray: '../img/bg-gray.jpg';
 
 $default-radius: 5px;
 
@@ -30,6 +29,7 @@ a.u-cleanLinks,
 	font-weight: bold;
 }
 
+
 // Defaults
 
 html, body {
@@ -43,7 +43,7 @@ div[ng-view], main {
 main {
 	padding: 0;
 
-	background: url($u-bg-gray);
+	background-color: $c-bg-gray;
 }
 
 h2 {
@@ -165,7 +165,7 @@ $c-seconday-green: #0C612E;
 	background: $c-bg-navbar;
 	margin: 1rem auto;
 	display: block;
-	&, &:hover { color: white; }
+	&, &:hover, &:focus { color: white; }
 }
 
 .PageTurner {
@@ -398,6 +398,9 @@ $c-font-answer: #D4D4D4;
 	cursor: pointer;
 	&.selected { color: orange; }
 }
+.Vote.disabled {
+	cursor: not-allowed;
+}
 
 
 .UserBox {
@@ -519,7 +522,7 @@ $c-font-answer: #D4D4D4;
 }
 
 .Profile hr {
-	border-color: $c-font-gray-light;
+	border-color: $c-font-gray;
 }
 
 .UserActivity {

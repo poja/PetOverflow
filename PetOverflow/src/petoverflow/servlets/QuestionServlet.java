@@ -44,7 +44,6 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 		// Map this request to:
 		// - /question/<question#>/vote
 		Pattern p = Pattern.compile("/question/([0-9]*)/vote");
-
 		String path = ServletUtility.getPath(request);
 		Matcher m = p.matcher(path);
 		if (!m.find()) {
@@ -52,8 +51,8 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 		}
 		int questionId = Integer.parseInt(m.group(1));
 
-		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
-		String voteType = params.get(ParametersConfig.VOTE_TYPE);
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		String voteType = Integer.toString(((Double) params.get(ParametersConfig.VOTE_TYPE)).intValue());
 
 		try {
 			if (voteType.equals(ParametersConfig.VOTE_TYPE_NONE)) {
@@ -62,6 +61,8 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 				m_daoManager.getQuestionVoteDao().addVote(questionId, new Vote(user.getId(), VoteType.Up));
 			} else if (voteType.equals(ParametersConfig.VOTE_TYPE_DOWN)) {
 				m_daoManager.getQuestionVoteDao().addVote(questionId, new Vote(user.getId(), VoteType.Down));
+			} else {
+				throw new ServletException("The vote is not one of the required types.");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -90,9 +91,18 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 			throw new ServletException("Invalid URI");
 		}
 
-		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
-		String text = params.get(ParametersConfig.TEXT);
-		List<String> topics = ServletUtility.convertListFromJson(params.get(ParametersConfig.TOPICS));
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		String text = (String) params.get(ParametersConfig.TEXT);
+
+		List<String> topics;
+		try {
+			@SuppressWarnings("unchecked")
+			List<String> list = (List<String>) params.get(ParametersConfig.TOPICS);
+			topics = list;
+		} catch (ClassCastException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			return;
+		}
 
 		try {
 			m_daoManager.getQuestionDao().createQuestion(text, user.getId(), topics);
@@ -120,8 +130,8 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 		// - /question/<question#>/answers
 		Pattern p1 = Pattern.compile("/question/best");
 		Pattern p2 = Pattern.compile("/question/newest");
-		Pattern p3 = Pattern.compile("/question/([0-9]*)");
-		Pattern p4 = Pattern.compile("/question/([0-9]*)/answers");
+		Pattern p3 = Pattern.compile("/question/([0-9]+)");
+		Pattern p4 = Pattern.compile("/question/([0-9]+)/answers");
 
 		String path = ServletUtility.getPath(request);
 		Matcher m1 = p1.matcher(path);
@@ -129,10 +139,10 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 		Matcher m3 = p3.matcher(path);
 		Matcher m4 = p4.matcher(path);
 		if (m4.find()) {
-			int questionId = Integer.parseInt(m3.group(1));
+			int questionId = Integer.parseInt(m4.group(1));
 			getBestAnswers(request, response, user, questionId);
 		} else if (m3.find()) {
-			int questionId = Integer.parseInt(m2.group(1));
+			int questionId = Integer.parseInt(m3.group(1));
 			getAQuestion(request, response, user, questionId);
 		} else if (m2.find()) {
 			getNewestQuestions(request, response, user);
@@ -194,9 +204,9 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 	 */
 	private void getBestAnswers(HttpServletRequest request, HttpServletResponse response, User user, int questionId)
 			throws ServletException, IOException {
-		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
-		int size = Integer.parseInt(params.get(ParametersConfig.SIZE));
-		int offset = Integer.parseInt(params.get(ParametersConfig.OFFSET));
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		int size = ((Double) params.get(ParametersConfig.SIZE)).intValue();
+		int offset = ((Double) params.get(ParametersConfig.OFFSET)).intValue();
 
 		List<AnswerDto> answersDto;
 		try {
@@ -238,9 +248,9 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 	 */
 	private void getNewestQuestions(HttpServletRequest request, HttpServletResponse response, User user)
 			throws ServletException, IOException {
-		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
-		int size = Integer.parseInt(params.get(ParametersConfig.SIZE));
-		int offset = Integer.parseInt(params.get(ParametersConfig.OFFSET));
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		int size = ((Double) params.get(ParametersConfig.SIZE)).intValue();
+		int offset = ((Double) params.get(ParametersConfig.OFFSET)).intValue();
 
 		List<QuestionDto> questionsDto = new ArrayList<QuestionDto>();
 		try {
@@ -266,9 +276,9 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 
 	private void getBestQuestion(HttpServletRequest request, HttpServletResponse response, User user)
 			throws ServletException, IOException {
-		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
-		int size = Integer.parseInt(params.get(ParametersConfig.SIZE));
-		int offset = Integer.parseInt(params.get(ParametersConfig.OFFSET));
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		int size = ((Double) params.get(ParametersConfig.SIZE)).intValue();
+		int offset = ((Double) params.get(ParametersConfig.OFFSET)).intValue();
 
 		List<QuestionDto> questionsDto = new ArrayList<QuestionDto>();
 		List<Question> bestQuestions;

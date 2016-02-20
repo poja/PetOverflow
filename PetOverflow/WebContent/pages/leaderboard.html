@@ -6,10 +6,10 @@
 		<nvd3 class="BarGraph"
 			data="lbCtrl.graphData" 
 			options="lbCtrl.graphOptions" 
-			ng-show="lbCtrl.leaders.length > 0"></nvd3>
+			ng-if="lbCtrl.leaders.length > 1"></nvd3>
 		<ol class="Leaderboard-list">
 			<li ng-repeat="leader in lbCtrl.leaders">
-				<div class="LeaderIndex"><p>{{ $index + lbCtrl.firstIndex() }}</p></div>
+				<div class="LeaderIndex"><p>{{ $index + 1 + lbCtrl.firstIndex() }}</p></div>
 				<div leader></div>
 			</li>
 		</ol>

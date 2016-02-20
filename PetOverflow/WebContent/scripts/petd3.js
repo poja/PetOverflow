@@ -21,8 +21,13 @@
 					var maxSize = words.reduce(function (prevValue, currentEl) {
 						return (prevValue > currentEl.size) ? prevValue : currentEl.size;
 					}, 0);
+					var minSize = words.reduce(function (prevValue, currentEl) {
+						return (prevValue < currentEl.size) ? prevValue : currentEl.size;
+					}, 0);
 					function pxSize(word) {
-						return (word.size / maxSize) * 50 + 10; // min > 10, max = 40
+						var relativeSize = ((word.size - minSize + 0.5) / (maxSize - minSize + 0.5)) || 0;
+						debugger;
+						return relativeSize * 20 + 25; // min > 10, max = 15
 					}
 
 				    function drawingCallback(processedWords) {

@@ -1,6 +1,5 @@
 package petoverflow.dto;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -17,10 +16,13 @@ public class QuestionDto {
 
 	public double rating;
 
-	public Timestamp timeStamp;
+	// timestamp in milliseconds since Jan 1990
+	public long timestamp;
 
 	public List<String> topics;
 
 	public int voteStatus;
+	
+	public Integer bestAnswerId;
 
 }

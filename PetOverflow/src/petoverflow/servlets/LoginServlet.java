@@ -1,6 +1,7 @@
 package petoverflow.servlets;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -37,33 +38,39 @@ public class LoginServlet extends HttpServlet {
 		Gson gson = new Gson();
 
 		// Parse the authentication information
-		String authStr = ServletUtility.getRequestData(request);
-		AuthenticationDto auth = gson.fromJson(authStr, AuthenticationDto.class);
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
 
-		if (auth == null || auth.getUsername() == null || auth.getPassword() == null) {
+		String username = params.get(ParametersConfig.USERNAME).toString();
+		String password = params.get(ParametersConfig.PASSWORD).toString();
+		if (username == null || password == null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
 
 		try {
-			if (m_userDao.isAuthenticationPair(auth.getUsername(), auth.getPassword())) {
-				auth.setSuccess(true);
+			Integer userId = m_userDao.isAuthenticationPair(username, password);
+			if (userId != null) {
+				AuthenticationDto auth = new AuthenticationDto(userId, username, password, true);
 				response.getWriter().write(gson.toJson(auth));
 				Cookie usernameCookie = new Cookie("username", auth.getUsername());
 				Cookie passwordCookie = new Cookie("password", auth.getPassword());
+				Cookie idCookie = new Cookie("userId", userId.toString());
 				response.addCookie(usernameCookie);
 				response.addCookie(passwordCookie);
+				response.addCookie(idCookie);
 			} else {
-				auth.setSuccess(false);
+				AuthenticationDto auth = new AuthenticationDto(-1, username, password, false);
 				response.getWriter().write(gson.toJson(auth));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			auth.setSuccess(false);
 			Cookie usernameCookie = new Cookie("username", "");
 			Cookie passwordCookie = new Cookie("password", "");
+			Cookie idCookie = new Cookie("userId", "");
 			response.addCookie(usernameCookie);
 			response.addCookie(passwordCookie);
+			response.addCookie(idCookie);
+			AuthenticationDto auth = new AuthenticationDto(-1, username, password, false);
 			response.getWriter().write(gson.toJson(auth));
 		}
 	}

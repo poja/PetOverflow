@@ -307,7 +307,7 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 		} else {
 			boolean isAuthentication;
 			try {
-				isAuthentication = m_daoManager.getUserDao().isAuthenticationPair(username, password);
+				isAuthentication = (m_daoManager.getUserDao().isAuthenticationPair(username, password) != null);
 				if (!isAuthentication) {
 					return HttpServletResponse.SC_UNAUTHORIZED;
 				} else {

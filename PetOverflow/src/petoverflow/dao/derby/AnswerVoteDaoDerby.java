@@ -152,4 +152,43 @@ public class AnswerVoteDaoDerby extends DaoObject implements AnswerVoteDao {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see petoverflow.dao.AnswerVoteDao#getQuestionTimestamp(int)
+	 */
+	@Override
+	public Integer getBestAnswerForQuestion(int questionId) throws SQLException {
+
+		Connection conn = null;
+		ArrayList<Statement> statements = new ArrayList<Statement>();
+		ResultSet rs = null;
+
+		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
+			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.ID + " FROM "
+					+ DerbyConfig.ANSWER_TABLE_NAME + " WHERE " + DerbyConfig.QUESTION_ID + " = ?");
+			statements.add(s);
+			s.setInt(1, questionId);
+			rs = s.executeQuery();
+
+			Integer bestAnswer = null;
+			int bestRating = Integer.MIN_VALUE;
+			AnswerVoteDao answerVoteDao = m_daoManager.getAnswerVoteDao();
+			while (rs.next()) {
+				int currentId = rs.getInt(1);
+				int currentRating = answerVoteDao.getAnswerVotes(currentId).size();
+				if (currentRating > bestRating) {
+					bestRating = currentRating;
+					bestAnswer = currentId;
+				}
+			}
+			return bestAnswer;
+		} catch (Exception e) {
+			throw new SQLException(e.getMessage()); // TODO is this OK?
+		} finally {
+			DerbyUtils.cleanUp(rs, statements, conn);
+		}
+	}
+
 }

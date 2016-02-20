@@ -148,7 +148,6 @@
                                     configure(scope.chart[key], options.chart[key], options.chart.type);
                                 }
 
-                                //TODO: need to fix bug in nvd3
                                 else if ((key === 'xTickFormat' || key === 'yTickFormat') && options.chart.type === 'lineWithFocusChart');
                                 else if ((key === 'tooltips') && options.chart.type === 'boxPlotChart');
                                 else if ((key === 'tooltipXContent' || key === 'tooltipYContent') && options.chart.type === 'scatterChart');

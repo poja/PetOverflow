@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -49,19 +50,19 @@ public class UserServlet extends AuthenticatedHttpServlet {
 			throw new ServletException("Invalid URI");
 		}
 
-		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
-		System.out.println(params);
-		String username = params.get(ParametersConfig.USERNAME);
-		String password = params.get(ParametersConfig.PASSWORD);
-		String nickname = params.get(ParametersConfig.NICKNAME);
-		String description = params.get(ParametersConfig.DESCRIPTION);
-		String photoUrl = params.get(ParametersConfig.PHOTO_URL);
-		String phoneNum = params.get(ParametersConfig.PHONE_NUM);
+		// TODO lowercase username
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		String username = params.get(ParametersConfig.USERNAME).toString();
+		String password = params.get(ParametersConfig.PASSWORD).toString();
+		String nickname = params.get(ParametersConfig.NICKNAME).toString();
+		String description = params.get(ParametersConfig.DESCRIPTION).toString();
+		String photoUrl = params.get(ParametersConfig.PHOTO_URL).toString();
+		String phoneNum = params.get(ParametersConfig.PHONE_NUM).toString();
 
 		User newUser = null;
 		try {
 			if (m_daoManager.getUserDao().exist(username)) {
-				// TODO send error to user, username already exist
+				// TODO send error to user, username already exists
 			} else {
 				newUser = m_daoManager.getUserDao().createUser(username, password, nickname, description, photoUrl,
 						phoneNum);
@@ -69,6 +70,13 @@ public class UserServlet extends AuthenticatedHttpServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		Cookie usernameCookie = new Cookie("username", username);
+		Cookie passwordCookie = new Cookie("password", password);
+		Cookie idCookie = new Cookie("userId", Integer.toString(newUser.getId()));
+		response.addCookie(usernameCookie);
+		response.addCookie(passwordCookie);
+		response.addCookie(idCookie);
 
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
@@ -140,9 +148,9 @@ public class UserServlet extends AuthenticatedHttpServlet {
 	 */
 	private void getLeaders(HttpServletRequest request, HttpServletResponse response, User user)
 			throws IOException, ServletException {
-		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
-		int size = Integer.parseInt(params.get(ParametersConfig.SIZE));
-		int offset = Integer.parseInt(params.get(ParametersConfig.OFFSET));
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		int size = (((Double) params.get(ParametersConfig.SIZE))).intValue();
+		int offset = ((Double) (params.get(ParametersConfig.OFFSET))).intValue();
 
 		List<User> leaders;
 		try {
@@ -220,9 +228,9 @@ public class UserServlet extends AuthenticatedHttpServlet {
 	 */
 	private void getUserAnswers(HttpServletRequest request, HttpServletResponse response, User user,
 			int requestedUserId) throws IOException, ServletException {
-		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
-		int size = Integer.parseInt(params.get(ParametersConfig.SIZE));
-		int offset = Integer.parseInt(params.get(ParametersConfig.OFFSET));
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		int size = (((Double) params.get(ParametersConfig.SIZE))).intValue();
+		int offset = ((Double) (params.get(ParametersConfig.OFFSET))).intValue();
 
 		List<Answer> answers;
 		try {
@@ -232,7 +240,7 @@ public class UserServlet extends AuthenticatedHttpServlet {
 			throw new ServletException(e1.getMessage());
 		}
 		Utility.sortByTimestamp(answers);
-		List<Answer> releventAnswers = answers.subList(0, Math.min(size, answers.size() + 1));
+		List<Answer> releventAnswers = answers.subList(0, Math.min(size, answers.size()));
 		List<AnswerDto> releventAnswersDto = new ArrayList<AnswerDto>();
 		for (Answer answer : releventAnswers) {
 			AnswerDto answerDto;
@@ -252,9 +260,9 @@ public class UserServlet extends AuthenticatedHttpServlet {
 
 	private void getUserQuestions(HttpServletRequest request, HttpServletResponse response, User user,
 			int requestedUserId) throws ServletException, IOException {
-		HashMap<String, String> params = ServletUtility.getRequestParameters(request);
-		int size = Integer.parseInt(params.get(ParametersConfig.SIZE));
-		int offset = Integer.parseInt(params.get(ParametersConfig.OFFSET));
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		int size = (((Double) params.get(ParametersConfig.SIZE))).intValue();
+		int offset = ((Double) (params.get(ParametersConfig.OFFSET))).intValue();
 
 		List<Question> questions;
 		try {
@@ -265,7 +273,7 @@ public class UserServlet extends AuthenticatedHttpServlet {
 		}
 		Utility.sortByTimestamp(questions);
 		Utility.cutList(questions, size, offset);
-		
+
 		List<QuestionDto> releventAnswersDto = new ArrayList<QuestionDto>();
 		for (Question question : questions) {
 			QuestionDto questionDto;

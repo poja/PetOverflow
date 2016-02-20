@@ -4,14 +4,14 @@
 	<div class="container-fluid Info">
 		<div class="row">
 			<div class="col-sm-3 col-sm-offset-2">
-				<img ng-src="{{ prCtrl.user.photoUrl || prCtrl.DEFAULT_PROFILE }}" alt="" />
+				<img ng-src="{{ prCtrl.user.photoUrl || prCtrl.DEFAULT_PROFILE }}" alt="User Profile Image" />
 			</div>
 			<div class="col-sm-5">
 				<h2><span class="u-bold">{{ prCtrl.user.username }}</span>'s Profile</h2>		
-				<p>User rating: {{ prCtrl.user.rating }}</p>
+				<p>User rating: {{ prCtrl.user.rating | number:2 }}</p>
 				<p class="u-bold">Get to know {{ prCtrl.user.nickname }}:</p>
 				<q>{{ prCtrl.user.description }}</q>
-				<p class="u-bold">Mike is an expert at:</p>
+				<p class="u-bold">{{ prCtrl.user.nickname }} is an expert at:</p>
 				<ol class="ExpertiseList">
 					<li ng-repeat="topic in prCtrl.user.expertise">
 						<a ng-href="#/topics/{{topic.id}}">{{ topic.name }}</a>

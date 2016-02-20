@@ -1,7 +1,5 @@
 package petoverflow.dto;
 
-import java.sql.Timestamp;
-
 /**
  * The AnswerDto holds information about an answer. This object is used to
  * transfer that data easily.
@@ -16,7 +14,8 @@ public class AnswerDto {
 
 	public double rating;
 
-	public Timestamp timestamp;
+	// timestamp in milliseconds since Jan 1990
+	public long timestamp;
 
 	public int questionId;
 

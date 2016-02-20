@@ -3,8 +3,8 @@
 
 	<div class="container">
 		<h2>Hot Topics</h2>
-		<div id="hot-topics-cloud" class="TagCloud">
-			<tag-cloud data="htpCtrl.topics"></tag-cloud>
+		<div id="hot-topics-cloud" class="TagCloud" ng-if="htpCtrl.cloudData.length > 0">
+			<tag-cloud data="htpCtrl.cloudData"></tag-cloud>
 		</div>
 	</div>
 		

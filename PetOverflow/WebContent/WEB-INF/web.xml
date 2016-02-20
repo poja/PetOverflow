@@ -39,19 +39,19 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>UserServlet</servlet-name>
-		<url-pattern>/user</url-pattern>
+		<url-pattern>/user/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>QuestionServlet</servlet-name>
-		<url-pattern>/question</url-pattern>
+		<url-pattern>/question/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>AnswerServlet</servlet-name>
-		<url-pattern>/answer</url-pattern>
+		<url-pattern>/answer/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>TopicServlet</servlet-name>
-		<url-pattern>/topic</url-pattern>
+		<url-pattern>/topic/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>

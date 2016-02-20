@@ -36,6 +36,12 @@ public class Utility {
 		return list.subList(offset, Math.min(list.size(), offset + size));
 	}
 
+	/**
+	 * Sorts a list, so that the highest rated elements are <b>first</b>
+	 * 
+	 * @param list
+	 *            A list of Rated items to sort
+	 */
 	public static void sortByRating(List<? extends Rated> list) {
 		final HashMap<Rated, Double> ratings = new HashMap<Rated, Double>();
 		for (Rated e : list) {
@@ -51,11 +57,11 @@ public class Utility {
 
 			@Override
 			public int compare(Rated o1, Rated o2) {
-				double r1 = ratings.get(o1);
-				double r2 = ratings.get(o2);
+				Double r1 = ratings.get(o1);
+				Double r2 = ratings.get(o2);
 				if (r1 == r2) {
 					return 0;
-				} else if (r1 > r2) {
+				} else if (r1 < r2) {
 					return 1;
 				} else {
 					return -1;

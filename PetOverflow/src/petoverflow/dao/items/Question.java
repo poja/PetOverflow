@@ -106,6 +106,15 @@ public class Question extends DaoObject implements Rated, Timestampable {
 	public Timestamp getTimestamp() throws Exception {
 		return m_daoManager.getQuestionDao().getQuestionTimestamp(m_id);
 	}
+	
+	/**
+	 * Find the highest rated answer to this question
+	 * 
+	 * @return id of the best answer, of null if there aren't any
+	 */
+	public Integer getBestAnswer() throws Exception {
+		return m_daoManager.getAnswerVoteDao().getBestAnswerForQuestion(m_id);
+	}
 
 	/**
 	 * Get a list of this question related topics
@@ -133,7 +142,8 @@ public class Question extends DaoObject implements Rated, Timestampable {
 		question.text = getText();
 		question.authorId = getAuthor().getId();
 		question.rating = getRating();
-		question.timeStamp = getTimestamp();
+		question.timestamp = getTimestamp().getTime();
+		question.bestAnswerId = getBestAnswer();
 
 		List<Topic> topics = getTopics();
 		question.topics = new ArrayList<String>();
