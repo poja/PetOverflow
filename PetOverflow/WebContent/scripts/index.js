@@ -149,13 +149,16 @@
 		};
 
 		questCtrl.previousPage = function () {
-			if (questCtrl.currentPage > 0)
+			if (questCtrl.currentPage > 0) {
 				questCtrl.currentPage -= 1;
-			questCtrl.updateQuestions();
+				questCtrl.updateQuestions();
+			}
 		};
 		questCtrl.nextPage = function () {
-			questCtrl.currentPage += 1;
-			questCtrl.updateQuestions();
+			if (questCtrl.questions.length >= questCtrl.PAGE_SIZE) {
+				questCtrl.currentPage += 1;
+				questCtrl.updateQuestions();
+			}
 		};
 		$scope.$on('previousPage', questCtrl.previousPage);
 		$scope.$on('nextPage', questCtrl.nextPage);
@@ -169,6 +172,7 @@
 
 		this.wantsSms = false;
 		this.photoUrl = '';
+		this.description = '';
 
 		this.submit = function() {
 			var userInfo = {
@@ -182,14 +186,12 @@
 			};
 
 			PetData.postUser(userInfo).then(function (response) {
-				$rootScope.$emit('login');	
-			}, function (response) {
-				// Sign up failed
+				if (response.data.errorMessage)
+					alert(response.data.errorMessage);
+				else
+					$rootScope.$emit('login');	
 			});
-			
 		};
-
-
 	}]);
 
 	app.controller('QuestionAskingController', ['PetData', '$scope', function (PetData, $scope) {
@@ -352,13 +354,16 @@
 			return lbCtrl.firstIndex() + lbCtrl.leaders.length - 1;
 		}
 		lbCtrl.previousPage = function () {
-			if (lbCtrl.currentPage > 0)
+			if (lbCtrl.currentPage > 0) {
 				lbCtrl.currentPage -= 1;
-			lbCtrl.updateData();
+				lbCtrl.updateData();
+			}
 		};
 		lbCtrl.nextPage = function () {
-			lbCtrl.currentPage += 1;
-			lbCtrl.updateData();
+			if (lbCtrl.leaders.length >= lbCtrl.PAGE_SIZE) {
+				lbCtrl.currentPage += 1;
+				lbCtrl.updateData();
+			}
 		};
 		$scope.$on('previousPage', lbCtrl.previousPage);
 		$scope.$on('nextPage', lbCtrl.nextPage);

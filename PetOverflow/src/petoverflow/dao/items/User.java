@@ -109,6 +109,16 @@ public class User extends DaoObject implements Rated {
 	public String getPhoneNum() throws Exception {
 		return m_daoManager.getUserDao().getUserPhoneNum(m_id);
 	}
+	
+	/**
+	 * Check if the user wants SMS notifications
+	 * 
+	 * @return true if the user wants notifications, else false
+	 * @throws Exception
+	 */
+	public boolean getWantsSms() throws Exception {
+		return m_daoManager.getUserDao().getUserWantsSms(m_id);
+	}
 
 	/**
 	 * Get the rating of this user

@@ -9,8 +9,8 @@
 			<div class="col-sm-5">
 				<h2><span class="u-bold">{{ prCtrl.user.username }}</span>'s Profile</h2>		
 				<p>User rating: {{ prCtrl.user.rating | number:2 }}</p>
-				<p class="u-bold">Get to know {{ prCtrl.user.nickname }}:</p>
-				<q>{{ prCtrl.user.description }}</q>
+				<p class="u-bold" ng-if="prCtrl.user.description">Get to know {{ prCtrl.user.nickname }}:</p>
+				<q ng-if="prCtrl.user.description">{{ prCtrl.user.description }}</q>
 				<p class="u-bold">{{ prCtrl.user.nickname }} is an expert at:</p>
 				<ol class="ExpertiseList">
 					<li ng-repeat="topic in prCtrl.user.expertise">

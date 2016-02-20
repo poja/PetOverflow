@@ -3,6 +3,7 @@ package petoverflow.servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
+import petoverflow.Utility;
 import petoverflow.dao.items.Answer;
+import petoverflow.dao.items.Question;
+import petoverflow.dao.items.Topic;
 import petoverflow.dao.items.User;
 import petoverflow.dao.items.Vote;
 import petoverflow.dao.items.Vote.VoteType;
@@ -87,9 +91,31 @@ public class AnswerServlet extends AuthenticatedHttpServlet {
 
 		try {
 			m_daoManager.getAnswerDao().createAnswer(text, user.getId(), questionId);
+			notifyAsker(questionId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Check whether the asker of the question requested notifications, and if
+	 * so, send them the notifications.
+	 * 
+	 * @param questionId The id of the question that was answered
+	 */
+	private void notifyAsker(int questionId) throws Exception {
+		Question q = m_daoManager.getQuestionDao().getQuestion(questionId);
+		User asker = q.getAuthor();
+		List<Topic> topics = q.getTopics();
+		
+		if (asker.getWantsSms()) {
+			String message = "Your question on PetOverflow";
+			if (topics.size() > 0) {
+				message += ", about '" + topics.get(0).getName() + "',";
+			}
+			message += " has been answered. Go check it out!";
+			Utility.sendSms(asker.getPhoneNum(), message);
 		}
 	}
 

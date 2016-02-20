@@ -181,7 +181,7 @@ public class UserDaoDerby extends DaoObject implements UserDao {
 	 */
 	@Override
 	public User createUser(String username, String password, String nickname, String description, String photoUrl,
-			String phoneNum) throws SQLException, NoSuchUserException, ExistingUsernameException {
+			String phoneNum, boolean wantsSms) throws SQLException, NoSuchUserException, ExistingUsernameException {
 		if (exist(username)) {
 			throw new ExistingUsernameException();
 		}
@@ -194,7 +194,7 @@ public class UserDaoDerby extends DaoObject implements UserDao {
 			PreparedStatement s = conn.prepareStatement(
 					"INSERT INTO " + DerbyConfig.USER_TABLE_NAME + " (" + DerbyConfig.USERNAME + ", "
 							+ DerbyConfig.PASSWORD + ", " + DerbyConfig.NICKNAME + ", " + DerbyConfig.DESCRIPTION + ", "
-							+ DerbyConfig.PHOTO_URL + ", " + DerbyConfig.PHONE_NUM + ") VALUES (?, ?, ?, ?, ?, ?)",
+							+ DerbyConfig.PHOTO_URL + ", " + DerbyConfig.PHONE_NUM + ", " + DerbyConfig.WANTS_SMS + ") VALUES (?, ?, ?, ?, ?, ?, ?)",
 					new String[] { DerbyConfig.ID });
 			statements.add(s);
 			s.setString(1, username);
@@ -203,6 +203,7 @@ public class UserDaoDerby extends DaoObject implements UserDao {
 			s.setString(4, description);
 			s.setString(5, photoUrl);
 			s.setString(6, phoneNum);
+			s.setBoolean(7, wantsSms);
 			s.executeUpdate();
 			rs = s.getGeneratedKeys();
 
@@ -386,6 +387,41 @@ public class UserDaoDerby extends DaoObject implements UserDao {
 				throw new SQLException("Unexpected error");
 			}
 			return rs.getString(DerbyConfig.PHONE_NUM);
+
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			DerbyUtils.cleanUp(rs, statements, conn);
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see petoverflow.dao.UserDao#getUserWantsSms(int)
+	 */
+	@Override
+	public boolean getUserWantsSms(int userId) throws SQLException, NoSuchUserException {
+		if (!exist(userId)) {
+			throw new NoSuchUserException();
+		}
+
+		Connection conn = null;
+		ArrayList<Statement> statements = new ArrayList<Statement>();
+		ResultSet rs = null;
+
+		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
+			PreparedStatement s = conn.prepareStatement("SELECT " + DerbyConfig.WANTS_SMS + " FROM "
+					+ DerbyConfig.USER_TABLE_NAME + " WHERE " + DerbyConfig.ID + " = ?");
+			statements.add(s);
+			s.setInt(1, userId);
+			rs = s.executeQuery();
+
+			if (!rs.next()) {
+				throw new SQLException("Unexpected error");
+			}
+			return rs.getBoolean(1);
 
 		} catch (SQLException e) {
 			throw e;

@@ -9,6 +9,7 @@ public class DerbyConfig {
 	public static final String DESCRIPTION = "description";
 	public static final String PHOTO_URL = "photoUrl";
 	public static final String PHONE_NUM = "phoneNum";
+	public static final String WANTS_SMS = "wantsSms";
 	public static final String TEXT = "text";
 	public static final String AUTHOR_ID = "authorId";
 	public static final String TIMESTAMP = "timestamp";
@@ -25,6 +26,7 @@ public class DerbyConfig {
 	private static final String DESCRIPTION_TYPE = "VARCHAR(50) NOT NULL";
 	private static final String PHOTO_URL_TYPE = "LONG VARCHAR";
 	private static final String PHONE_NUM_TYPE = "VARCHAR(20)";
+	private static final String WANTS_SMS_TYPE = "BOOLEAN NOT NULL";
 	private static final String TEXT_TYPE = "LONG VARCHAR NOT NULL";
 	private static final String AUTHOR_ID_TYPE = "INTEGER NOT NULL";
 	private static final String TIMESTAMP_TYPE = "TIMESTAMP NOT NULL";
@@ -39,7 +41,7 @@ public class DerbyConfig {
 	public static final String USER_TABLE_CREATE = "CREATE TABLE " + USER_TABLE_NAME + " (" + ID + " " + ID_TYPE + ", "
 			+ USERNAME + " " + USERNAME_TYPE + ", " + PASSWORD + " " + PASSWORD_TYPE + ", " + NICKNAME + " "
 			+ NICKNAME_TYPE + ", " + DESCRIPTION + " " + DESCRIPTION_TYPE + ", " + PHOTO_URL + " " + PHOTO_URL_TYPE
-			+ ", " + PHONE_NUM + " " + PHONE_NUM_TYPE + ")";
+			+ ", " + PHONE_NUM + " " + PHONE_NUM_TYPE + ", " + WANTS_SMS + " " + WANTS_SMS_TYPE + ")";
 	public static final String QUESTION_TABLE_NAME = "Questions";
 	public static final String QUESTION_TABLE_CREATE = "CREATE TABLE " + QUESTION_TABLE_NAME + " (" + ID + " " + ID_TYPE
 			+ ", " + TEXT + " " + TEXT_TYPE + ", " + AUTHOR_ID + " " + AUTHOR_ID_TYPE + ", " + TIMESTAMP + " "

@@ -26,7 +26,6 @@
 					}, 0);
 					function pxSize(word) {
 						var relativeSize = ((word.size - minSize + 0.5) / (maxSize - minSize + 0.5)) || 0;
-						debugger;
 						return relativeSize * 20 + 25; // min > 10, max = 15
 					}
 

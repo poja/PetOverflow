@@ -1,5 +1,8 @@
 package petoverflow;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,6 +10,9 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import petoverflow.dao.utility.Rated;
 import petoverflow.dao.utility.Timestampable;
@@ -92,4 +98,47 @@ public class Utility {
 		});
 	}
 
+	public static void sendSms(String phoneNumber, String message) {
+		System.out.println("SMS message:");
+		System.out.println(message);
+		System.out.println("To phone:");
+		System.out.println(phoneNumber);
+		phoneNumber = phoneNumber.replaceFirst("\\+", "+ ");
+
+		try {
+			String urlStr = "http://yishai.imrapid.io/sms?";
+			urlStr += "&message=" + URLEncoder.encode(message, "UTF-8");
+			urlStr += "&number=" + URLEncoder.encode(phoneNumber, "UTF-8");
+			System.out.println("GET request to: ");
+			System.out.println(urlStr);
+
+			URL url = new URL(urlStr);
+			ExecutorService executor = Executors.newFixedThreadPool(1);
+			executor.submit(new SmsSender(url));
+		} catch (Exception e) {
+			// Ignore exceptions. If it didn't work - too bad.
+		}
+	}
+
 }
+
+class SmsSender implements Callable<Integer> {
+	private URL m_url;
+
+	public SmsSender(URL url) {
+		m_url = url;
+	}
+
+	@Override
+	public Integer call() {
+		try {
+			HttpURLConnection con = (HttpURLConnection) m_url.openConnection();
+			con.setRequestMethod("GET");
+			con.getInputStream().close();
+			con.disconnect();
+		} catch (Exception e) {
+			// Doesn't matter, didn't work - too bad.
+		}
+		return 0;
+	}
+};

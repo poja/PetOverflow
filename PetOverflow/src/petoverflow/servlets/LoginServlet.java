@@ -44,7 +44,7 @@ public class LoginServlet extends HttpServlet {
 		String password = params.get(ParametersConfig.PASSWORD).toString();
 		if (username == null || password == null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-			return;
+			return; 
 		}
 
 		try {

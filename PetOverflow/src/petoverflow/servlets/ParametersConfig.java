@@ -21,5 +21,6 @@ public class ParametersConfig {
 	public static final String DESCRIPTION = "description";
 	public static final String PHOTO_URL = "photoUrl";
 	public static final String PHONE_NUM = "phoneNumber";
+	public static final String WANTS_SMS = "wantsSms";
 
 }

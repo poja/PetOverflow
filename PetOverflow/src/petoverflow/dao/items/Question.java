@@ -78,6 +78,7 @@ public class Question extends DaoObject implements Rated, Timestampable {
 		return m_daoManager.getQuestionDao().getQuestionAuthor(m_id);
 	}
 
+	// TODO IMPORTANT!!! Rating is NOT the same as vote count!
 	/**
 	 * Get the rating of this question
 	 * 
@@ -106,7 +107,7 @@ public class Question extends DaoObject implements Rated, Timestampable {
 	public Timestamp getTimestamp() throws Exception {
 		return m_daoManager.getQuestionDao().getQuestionTimestamp(m_id);
 	}
-	
+
 	/**
 	 * Find the highest rated answer to this question
 	 * 

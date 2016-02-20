@@ -58,14 +58,21 @@ public class UserServlet extends AuthenticatedHttpServlet {
 		String description = params.get(ParametersConfig.DESCRIPTION).toString();
 		String photoUrl = params.get(ParametersConfig.PHOTO_URL).toString();
 		String phoneNum = params.get(ParametersConfig.PHONE_NUM).toString();
+		boolean wantsSms = (boolean) params.get(ParametersConfig.WANTS_SMS);
+		
+		Gson gson = new Gson();
+		PrintWriter out = response.getWriter();
 
 		User newUser = null;
 		try {
 			if (m_daoManager.getUserDao().exist(username)) {
-				// TODO send error to user, username already exists
+				HashMap<String, String> ans = new HashMap<String, String>();
+				ans.put("errorMessage", "Sorry, this username already exists. Please choose a different one.");
+				out.append(gson.toJson(ans));
+				return;
 			} else {
 				newUser = m_daoManager.getUserDao().createUser(username, password, nickname, description, photoUrl,
-						phoneNum);
+						phoneNum, wantsSms);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -77,13 +84,14 @@ public class UserServlet extends AuthenticatedHttpServlet {
 		response.addCookie(usernameCookie);
 		response.addCookie(passwordCookie);
 		response.addCookie(idCookie);
-
 		response.setContentType("application/json");
-		PrintWriter out = response.getWriter();
-		Gson gson = new Gson();
+		
 		if (newUser != null) {
 			try {
 				out.append(gson.toJson(newUser.toUserDto()));
+				if (wantsSms) {
+					Utility.sendSms(phoneNum, "Welcome to PetOverflow, " + nickname + "!");
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				// TODO send back error

@@ -74,7 +74,7 @@ public interface UserDao {
 	 *             if fail
 	 */
 	public User createUser(String username, String password, String nickname, String description, String photoUrl,
-			String phoneNum) throws Exception;
+			String phoneNum, boolean wantsSms) throws Exception;
 
 	/**
 	 * Get a user's username
@@ -130,6 +130,15 @@ public interface UserDao {
 	 *             if fail
 	 */
 	public String getUserPhoneNum(int userId) throws Exception;
+	
+	/**
+	 * Check if this user wants SMS notifications.
+	 * 
+	 * @param userId
+	 * @return true if the user wants SMS notifications, otherwise false
+	 * @throws Exception
+	 */
+	public boolean getUserWantsSms(int userId) throws Exception;
 
 	/**
 	 * Set a user's password to a new one
@@ -178,6 +187,8 @@ public interface UserDao {
 	 *             if fail
 	 */
 	public void setUserPhoneNum(int userId, String phoneNum) throws Exception;
+	
+	
 
 	/**
 	 * Get a list of the users with the highest rating
