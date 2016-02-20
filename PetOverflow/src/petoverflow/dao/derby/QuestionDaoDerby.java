@@ -184,6 +184,7 @@ public class QuestionDaoDerby extends DaoObject implements QuestionDao {
 			if (!rs.next()) {
 				throw new SQLException("Unexpected error");
 			}
+			System.out.println(rs);
 			int id = rs.getInt(1);
 			Question question = new Question(m_daoManager, id);
 
