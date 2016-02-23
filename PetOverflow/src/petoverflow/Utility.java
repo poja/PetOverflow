@@ -7,7 +7,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -17,16 +16,23 @@ import java.util.concurrent.Executors;
 import petoverflow.dao.utility.Rated;
 import petoverflow.dao.utility.Timestampable;
 
+/**
+ * The Utility class provides a set static helper methods that are used by the
+ * application.
+ */
 public class Utility {
 
-	public static <T> List<T> fromEnumeration(Enumeration<T> enumeration) {
-		List<T> list = new ArrayList<T>();
-		while (enumeration.hasMoreElements()) {
-			list.add(enumeration.nextElement());
-		}
-		return list;
-	}
-
+	/**
+	 * Cut a list to a size in a offset
+	 * 
+	 * @param list
+	 *            the list to cut
+	 * @param size
+	 *            the wanted size
+	 * @param offset
+	 *            the wanted offset
+	 * @return sub list of the list in range [offset, offset + size)
+	 */
 	public static <T> List<T> cutList(List<T> list, int size, int offset) {
 		if (list == null) {
 			throw new IllegalArgumentException("list can't be null");
@@ -76,6 +82,12 @@ public class Utility {
 		});
 	}
 
+	/**
+	 * Sorts a list, so that the newest items are <b>first</b>
+	 * 
+	 * @param list
+	 *            a lsit of items with time stamo to sort
+	 */
 	public static void sortByTimestamp(List<? extends Timestampable> list) {
 		final HashMap<Timestampable, Timestamp> timestamps = new HashMap<Timestampable, Timestamp>();
 		for (Timestampable e : list) {
@@ -113,6 +125,14 @@ public class Utility {
 		});
 	}
 
+	/**
+	 * Send a SMS to a phone number
+	 * 
+	 * @param phoneNumber
+	 *            the phone number
+	 * @param message
+	 *            the text of the SMS
+	 */
 	public static void sendSms(String phoneNumber, String message) {
 		System.out.println("SMS message:");
 		System.out.println(message);
@@ -135,25 +155,30 @@ public class Utility {
 		}
 	}
 
-}
+	/**
+	 * The SmsSender class used to send SMSs
+	 */
+	private static class SmsSender implements Callable<Integer> {
 
-class SmsSender implements Callable<Integer> {
-	private URL m_url;
+		private URL m_url;
 
-	public SmsSender(URL url) {
-		m_url = url;
-	}
-
-	@Override
-	public Integer call() {
-		try {
-			HttpURLConnection con = (HttpURLConnection) m_url.openConnection();
-			con.setRequestMethod("GET");
-			con.getInputStream().close();
-			con.disconnect();
-		} catch (Exception e) {
-			// Doesn't matter, didn't work - too bad.
+		public SmsSender(URL url) {
+			m_url = url;
 		}
-		return 0;
-	}
-};
+
+		@Override
+		public Integer call() {
+			try {
+				HttpURLConnection con = (HttpURLConnection) m_url.openConnection();
+				con.setRequestMethod("GET");
+				con.getInputStream().close();
+				con.disconnect();
+			} catch (Exception e) {
+				// Doesn't matter, didn't work - too bad.
+			}
+			return 0;
+		}
+
+	};
+
+}

@@ -13,17 +13,6 @@ import petoverflow.dao.items.User;
 public interface QuestionDao {
 
 	/**
-	 * Get a question by it's id
-	 * 
-	 * @param questionId
-	 *            the question's id
-	 * @return the requested question if exist
-	 * @throws Exception
-	 *             if fail
-	 */
-	public Question getQuestion(int questionId) throws Exception;
-
-	/**
 	 * Checks if a question exist
 	 * 
 	 * @param questionId
@@ -33,23 +22,6 @@ public interface QuestionDao {
 	 *             if fail
 	 */
 	public boolean exist(int questionId) throws Exception;
-
-	/**
-	 * Get all question by a specific user
-	 * 
-	 * @param authorId
-	 *            the user's id
-	 * @param size
-	 *            the wanted size of the list
-	 * @param offset
-	 *            the wanted offset of the total list
-	 * @return a list of all question published by the user
-	 * @throws Exception
-	 *             if fail
-	 */
-	public List<Question> getQuestionsByAuthor(int authorId, int size, int offset) throws Exception;
-
-	public List<Question> getQuestionsByAuthorAll(int authorId) throws Exception;
 
 	/**
 	 * Create a new question
@@ -65,6 +37,17 @@ public interface QuestionDao {
 	 *             if fail
 	 */
 	public Question createQuestion(String text, int authorId, List<String> topics) throws Exception;
+
+	/**
+	 * Get a question by it's id
+	 * 
+	 * @param questionId
+	 *            the question's id
+	 * @return the requested question if exist
+	 * @throws Exception
+	 *             if fail
+	 */
+	public Question getQuestion(int questionId) throws Exception;
 
 	/**
 	 * Get the text of a question
@@ -98,6 +81,32 @@ public interface QuestionDao {
 	 *             if fail
 	 */
 	public Timestamp getQuestionTimestamp(int questionId) throws Exception;
+
+	/**
+	 * Get questions by a specific user in range [offset, offset + size)
+	 * 
+	 * @param authorId
+	 *            the user's id
+	 * @param size
+	 *            the wanted size of the list
+	 * @param offset
+	 *            the wanted offset of the total list
+	 * @return a sub list of the list of all questions published by the user
+	 * @throws Exception
+	 *             if fail
+	 */
+	public List<Question> getQuestionsByAuthor(int authorId, int size, int offset) throws Exception;
+
+	/**
+	 * Get all questions by a specific user
+	 * 
+	 * @param authorId
+	 *            the user's id
+	 * @return a list of all questions published by the user
+	 * @throws Exception
+	 *             if fail
+	 */
+	public List<Question> getQuestionsByAuthorAll(int authorId) throws Exception;
 
 	/**
 	 * Get the newest questions list

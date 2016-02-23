@@ -79,7 +79,7 @@ public class AnswerDaoDerby extends DaoObject implements AnswerDao {
 		if (!exist(answerId)) {
 			throw new NoSuchAnswerException();
 		}
-		return new Answer(m_daoManager, answerId);
+		return new Answer(getDaoManager(), answerId);
 	}
 
 	/*
@@ -132,7 +132,7 @@ public class AnswerDaoDerby extends DaoObject implements AnswerDao {
 				throw new SQLException("Unexpected error");
 			}
 			int id = rs.getInt(1);
-			return new Answer(m_daoManager, id);
+			return new Answer(getDaoManager(), id);
 
 		} catch (SQLException e) {
 			throw e;
@@ -201,7 +201,7 @@ public class AnswerDaoDerby extends DaoObject implements AnswerDao {
 				throw new SQLException("Unexpected error");
 			}
 			int userId = rs.getInt(DerbyConfig.AUTHOR_ID);
-			return m_daoManager.getUserDao().getUser(userId);
+			return getDaoManager().getUserDao().getUser(userId);
 
 		} catch (Exception e) {
 			throw e;
@@ -236,7 +236,7 @@ public class AnswerDaoDerby extends DaoObject implements AnswerDao {
 				throw new SQLException("Unexpected error");
 			}
 			int questionId = rs.getInt(DerbyConfig.QUESTION_ID);
-			return m_daoManager.getQuestionDao().getQuestion(questionId);
+			return getDaoManager().getQuestionDao().getQuestion(questionId);
 
 		} catch (Exception e) {
 			throw e;
@@ -311,7 +311,7 @@ public class AnswerDaoDerby extends DaoObject implements AnswerDao {
 			List<Answer> answersByUser = new ArrayList<Answer>();
 			while (rs.next()) {
 				int answerId = rs.getInt(DerbyConfig.ID);
-				answersByUser.add(new Answer(m_daoManager, answerId));
+				answersByUser.add(new Answer(getDaoManager(), answerId));
 			}
 			return answersByUser;
 
@@ -349,7 +349,7 @@ public class AnswerDaoDerby extends DaoObject implements AnswerDao {
 			List<Answer> questionAnswers = new ArrayList<Answer>();
 			while (rs.next()) {
 				int answerId = rs.getInt(DerbyConfig.ID);
-				questionAnswers.add(new Answer(m_daoManager, answerId));
+				questionAnswers.add(new Answer(getDaoManager(), answerId));
 			}
 
 			Utility.sortByRating(questionAnswers);

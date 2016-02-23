@@ -1,6 +1,5 @@
 package petoverflow.dao.items;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import petoverflow.dao.AnswerDao;
@@ -9,8 +8,6 @@ import petoverflow.dao.DaoObject;
 import petoverflow.dao.QuestionDao;
 import petoverflow.dao.UserDao;
 import petoverflow.dao.utility.Rated;
-import petoverflow.dto.TopicDto;
-import petoverflow.dto.UserDto;
 
 /**
  * The User class represent a user in the PetOverflow system. This class uses
@@ -67,7 +64,7 @@ public class User extends DaoObject implements Rated {
 	 *             if DAO fails
 	 */
 	public String getUsername() throws Exception {
-		return m_daoManager.getUserDao().getUserUsername(m_id);
+		return getDaoManager().getUserDao().getUserUsername(m_id);
 	}
 
 	/**
@@ -78,7 +75,7 @@ public class User extends DaoObject implements Rated {
 	 *             if DAO fails
 	 */
 	public String getNickname() throws Exception {
-		return m_daoManager.getUserDao().getUserNickname(m_id);
+		return getDaoManager().getUserDao().getUserNickname(m_id);
 	}
 
 	/**
@@ -89,7 +86,7 @@ public class User extends DaoObject implements Rated {
 	 *             if DAO fails
 	 */
 	public String getDescription() throws Exception {
-		return m_daoManager.getUserDao().getUserDescription(m_id);
+		return getDaoManager().getUserDao().getUserDescription(m_id);
 	}
 
 	/**
@@ -100,7 +97,7 @@ public class User extends DaoObject implements Rated {
 	 *             if DAO fails
 	 */
 	public String getPhotoUrl() throws Exception {
-		return m_daoManager.getUserDao().getUserPhotoURL(m_id);
+		return getDaoManager().getUserDao().getUserPhotoURL(m_id);
 	}
 
 	/**
@@ -111,7 +108,7 @@ public class User extends DaoObject implements Rated {
 	 *             if DAO fails
 	 */
 	public String getPhoneNum() throws Exception {
-		return m_daoManager.getUserDao().getUserPhoneNum(m_id);
+		return getDaoManager().getUserDao().getUserPhoneNum(m_id);
 	}
 
 	/**
@@ -121,7 +118,7 @@ public class User extends DaoObject implements Rated {
 	 * @throws Exception
 	 */
 	public boolean getWantsSms() throws Exception {
-		return m_daoManager.getUserDao().getUserWantsSms(m_id);
+		return getDaoManager().getUserDao().getUserWantsSms(m_id);
 	}
 
 	/**
@@ -132,8 +129,8 @@ public class User extends DaoObject implements Rated {
 	 *             if DAO fails
 	 */
 	public double getRating() throws Exception {
-		List<Question> userQuestions = m_daoManager.getQuestionDao().getQuestionsByAuthorAll(m_id);
-		List<Answer> userAnswers = m_daoManager.getAnswerDao().getAnswersByAuthorAll(m_id);
+		List<Question> userQuestions = getDaoManager().getQuestionDao().getQuestionsByAuthorAll(m_id);
+		List<Answer> userAnswers = getDaoManager().getAnswerDao().getAnswersByAuthorAll(m_id);
 
 		double averageQuestionsRating = 0;
 		for (Question userQuestion : userQuestions) {
@@ -149,7 +146,7 @@ public class User extends DaoObject implements Rated {
 	}
 
 	public List<Topic> getBestTopics() throws Exception {
-		return m_daoManager.getUserDao().getUserBestTopics(m_id, BEST_TOPICS_SIZE);
+		return getDaoManager().getUserDao().getUserBestTopics(m_id, BEST_TOPICS_SIZE);
 	}
 
 	/**
@@ -161,7 +158,7 @@ public class User extends DaoObject implements Rated {
 	 *             if DAO fails
 	 */
 	public void setPassword(String password) throws Exception {
-		m_daoManager.getUserDao().setUserPassword(m_id, password);
+		getDaoManager().getUserDao().setUserPassword(m_id, password);
 	}
 
 	/**
@@ -173,7 +170,7 @@ public class User extends DaoObject implements Rated {
 	 *             if DAO fails
 	 */
 	public void setDescription(String description) throws Exception {
-		m_daoManager.getUserDao().setUserDescription(m_id, description);
+		getDaoManager().getUserDao().setUserDescription(m_id, description);
 	}
 
 	/**
@@ -185,7 +182,7 @@ public class User extends DaoObject implements Rated {
 	 *             if DAO fails
 	 */
 	public void setPhoto(String photoUrl) throws Exception {
-		m_daoManager.getUserDao().setUserPhoto(m_id, photoUrl);
+		getDaoManager().getUserDao().setUserPhoto(m_id, photoUrl);
 	}
 
 	/**
@@ -197,36 +194,11 @@ public class User extends DaoObject implements Rated {
 	 *             if DAO fails
 	 */
 	public void setPhoneNum(String phoneNum) throws Exception {
-		m_daoManager.getUserDao().setUserPhoneNum(m_id, phoneNum);
+		getDaoManager().getUserDao().setUserPhoneNum(m_id, phoneNum);
 	}
 
-	/**
-	 * Create a user DTO that holds the public information about the user
-	 * 
-	 * @return user DTO object with the user information
-	 * @throws Exception
-	 *             if DAO fail
-	 */
-	public UserDto toUserDto() throws Exception {
-		UserDto user = new UserDto();
-		user.id = m_id;
-		user.username = getUsername();
-		user.nickname = getNickname();
-		user.description = getDescription();
-		user.photoUrl = getPhotoUrl();
-		user.rating = getRating();
-		user.phoneNumber = getPhoneNum();
-		user.wantsSms = getWantsSms();
-
-		List<Topic> bestTopics = getBestTopics();
-		List<TopicDto> bestTopicsDto = new ArrayList<TopicDto>();
-		for (Topic topic : bestTopics) {
-			TopicDto topicDto = topic.toTopicDto();
-			bestTopicsDto.add(topicDto);
-		}
-		user.expertise = bestTopicsDto;
-
-		return user;
+	public void setWantsSms(boolean wantsSms) throws Exception {
+		getDaoManager().getUserDao().setUserWantsSms(m_id, wantsSms);
 	}
 
 	@Override

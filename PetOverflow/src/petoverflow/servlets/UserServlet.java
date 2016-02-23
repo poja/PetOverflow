@@ -2,7 +2,6 @@ package petoverflow.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -87,7 +86,7 @@ public class UserServlet extends AuthenticatedHttpServlet {
 
 		if (newUser != null) {
 			try {
-				out.append(gson.toJson(newUser.toUserDto()));
+				out.append(gson.toJson(new UserDto(newUser)));
 				if (wantsSms) {
 					Utility.sendSms(phoneNum, "Welcome to PetOverflow, " + nickname + "!");
 				}
@@ -138,6 +137,36 @@ public class UserServlet extends AuthenticatedHttpServlet {
 		}
 	}
 
+	protected void doAuthenticatedPut(HttpServletRequest request, HttpServletResponse response, User user)
+			throws ServletException, IOException {
+		// Map this request to:
+		// - /user/me/description
+		// - /user/me/wantsSms
+		// - /user/me/phone
+		// - /user/me/photo
+		Pattern p1 = Pattern.compile("/user/me/description");
+		Pattern p2 = Pattern.compile("/user/me/wantsSms");
+		Pattern p3 = Pattern.compile("/user/me/phone");
+		Pattern p4 = Pattern.compile("/user/me/photo");
+
+		String path = ServletUtility.getPath(request);
+		Matcher m1 = p1.matcher(path);
+		Matcher m2 = p2.matcher(path);
+		Matcher m3 = p3.matcher(path);
+		Matcher m4 = p4.matcher(path);
+		if (m1.find()) {
+			putUserDescription(request, response, user);
+		} else if (m2.find()) {
+			putUserWantsSms(request, response, user);
+		} else if (m3.find()) {
+			putUserPhone(request, response, user);
+		} else if (m4.find()) {
+			putUserPhoto(request, response, user);
+		} else {
+			throw new ServletException("Invalid URI");
+		}
+	}
+
 	/**
 	 * Get a list of the leaders users by their rating
 	 * 
@@ -158,23 +187,13 @@ public class UserServlet extends AuthenticatedHttpServlet {
 		int size = (((Double) params.get(ParametersConfig.SIZE))).intValue();
 		int offset = ((Double) (params.get(ParametersConfig.OFFSET))).intValue();
 
-		List<User> leaders;
+		List<UserDto> leadersDto;
 		try {
-			leaders = m_daoManager.getUserDao().getMostRatedUsers(size, offset);
+			List<User> leaders = m_daoManager.getUserDao().getMostRatedUsers(size, offset);
+			leadersDto = UserDto.listToDto(leaders);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 			throw new ServletException(e1.getMessage());
-		}
-		List<UserDto> leadersDto = new ArrayList<UserDto>();
-		for (User leader : leaders) {
-			UserDto leaderDto;
-			try {
-				leaderDto = leader.toUserDto();
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new ServletException(e.getMessage());
-			}
-			leadersDto.add(leaderDto);
 		}
 
 		response.setContentType("application/json");
@@ -204,7 +223,7 @@ public class UserServlet extends AuthenticatedHttpServlet {
 		UserDto userDto;
 		try {
 			User requestedUser = m_daoManager.getUserDao().getUser(requestedUserId);
-			userDto = requestedUser.toUserDto();
+			userDto = new UserDto(requestedUser);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
@@ -247,17 +266,13 @@ public class UserServlet extends AuthenticatedHttpServlet {
 		}
 		Utility.sortByTimestamp(answers);
 		List<Answer> releventAnswers = answers.subList(0, Math.min(size, answers.size()));
-		List<AnswerDto> releventAnswersDto = new ArrayList<AnswerDto>();
-		for (Answer answer : releventAnswers) {
-			AnswerDto answerDto;
-			try {
-				answerDto = answer.toAnswerDto(user.getId());
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new ServletException(e.getMessage());
-			}
-			releventAnswersDto.add(answerDto);
+		List<AnswerDto> releventAnswersDto;
+		try {
+			releventAnswersDto = AnswerDto.listToDto(releventAnswers, user.getId());
+		} catch (Exception e) {
+			throw new ServletException(e.getCause());
 		}
+
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
 		Gson gson = new Gson();
@@ -279,22 +294,61 @@ public class UserServlet extends AuthenticatedHttpServlet {
 		}
 		Utility.sortByTimestamp(questions);
 		Utility.cutList(questions, size, offset);
-
-		List<QuestionDto> releventAnswersDto = new ArrayList<QuestionDto>();
-		for (Question question : questions) {
-			QuestionDto questionDto;
-			try {
-				questionDto = question.toQuestionDto(user.getId());
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new ServletException(e.getMessage());
-			}
-			releventAnswersDto.add(questionDto);
+		List<QuestionDto> releventAnswersDto;
+		try {
+			releventAnswersDto = QuestionDto.listToDto(questions, user.getId());
+		} catch (Exception e) {
+			throw new ServletException(e.getCause());
 		}
+
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
 		Gson gson = new Gson();
 		out.append(gson.toJson(releventAnswersDto));
+	}
+
+	private void putUserDescription(HttpServletRequest request, HttpServletResponse response, User user)
+			throws ServletException, IOException {
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		String description = ((String) params.get(ParametersConfig.DESCRIPTION));
+		try {
+			user.setDescription(description);
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+	}
+
+	private void putUserWantsSms(HttpServletRequest request, HttpServletResponse response, User user)
+			throws ServletException, IOException {
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		Boolean wantsSms = ((Boolean) params.get(ParametersConfig.WANTS_SMS));
+		try {
+			user.setWantsSms(wantsSms);
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+	}
+
+	private void putUserPhone(HttpServletRequest request, HttpServletResponse response, User user)
+			throws ServletException, IOException {
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		String phoneNumber = ((String) params.get(ParametersConfig.PHONE_NUM));
+		try {
+			user.setPhoneNum(phoneNumber);
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+	}
+
+	private void putUserPhoto(HttpServletRequest request, HttpServletResponse response, User user)
+			throws ServletException, IOException {
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		String photoUrl = ((String) params.get(ParametersConfig.PHOTO_URL));
+		try {
+			user.setPhoto(photoUrl);
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
 	}
 
 }

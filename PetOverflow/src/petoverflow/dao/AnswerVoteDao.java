@@ -44,13 +44,16 @@ public interface AnswerVoteDao {
 	 *             if fail
 	 */
 	public List<Vote> getAnswerVotes(int answerId) throws Exception;
-	
+
 	/**
 	 * Get the best answer to this question
 	 * 
 	 * @param questionId
-	 * @return
+	 *            the question id
+	 * @return the id of the best answer to the question. null if there is no
+	 *         answers
 	 * @throws Exception
+	 *             if fail
 	 */
 	public Integer getBestAnswerForQuestion(int questionId) throws Exception;
 

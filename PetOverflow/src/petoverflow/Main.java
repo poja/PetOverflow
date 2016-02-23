@@ -16,8 +16,12 @@ import petoverflow.dao.derby.DerbyUtils;
  */
 public class Main implements ServletContextListener {
 
-	/**
-	 * Initialization of the server
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.servlet.ServletContextListener#contextInitialized(javax.servlet.
+	 * ServletContextEvent)
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent ev) {
@@ -33,19 +37,16 @@ public class Main implements ServletContextListener {
 		}
 	}
 
-	/**
-	 * Destruction of the server
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.
+	 * ServletContextEvent)
 	 */
 	@Override
 	public void contextDestroyed(ServletContextEvent ev) {
 		System.out.println("Destroying server");
 		DerbyUtils.shutdown();
-	}
-
-	/**
-	 * Used for debugging purposes only
-	 */
-	public static void main(String[] args) {
 	}
 
 }

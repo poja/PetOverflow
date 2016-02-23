@@ -14,17 +14,6 @@ import petoverflow.dao.items.User;
 public interface AnswerDao {
 
 	/**
-	 * Get an answer by it's id
-	 * 
-	 * @param answerId
-	 *            the answer's id
-	 * @return the requested answer
-	 * @throws Exception
-	 *             if fail
-	 */
-	public Answer getAnswer(int answerId) throws Exception;
-
-	/**
 	 * Check if an answer is exist
 	 * 
 	 * @param answerId
@@ -49,6 +38,17 @@ public interface AnswerDao {
 	 *             if fail
 	 */
 	public Answer createAnswer(String text, int authorId, int questionId) throws Exception;
+
+	/**
+	 * Get an answer by it's id
+	 * 
+	 * @param answerId
+	 *            the answer's id
+	 * @return the requested answer
+	 * @throws Exception
+	 *             if fail
+	 */
+	public Answer getAnswer(int answerId) throws Exception;
 
 	/**
 	 * Get a text of an answer
@@ -95,7 +95,7 @@ public interface AnswerDao {
 	public Timestamp getAnswerTimestamp(int answerId) throws Exception;
 
 	/**
-	 * Get all answers by specific user
+	 * Get answers by specific user in range [offset, offset + size)
 	 * 
 	 * @param authorId
 	 *            the user id
@@ -103,16 +103,25 @@ public interface AnswerDao {
 	 *            the wanted size of the list
 	 * @param offset
 	 *            the wanted offset of the total list
-	 * @return a list of the answer the user published
+	 * @return a sub list of the list of the answers the user published
 	 * @throws Exception
 	 *             if fail
 	 */
 	public List<Answer> getAnswersByAuthor(int authorId, int size, int offset) throws Exception;
 
+	/**
+	 * Get all answers by specific user
+	 * 
+	 * @param authorId
+	 *            the user id
+	 * @return a list with all answers by the user
+	 * @throws Exception
+	 *             if fail
+	 */
 	public List<Answer> getAnswersByAuthorAll(int authorId) throws Exception;
 
 	/**
-	 * Get all answers to a specific question
+	 * Get answers to a specific question in range [offset, offset + size)
 	 * 
 	 * @param questionId
 	 *            the question id
@@ -120,12 +129,21 @@ public interface AnswerDao {
 	 *            the wanted size of the list
 	 * @param offset
 	 *            the wanted offset of the total list
-	 * @return a list of all answers to the question
+	 * @return a sub list of the list of all answers to the question
 	 * @throws Exception
 	 *             if fail
 	 */
 	public List<Answer> getQuestionAnswers(int questionId, int size, int offset) throws Exception;
-	
+
+	/**
+	 * Get all answers to a specific question
+	 * 
+	 * @param questionId
+	 *            the question id
+	 * @return a list with all answers to the question
+	 * @throws Exception
+	 *             if fail
+	 */
 	public List<Answer> getQuestionAnswersAll(int questionId) throws Exception;
 
 }

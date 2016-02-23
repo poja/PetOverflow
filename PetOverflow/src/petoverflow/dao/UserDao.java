@@ -12,28 +12,6 @@ import petoverflow.dao.items.User;
 public interface UserDao {
 
 	/**
-	 * Get user by it's id
-	 * 
-	 * @param userId
-	 *            the user's id
-	 * @return the user if exist
-	 * @throws Exception
-	 *             if fail
-	 */
-	public User getUser(int userId) throws Exception;
-
-	/**
-	 * Get user by it's username
-	 * 
-	 * @param username
-	 *            the user's username
-	 * @return the user if exist
-	 * @throws Exception
-	 *             if fail
-	 */
-	public User getUser(String username) throws Exception;
-
-	/**
 	 * Checks if a user exist by it's id
 	 * 
 	 * @param userId
@@ -84,6 +62,28 @@ public interface UserDao {
 	 */
 	public User createUser(String username, String password, String nickname, String description, String photoUrl,
 			String phoneNum, boolean wantsSms) throws Exception;
+
+	/**
+	 * Get user by it's id
+	 * 
+	 * @param userId
+	 *            the user's id
+	 * @return the user if exist
+	 * @throws Exception
+	 *             if fail
+	 */
+	public User getUser(int userId) throws Exception;
+
+	/**
+	 * Get user by it's username
+	 * 
+	 * @param username
+	 *            the user's username
+	 * @return the user if exist
+	 * @throws Exception
+	 *             if fail
+	 */
+	public User getUser(String username) throws Exception;
 
 	/**
 	 * Get a user's username
@@ -149,6 +149,17 @@ public interface UserDao {
 	 */
 	public boolean getUserWantsSms(int userId) throws Exception;
 
+	/**
+	 * Get a list of the best topics of a user
+	 * 
+	 * @param userId
+	 *            the user's id
+	 * @param size
+	 *            the wanted size
+	 * @return a list with the best topics of a user
+	 * @throws Exception
+	 *             if fail
+	 */
 	public List<Topic> getUserBestTopics(int userId, int size) throws Exception;
 
 	/**
@@ -198,6 +209,18 @@ public interface UserDao {
 	 *             if fail
 	 */
 	public void setUserPhoneNum(int userId, String phoneNum) throws Exception;
+
+	/**
+	 * Set the 'wants SMS' flag of a user to a new value
+	 * 
+	 * @param userId
+	 *            the user's id
+	 * @param wantsSms
+	 *            the new value of the flag
+	 * @throws Exception
+	 *             if fail
+	 */
+	public void setUserWantsSms(int userId, boolean wantsSms) throws Exception;
 
 	/**
 	 * Get a list of the users with the highest rating

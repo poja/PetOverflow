@@ -2,7 +2,6 @@ package petoverflow.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -174,7 +173,7 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 		QuestionDto questionDto;
 		try {
 			Question question = m_daoManager.getQuestionDao().getQuestion(questionId);
-			questionDto = question.toQuestionDto(user.getId());
+			questionDto = new QuestionDto(question, user.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
@@ -211,16 +210,7 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 		List<AnswerDto> answersDto;
 		try {
 			List<Answer> answers = m_daoManager.getAnswerDao().getQuestionAnswers(questionId, size, offset);
-			answersDto = new ArrayList<AnswerDto>();
-			for (Answer answer : answers) {
-				try {
-					AnswerDto answerDto = answer.toAnswerDto(user.getId());
-					answersDto.add(answerDto);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
+			answersDto = AnswerDto.listToDto(answers, user.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
@@ -252,17 +242,10 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 		int size = ((Double) params.get(ParametersConfig.SIZE)).intValue();
 		int offset = ((Double) params.get(ParametersConfig.OFFSET)).intValue();
 
-		List<QuestionDto> questionsDto = new ArrayList<QuestionDto>();
+		List<QuestionDto> questionsDto;
 		try {
 			List<Question> newestQuestions = m_daoManager.getQuestionDao().getNewestQuestions(size, offset);
-			for (Question question : newestQuestions) {
-				try {
-					QuestionDto questionDto = question.toQuestionDto(user.getId());
-					questionsDto.add(questionDto);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
+			questionsDto = QuestionDto.listToDto(newestQuestions, user.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
@@ -280,19 +263,10 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 		int size = ((Double) params.get(ParametersConfig.SIZE)).intValue();
 		int offset = ((Double) params.get(ParametersConfig.OFFSET)).intValue();
 
-		List<QuestionDto> questionsDto = new ArrayList<QuestionDto>();
-		List<Question> bestQuestions;
+		List<QuestionDto> questionsDto;
 		try {
-			bestQuestions = m_daoManager.getQuestionDao().getBestQuestions(size, offset);
-
-			for (Question question : bestQuestions) {
-				try {
-					QuestionDto questionDto = question.toQuestionDto(user.getId());
-					questionsDto.add(questionDto);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
+			List<Question> bestQuestions = m_daoManager.getQuestionDao().getBestQuestions(size, offset);
+			questionsDto = QuestionDto.listToDto(bestQuestions, user.getId());
 		} catch (Exception e1) {
 			throw new ServletException(e1.getMessage());
 		}

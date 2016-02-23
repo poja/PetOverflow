@@ -2,7 +2,6 @@ package petoverflow.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -69,21 +68,13 @@ public class TopicServlet extends AuthenticatedHttpServlet {
 		int size = (((Double) params.get(ParametersConfig.SIZE))).intValue();
 		int offset = ((Double) (params.get(ParametersConfig.OFFSET))).intValue();
 
-		List<Topic> topics;
+		List<TopicDto> topicsDto;
 		try {
-			topics = m_daoManager.getTopicDao().getPopularTopics(size, offset);
+			List<Topic> topics = m_daoManager.getTopicDao().getPopularTopics(size, offset);
+			topicsDto = TopicDto.listToDto(topics, user.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
-		}
-		List<TopicDto> topicsDto = new ArrayList<TopicDto>();
-		for (Topic topic : topics) {
-			try {
-				TopicDto topicDto = topic.toTopicDto();
-				topicsDto.add(topicDto);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 
 		response.setContentType("application/json");
@@ -114,21 +105,12 @@ public class TopicServlet extends AuthenticatedHttpServlet {
 		int size = (((Double) params.get(ParametersConfig.SIZE))).intValue();
 		int offset = ((Double) (params.get(ParametersConfig.OFFSET))).intValue();
 
-		List<Question> bestQuestions;
+		List<QuestionDto> questionsDto;
 		try {
-			bestQuestions = m_daoManager.getTopicDao().getBestQuestionsByTopic(topic, size, offset);
+			List<Question> bestQuestions = m_daoManager.getTopicDao().getBestQuestionsByTopic(topic, size, offset);
+			questionsDto = QuestionDto.listToDto(bestQuestions, user.getId());
 		} catch (Exception e) {
 			throw new ServletException(e.getMessage());
-		}
-
-		List<QuestionDto> questionsDto = new ArrayList<QuestionDto>();
-		for (Question question : bestQuestions) {
-			try {
-				QuestionDto questionDto = question.toQuestionDto(user.getId());
-				questionsDto.add(questionDto);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 
 		response.setContentType("application/json");

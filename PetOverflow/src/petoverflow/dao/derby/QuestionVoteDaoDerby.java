@@ -67,7 +67,7 @@ public class QuestionVoteDaoDerby extends DaoObject implements QuestionVoteDao {
 	 */
 	public void addVote(int questionId, Vote vote) throws SQLException {
 		try {
-			if (m_daoManager.getQuestionDao().getQuestion(questionId).getAuthor().getId() == vote.getVoterId()) {
+			if (getDaoManager().getQuestionDao().getQuestion(questionId).getAuthor().getId() == vote.getVoterId()) {
 				// Can vote to yourself
 				return;
 			}

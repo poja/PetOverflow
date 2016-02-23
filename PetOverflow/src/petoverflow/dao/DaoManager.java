@@ -1,5 +1,9 @@
 package petoverflow.dao;
 
+/**
+ * The DaoManager class used to manage all DAO objects. It's contains all sub
+ * DAO objects. This class is singleton.
+ */
 public abstract class DaoManager {
 
 	protected UserDao m_userDao;
@@ -16,19 +20,15 @@ public abstract class DaoManager {
 
 	protected static DaoManager m_instance;
 
+	protected DaoManager() {
+	}
+
 	public static DaoManager getInstance() {
 		if (m_instance == null) {
 			throw new IllegalStateException("Dao manager wasn't initialized.");
 		} else {
 			return m_instance;
 		}
-	}
-
-	public static boolean isInitialized() {
-		return m_instance != null;
-	}
-
-	protected DaoManager() {
 	}
 
 	public UserDao getUserDao() {

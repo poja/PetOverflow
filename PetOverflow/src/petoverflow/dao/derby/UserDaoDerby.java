@@ -86,7 +86,7 @@ public class UserDaoDerby extends DaoObject implements UserDao {
 		if (!exist(userId)) {
 			throw new NoSuchUserException();
 		}
-		return new User(m_daoManager, userId);
+		return new User(getDaoManager(), userId);
 	}
 
 	/*
@@ -115,7 +115,7 @@ public class UserDaoDerby extends DaoObject implements UserDao {
 				throw new SQLException("Unexpected error");
 			}
 			int id = rs.getInt(DerbyConfig.ID);
-			return new User(m_daoManager, id);
+			return new User(getDaoManager(), id);
 
 		} catch (SQLException e) {
 			throw e;
@@ -241,7 +241,7 @@ public class UserDaoDerby extends DaoObject implements UserDao {
 				throw new SQLException("Unexpected error");
 			}
 			int id = rs.getInt(1);
-			return new User(m_daoManager, id);
+			return new User(getDaoManager(), id);
 
 		} catch (SQLException e) {
 			throw e;
@@ -463,7 +463,7 @@ public class UserDaoDerby extends DaoObject implements UserDao {
 	@Override
 	public List<Topic> getUserBestTopics(int userId, int size) throws Exception {
 		final HashMap<Topic, Double> topicsRating = new HashMap<Topic, Double>();
-		List<Answer> userAnswers = m_daoManager.getAnswerDao().getAnswersByAuthorAll(userId);
+		List<Answer> userAnswers = getDaoManager().getAnswerDao().getAnswersByAuthorAll(userId);
 		for (Answer answer : userAnswers) {
 			try {
 				double answerRating = answer.getRating();
@@ -634,6 +634,36 @@ public class UserDaoDerby extends DaoObject implements UserDao {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see petoverflow.dao.UserDao#setUserWantsSms(int, boolean)
+	 */
+	public void setUserWantsSms(int userId, boolean wantsSms) throws SQLException, NoSuchUserException {
+		if (!exist(userId)) {
+			throw new NoSuchUserException();
+		}
+
+		Connection conn = null;
+		ArrayList<Statement> statements = new ArrayList<Statement>();
+		ResultSet rs = null;
+
+		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
+			PreparedStatement s = conn.prepareStatement("UPDATE " + DerbyConfig.USER_TABLE_NAME + " SET "
+					+ DerbyConfig.WANTS_SMS + " = ? WHERE " + DerbyConfig.ID + " = ?");
+			statements.add(s);
+			s.setBoolean(1, wantsSms);
+			s.setInt(2, userId);
+			s.executeUpdate();
+
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			DerbyUtils.cleanUp(rs, statements, conn);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see petoverflow.dao.UserDao#getMostRatedUsers(int, int)
 	 */
 	public List<User> getMostRatedUsers(int size, int offset) throws SQLException {
@@ -650,7 +680,7 @@ public class UserDaoDerby extends DaoObject implements UserDao {
 			rs = s.executeQuery();
 			while (rs.next()) {
 				int id = rs.getInt(DerbyConfig.ID);
-				allUsers.add(new User(m_daoManager, id));
+				allUsers.add(new User(getDaoManager(), id));
 			}
 
 		} catch (SQLException e) {

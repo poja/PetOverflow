@@ -11,20 +11,16 @@ import petoverflow.dao.items.Topic;
  */
 public interface TopicDao {
 
-	public List<Question> getBestQuestionsByTopic(String topic, int size, int offset) throws Exception;
-
 	/**
-	 * Get all question of a topic
+	 * Get a rating of a topic
 	 * 
-	 * @param topic
-	 *            the searched topic
-	 * @return a list of all questions' ids that have the searched topic
+	 * @param topicName
+	 *            the topic name
+	 * @return the topic's rating
 	 * @throws Exception
 	 *             if fail
 	 */
-	public List<Question> getQuestionsByTopic(String topic, int size, int offset) throws Exception;
-
-	public List<Question> getQuestionsByTopicAll(String topic) throws Exception;
+	public double getTopicRating(String topicName) throws Exception;
 
 	/**
 	 * Get all topics of a specific question
@@ -37,8 +33,6 @@ public interface TopicDao {
 	 */
 	public List<Topic> getQuestionTopics(int questionId) throws Exception;
 
-	public double getTopicRating(String topicName) throws Exception;
-
 	/**
 	 * Set topics to a question
 	 * 
@@ -49,7 +43,7 @@ public interface TopicDao {
 	 * @throws Exception
 	 *             if fail
 	 */
-	public void setTopics(int questionId, List<String> topics) throws Exception;
+	public void setQuestionTopics(int questionId, List<String> topics) throws Exception;
 
 	/**
 	 * Get all the current topics
@@ -60,6 +54,56 @@ public interface TopicDao {
 	 */
 	public List<Topic> getAllTopics() throws Exception;
 
+	/**
+	 * Get questions of a topic in range [offset, offset + size)
+	 * 
+	 * @param topic
+	 *            the searched topic
+	 * @return a sub list of the list of all questions that have the searched
+	 *         topic
+	 * @throws Exception
+	 *             if fail
+	 */
+	public List<Question> getQuestionsByTopic(String topic, int size, int offset) throws Exception;
+
+	/**
+	 * Get all questions of a topic
+	 * 
+	 * @param topic
+	 *            the searched topic name
+	 * @return a list of all questions that have the search topic
+	 * @throws Exception
+	 *             if fail
+	 */
+	public List<Question> getQuestionsByTopicAll(String topic) throws Exception;
+
+	/**
+	 * Get list of popular topics in range [offset, offset + size)
+	 * 
+	 * @param size
+	 *            the wanted size
+	 * @param offset
+	 *            the wanted offset
+	 * @return a sub list of the popular topics list
+	 * @throws Exception
+	 *             if fail
+	 */
 	public List<Topic> getPopularTopics(int size, int offset) throws Exception;
+
+	/**
+	 * Get a list of the best questions in a topic in range [offset, offset +
+	 * size)
+	 * 
+	 * @param topic
+	 *            the topic name
+	 * @param size
+	 *            the wanted size
+	 * @param offset
+	 *            the wanted offset
+	 * @return a sub list of the list of all best questions of the topic
+	 * @throws Exception
+	 *             if fail
+	 */
+	public List<Question> getBestQuestionsByTopic(String topic, int size, int offset) throws Exception;
 
 }

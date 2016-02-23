@@ -10,7 +10,6 @@ import petoverflow.dao.DaoObject;
 import petoverflow.dao.items.Vote.VoteType;
 import petoverflow.dao.utility.Rated;
 import petoverflow.dao.utility.Timestampable;
-import petoverflow.dto.AnswerDto;
 
 /**
  * The Answer class represent a user answer to question. This class uses DAO to
@@ -62,7 +61,7 @@ public class Answer extends DaoObject implements Rated, Timestampable {
 	 *             if DAO fails
 	 */
 	public String getText() throws Exception {
-		return m_daoManager.getAnswerDao().getAnswerText(m_id);
+		return getDaoManager().getAnswerDao().getAnswerText(m_id);
 	}
 
 	/**
@@ -73,7 +72,7 @@ public class Answer extends DaoObject implements Rated, Timestampable {
 	 *             if DAO fails
 	 */
 	public User getAuthor() throws Exception {
-		return m_daoManager.getAnswerDao().getAnswerAuthor(m_id);
+		return getDaoManager().getAnswerDao().getAnswerAuthor(m_id);
 	}
 
 	/**
@@ -84,7 +83,7 @@ public class Answer extends DaoObject implements Rated, Timestampable {
 	 *             if DAO fails
 	 */
 	public double getRating() throws Exception {
-		List<Vote> answerVotes = m_daoManager.getAnswerVoteDao().getAnswerVotes(m_id);
+		List<Vote> answerVotes = getDaoManager().getAnswerVoteDao().getAnswerVotes(m_id);
 
 		double rating = 0;
 		for (Vote vote : answerVotes) {
@@ -102,7 +101,7 @@ public class Answer extends DaoObject implements Rated, Timestampable {
 	 *             if DAO fails
 	 */
 	public Question getQuestion() throws Exception {
-		return m_daoManager.getAnswerDao().getAnswerQuestion(m_id);
+		return getDaoManager().getAnswerDao().getAnswerQuestion(m_id);
 	}
 
 	/**
@@ -113,29 +112,7 @@ public class Answer extends DaoObject implements Rated, Timestampable {
 	 *             if DAO fails
 	 */
 	public Timestamp getTimestamp() throws Exception {
-		return m_daoManager.getAnswerDao().getAnswerTimestamp(m_id);
-	}
-
-	public AnswerDto toAnswerDto(int userId) throws Exception {
-		AnswerDto answer = new AnswerDto();
-		answer.id = m_id;
-		answer.text = getText();
-		answer.authorId = getAuthor().getId();
-		answer.rating = getRating();
-		answer.timestamp = getTimestamp().getTime();
-		answer.questionId = getQuestion().getId();
-
-		int voteStatus = 0;
-		List<Vote> votes = m_daoManager.getAnswerVoteDao().getAnswerVotes(m_id);
-		for (Vote vote : votes) {
-			if (vote.getVoterId() == userId) {
-				voteStatus = vote.getType() == VoteType.Up ? 1 : -1;
-				break;
-			}
-		}
-		answer.voteStatus = voteStatus;
-
-		return answer;
+		return getDaoManager().getAnswerDao().getAnswerTimestamp(m_id);
 	}
 
 	public int hashCode() {

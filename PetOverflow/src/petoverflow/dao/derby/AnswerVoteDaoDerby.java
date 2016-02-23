@@ -68,7 +68,7 @@ public class AnswerVoteDaoDerby extends DaoObject implements AnswerVoteDao {
 	public void addVote(int answerId, Vote vote) throws SQLException {
 		// Remove previous vote
 		try {
-			if (m_daoManager.getAnswerDao().getAnswer(answerId).getAuthor().getId() == vote.getVoterId()) {
+			if (getDaoManager().getAnswerDao().getAnswer(answerId).getAuthor().getId() == vote.getVoterId()) {
 				// Can vote to yourself
 				return;
 			}
@@ -183,7 +183,7 @@ public class AnswerVoteDaoDerby extends DaoObject implements AnswerVoteDao {
 
 			Integer bestAnswer = null;
 			int bestRating = Integer.MIN_VALUE;
-			AnswerVoteDao answerVoteDao = m_daoManager.getAnswerVoteDao();
+			AnswerVoteDao answerVoteDao = getDaoManager().getAnswerVoteDao();
 			while (rs.next()) {
 				int currentId = rs.getInt(1);
 				int currentRating = answerVoteDao.getAnswerVotes(currentId).size();

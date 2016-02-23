@@ -93,8 +93,8 @@ public class AnswerServlet extends AuthenticatedHttpServlet {
 			response.setContentType("application/json");
 			PrintWriter out = response.getWriter();
 			Gson gson = new Gson();
-			out.append(gson.toJson(ans.toAnswerDto(user.getId())));
-			
+			out.append(gson.toJson(new AnswerDto(ans, user.getId())));
+
 			notifyAsker(questionId);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -145,7 +145,7 @@ public class AnswerServlet extends AuthenticatedHttpServlet {
 		AnswerDto answerDto;
 		try {
 			Answer answer = m_daoManager.getAnswerDao().getAnswer(answerId);
-			answerDto = answer.toAnswerDto(user.getId());
+			answerDto = new AnswerDto(answer, user.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());

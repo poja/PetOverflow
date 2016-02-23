@@ -88,7 +88,7 @@ public class TopicDaoDerby extends DaoObject implements TopicDao {
 			while (rs.next()) {
 				int questionId = rs.getInt(DerbyConfig.QUESTION_ID);
 				try {
-					Question question = m_daoManager.getQuestionDao().getQuestion(questionId);
+					Question question = getDaoManager().getQuestionDao().getQuestion(questionId);
 					questions.add(question);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -126,7 +126,7 @@ public class TopicDaoDerby extends DaoObject implements TopicDao {
 			List<Topic> relatedTopics = new ArrayList<Topic>();
 			while (rs.next()) {
 				String topicName = rs.getString(DerbyConfig.TOPIC);
-				Topic topic = new Topic(m_daoManager, topicName);
+				Topic topic = new Topic(getDaoManager(), topicName);
 				relatedTopics.add(topic);
 			}
 			return relatedTopics;
@@ -145,7 +145,7 @@ public class TopicDaoDerby extends DaoObject implements TopicDao {
 	 */
 	@Override
 	public double getTopicRating(String topic) throws Exception {
-		List<Question> questions = m_daoManager.getTopicDao().getQuestionsByTopicAll(topic);
+		List<Question> questions = getDaoManager().getTopicDao().getQuestionsByTopicAll(topic);
 		double rating = 0;
 		for (Question question : questions) {
 			rating += question.getRating();
@@ -153,7 +153,7 @@ public class TopicDaoDerby extends DaoObject implements TopicDao {
 		return rating;
 	}
 
-	public void setTopics(int questionId, List<String> topics) throws SQLException {
+	public void setQuestionTopics(int questionId, List<String> topics) throws SQLException {
 		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 		ResultSet rs = null;
@@ -199,7 +199,7 @@ public class TopicDaoDerby extends DaoObject implements TopicDao {
 				String topicName = rs.getString(DerbyConfig.TOPIC);
 				if (!topicsNames.contains(topicName)) {
 					topicsNames.add(topicName);
-					topics.add(new Topic(m_daoManager, topicName));
+					topics.add(new Topic(getDaoManager(), topicName));
 				}
 			}
 

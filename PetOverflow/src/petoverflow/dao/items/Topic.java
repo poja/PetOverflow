@@ -3,7 +3,6 @@ package petoverflow.dao.items;
 import petoverflow.dao.DaoManager;
 import petoverflow.dao.DaoObject;
 import petoverflow.dao.utility.Rated;
-import petoverflow.dto.TopicDto;
 
 public class Topic extends DaoObject implements Rated {
 
@@ -20,14 +19,7 @@ public class Topic extends DaoObject implements Rated {
 
 	@Override
 	public double getRating() throws Exception {
-		return m_daoManager.getTopicDao().getTopicRating(m_name);
-	}
-
-	public TopicDto toTopicDto() throws Exception {
-		TopicDto topic = new TopicDto();
-		topic.name = m_name;
-		topic.rating = getRating();
-		return topic;
+		return getDaoManager().getTopicDao().getTopicRating(m_name);
 	}
 
 	public int hashCode() {

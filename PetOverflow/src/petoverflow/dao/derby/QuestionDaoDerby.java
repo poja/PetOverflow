@@ -81,7 +81,7 @@ public class QuestionDaoDerby extends DaoObject implements QuestionDao {
 		if (!exist(questionId)) {
 			throw new NoSuchQuestionException();
 		}
-		return new Question(m_daoManager, questionId);
+		return new Question(getDaoManager(), questionId);
 	}
 
 	/*
@@ -144,7 +144,7 @@ public class QuestionDaoDerby extends DaoObject implements QuestionDao {
 			List<Question> userQuestions = new ArrayList<Question>();
 			while (rs.next()) {
 				int id = rs.getInt(DerbyConfig.ID);
-				userQuestions.add(new Question(m_daoManager, id));
+				userQuestions.add(new Question(getDaoManager(), id));
 			}
 			return userQuestions;
 
@@ -185,9 +185,9 @@ public class QuestionDaoDerby extends DaoObject implements QuestionDao {
 				throw new SQLException("Unexpected error");
 			}
 			int id = rs.getInt(1);
-			Question question = new Question(m_daoManager, id);
+			Question question = new Question(getDaoManager(), id);
 
-			m_daoManager.getTopicDao().setTopics(question.getId(), topics);
+			getDaoManager().getTopicDao().setQuestionTopics(question.getId(), topics);
 
 			return question;
 
@@ -258,7 +258,7 @@ public class QuestionDaoDerby extends DaoObject implements QuestionDao {
 				throw new SQLException("Unexpected error");
 			}
 			int userId = rs.getInt(DerbyConfig.AUTHOR_ID);
-			return m_daoManager.getUserDao().getUser(userId);
+			return getDaoManager().getUserDao().getUser(userId);
 
 		} catch (Exception e) {
 			throw e;
@@ -307,10 +307,17 @@ public class QuestionDaoDerby extends DaoObject implements QuestionDao {
 	 * @see petoverflow.dao.QuestionDao#getNewestQuestions(int)
 	 */
 	@Override
-	public List<Question> getNewestQuestions(int size, int offset) throws SQLException {
+	public List<Question> getNewestQuestions(int size, int offset) throws Exception {
 		List<Question> questions = getAllQuestion();
-		Utility.sortByTimestamp(questions);
-		return Utility.cutList(questions, size, offset);
+		List<Question> questionsWithOutAnswers = new ArrayList<Question>();
+		for (Question question : questions) {
+			boolean noAnswer = getDaoManager().getAnswerDao().getQuestionAnswersAll(question.getId()).size() == 0;
+			if (noAnswer) {
+				questionsWithOutAnswers.add(question);
+			}
+		}
+		Utility.sortByTimestamp(questionsWithOutAnswers);
+		return Utility.cutList(questionsWithOutAnswers, size, offset);
 	}
 
 	/*
@@ -340,7 +347,7 @@ public class QuestionDaoDerby extends DaoObject implements QuestionDao {
 			rs = s.executeQuery();
 			while (rs.next()) {
 				int id = rs.getInt(DerbyConfig.ID);
-				Question question = new Question(m_daoManager, id);
+				Question question = new Question(getDaoManager(), id);
 				questions.add(question);
 			}
 
