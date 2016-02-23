@@ -103,7 +103,7 @@ public class SampleDbInitiator {
 		topics.add("cats");
 		topics.add("sickness");
 		Question q4 = m_questionDao.createQuestion("Our family has a few cats. About a month ago, I started noticing"
-				+ " that one of the female cats became much more noisy. Also, her stomach became large!"
+				+ " that one of the female cats has become much more noisy. Also, her stomach became large!"
 				+ " What hapenned to our cat??", barak.getId(), topics);
 		m_questionVoteDao.addVote(q4.getId(), new Vote(vet.getId(), VoteType.Up));
 		Answer a1 = m_answerDao.createAnswer(

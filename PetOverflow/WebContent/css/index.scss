@@ -549,7 +549,24 @@ $c-hot: #DC0202;
 		
 		padding: 1rem 0;
 	}
+
+	.QueryRow {
+		margin-top: 3rem;
+	}
 	
+	.SearchArea {
+		min-height: 12rem;
+		margin-bottom: 5rem;
+
+		&, h4 {
+			font-size: 2.5rem;
+		}
+
+		ul {
+			display: block;
+			margin: 0 auto;
+		}
+	}
 }
 
 .TagCloud {
@@ -718,5 +735,33 @@ $c-hot: #DC0202;
 	img {
 		width: 100px;
 		height: 100px;
+	}
+}
+
+/*********************/
+/** Question Search **/
+/*********************/
+
+
+.QuestionSearchPage {
+	ul {
+		list-style: none;
+	}
+}
+
+.QueryRow {
+	margin-bottom: 3rem;
+
+	label {
+		display: inline-block;
+		font-size: 2.5rem;
+		font-weight: bold;
+	}
+
+	input {
+		display: inline-block;
+		margin-left: 1.5rem;
+		font-size: 1.7rem;
+		line-height: 2.5rem;
 	}
 }

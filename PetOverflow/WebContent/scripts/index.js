@@ -11,6 +11,7 @@
 			.when('/questions/browse/:type', { 
 				templateUrl: 'pages/browseQuestions.html' , 
 				controller: 'BrowseQuestionsController as questCtrl'})
+			.when('/questions/search', { templateUrl: 'pages/questionSearch.html' })
 			.when('/questions/ask', { templateUrl: 'pages/askQuestion.html'})
 			.when('/questions/:qId', { templateUrl: 'pages/questionView.html' })
 			.when('/questions/:qId/:mode', { templateUrl: 'pages/questionView.html' })
@@ -132,13 +133,12 @@
 			if (questCtrl.type === 'existing') getQuestions = PetData.getQuestionsExisting;
 			else if (questCtrl.type === 'newest') getQuestions = PetData.getQuestionsNewest;
 
-			getQuestions(this.firstIndex(), this.firstIndex() + this.PAGE_SIZE - 1).then(
+			getQuestions(this.PAGE_SIZE, this.firstIndex()).then(
 				function (response) {
 					if (response.data.length == 0 && questCtrl.currentPage > 0) { // Went too far
 						questCtrl.previousPage();
 						return;
 					}
-					console.dir(response.data);
 					questCtrl.questions = response.data;
 				},
 				HttpFailHandler
@@ -242,7 +242,6 @@
 		else userId = $routeParams.uId;		
 		
 		PetData.getUser(userId).then(function (response) {
-			console.dir(response.data);
 			prCtrl.user = response.data;
 		}, HttpFailHandler);
 
@@ -262,14 +261,17 @@
 
 	app.controller('HotTopicsController', ['PetData', 'HttpFailHandler', function (PetData, HttpFailHandler) {
 		var htpCtrl = this;
-		htpCtrl.topics = [];
+		htpCtrl.hotTopics = [];
+		htpCtrl.searchedTopics = [];
 		htpCtrl.cloudData = [];
+		htpCtrl.query = '';
 
-		var MAX_CLOUD_SIZE = 200;
+		var MAX_CLOUD_SIZE = 60;
+		var MAX_SEARCH_SIZE = 20;
 
 		PetData.getTopicsPopular(MAX_CLOUD_SIZE, 0).then(function (response) {
-			htpCtrl.topics = response.data;
-			htpCtrl.cloudData = htpCtrl.topics.map(function (topic) {
+			htpCtrl.hotTopics = response.data;
+			htpCtrl.cloudData = htpCtrl.hotTopics.map(function (topic) {
 				return {
 					text: topic.name,
 					size: topic.rating,
@@ -277,6 +279,12 @@
 				}
 			});
 		}, HttpFailHandler);
+
+		htpCtrl.search = function () {
+			PetData.getTopicsByText(htpCtrl.query, MAX_SEARCH_SIZE, 0).then(function (reponse) {
+				this.searchedTopics = response.data;
+			});
+		};
 	}]);
 
 	app.controller('TopicController', ['$scope', 'PetData', 'HttpFailHandler', '$routeParams', function ($scope, PetData, HttpFailHandler, $routeParams) {
@@ -487,6 +495,17 @@
 
 	}]);
 
+	app.controller('QuestionSearchController', ['PetData', function (PetData) {
+		var srchCtrl = this;
+		srchCtrl.questions = [];
+		srchCtrl.MAX_SIZE = 20;
+
+		srchCtrl.search = function () {
+			PetData.getQuestionsByText(srchCtrl.query, srchCtrl.MAX_SIZE, 0).then(function (response) {
+				srchCtrl.questions = response.data;
+			});
+		};
+	}]);
 
 	app.directive('userBox', ['PetData', 'HttpFailHandler', 'DEFAULT_PROFILE', function (PetData, HttpFailHandler, DEFAULT_PROFILE) {
 		return {
@@ -508,6 +527,12 @@
 		return {
 			restrict: 'E',
 			templateUrl: './pages/components/nav-bar.html'
+		};
+	});
+	app.directive('questionsNav', function () {
+		return {
+			restrict: 'E',
+			templateUrl: './pages/components/questions-nav.html'
 		};
 	});
 

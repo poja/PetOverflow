@@ -35,9 +35,7 @@
 			});
 		}
 
-		function getQuestionsNewest(beginIndex, endIndex) {
-			var size = endIndex - beginIndex + 1,
-				offset = beginIndex;
+		function getQuestionsNewest(size, offset) {
 			return $http({
 				method: 'GET',
 				url: '/PetOverflow/question/newest',
@@ -50,9 +48,7 @@
 			});
 		}
 
-		function getQuestionsExisting(beginIndex, endIndex) {
-			var size = endIndex - beginIndex + 1,
-				offset = beginIndex;
+		function getQuestionsExisting(size, offset) {
 			return $http({
 				method: 'GET',
 				url: '/PetOverflow/question/best',
@@ -104,7 +100,6 @@
 		}
 
 		function postUser(userInfo) {
-			console.dir(userInfo);
 			return $http({
 				method: 'POST',
 				url: '/PetOverflow/user',
@@ -229,6 +224,32 @@
 			})
 		};
 
+		function getQuestionsByText(text, size, offset) {
+			return $http({
+				method: 'GET',
+				url: '/PetOverflow/question/search',
+				params: {
+					data: JSON.stringify({
+						size: size,
+						offset: offset
+					})
+				}
+			});
+		}
+
+		function getTopicsByText(text, size, offset) {
+			return $http({
+				method: 'GET',
+				url: '/PetOverflow/topic/search',
+				params: {
+					data: JSON.stringify({
+						size: size,
+						offset: offset
+					})
+				}
+			});
+		}
+
 
 		return {
 			// Questions
@@ -238,6 +259,7 @@
 			getQuestionsNewest: getQuestionsNewest,
 			getQuestionsExisting: getQuestionsExisting,
 			putQuestionVote: putQuestionVote,
+			getQuestionsByText: getQuestionsByText,
 
 			// Answers
 			postAnswer: postAnswer,
@@ -258,6 +280,7 @@
 			// Topics
 			getTopicsPopular: getTopicsPopular,
 			getTopicQuestions: getTopicQuestions,
+			getTopicsByText: getTopicsByText
 		};
 
 	}]);

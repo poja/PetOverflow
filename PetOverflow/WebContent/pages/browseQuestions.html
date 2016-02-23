@@ -1,21 +1,8 @@
 <main>
 	<pet-nav></pet-nav>
 
-	<div class="container-fluid">
-		<div class="QuestionsNav row">
-			<a 	href="#/questions/browse/newest"
-				class="col-sm-4" 
-				active-link="active">
-				New Questions</a>
-			<a 	href="#/questions/browse/existing" 
-				class="col-sm-4" 
-				active-link="active">
-				Existing Questions</a>
-			<a 	href="#/questions/ask" 
-				class="col-sm-4"
-				active-link="active">
-				Ask a Question</a>
-		</div>
+	<div class="container">
+		<questions-nav></questions-nav>
 
 		<ul class="QuestionList container">
 			<li ng-repeat="question in questCtrl.questions">

@@ -6,6 +6,26 @@
 		<div id="hot-topics-cloud" class="TagCloud" ng-if="htpCtrl.cloudData.length > 0">
 			<tag-cloud data="htpCtrl.cloudData"></tag-cloud>
 		</div>
+		<h3 class="u-center" ng-if="!htpCtrl.cloudData || htpCtrl.cloudData.length == 0">No topics yet.</h3>
+
+		<div class="SearchArea">
+			<div class="QueryRow">
+				<label for="topic-search">Find all topics with this text:</label>
+				<input type="text" 
+					id="topics-search"
+					ng-model="htpCtrl.query" 
+					class="form-control" 
+					on-enter-key="htpCtrl.search()" />
+				<button class="SmallButton btn" ng-click="htpCtrl.search()">Search</button>	
+			</div>	
+
+			<h4 ng-if="htpCtrl.searchedTopics.length > 0">Topics found:</h4>
+			<ul>
+				<li ng-repeat="topic in htpCtrl.searchedTopics">
+					<a ng-href="#/topics/{{topic.name}}">{{ topic.name }}</a>
+				</li>
+			</ul>
+		</div>	
 	</div>
 		
 </main>

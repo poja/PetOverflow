@@ -1,0 +1,24 @@
+<main ng-controller="QuestionSearchController as srchCtrl" class="QuestionSearchPage">
+	<pet-nav></pet-nav>
+
+	<div class="container">
+		<questions-nav></questions-nav>
+		
+		<div class="QueryRow">
+			<label for="q-search">Search for questions with this text inside:</label>
+			<input type="text" 
+				id="q-search"
+				ng-model="srchCtrl.query" 
+				class="form-control" 
+				on-enter-key="srchCtrl.search()" />
+			<button class="SmallButton btn" ng-click="srchCtrl.search()">Search</button>	
+		</div>
+		
+
+		<ul>
+			<li ng-repeat="question in srchCtrl.questions">
+				<question question-id="question.id"></question>
+			</li>
+		</ul>
+	</div>	
+</main>

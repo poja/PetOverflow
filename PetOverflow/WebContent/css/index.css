@@ -395,6 +395,16 @@ input[type="tel"] {
   font-weight: 700;
   text-align: center;
   padding: 1rem 0; }
+.HotTopics .QueryRow {
+  margin-top: 3rem; }
+.HotTopics .SearchArea {
+  min-height: 12rem;
+  margin-bottom: 5rem; }
+  .HotTopics .SearchArea, .HotTopics .SearchArea h4 {
+    font-size: 2.5rem; }
+  .HotTopics .SearchArea ul {
+    display: block;
+    margin: 0 auto; }
 
 .TagCloud {
   width: 100%;
@@ -503,5 +513,23 @@ input[type="tel"] {
 .SettingsPage img {
   width: 100px;
   height: 100px; }
+
+/*********************/
+/** Question Search **/
+/*********************/
+.QuestionSearchPage ul {
+  list-style: none; }
+
+.QueryRow {
+  margin-bottom: 3rem; }
+  .QueryRow label {
+    display: inline-block;
+    font-size: 2.5rem;
+    font-weight: bold; }
+  .QueryRow input {
+    display: inline-block;
+    margin-left: 1.5rem;
+    font-size: 1.7rem;
+    line-height: 2.5rem; }
 
 /*# sourceMappingURL=index.css.map */
