@@ -181,6 +181,31 @@ public class UserDaoDerby extends DaoObject implements UserDao {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see petOverflow.dao.UserDao#isEmpty()
+	 */
+	public boolean isEmpty() throws Exception {
+		Connection conn = null;
+		ArrayList<Statement> statements = new ArrayList<Statement>();
+		ResultSet rs = null;
+
+		try {
+			conn = DerbyUtils.getConnection(DerbyConfig.DB_NAME);
+			PreparedStatement s = conn.prepareStatement(
+					"SELECT * FROM " + DerbyConfig.USER_TABLE_NAME);
+			statements.add(s);
+			rs = s.executeQuery();
+			return !rs.next();
+
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			DerbyUtils.cleanUp(rs, statements, conn);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see petoverflow.dao.UserDao#createUser(java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String)

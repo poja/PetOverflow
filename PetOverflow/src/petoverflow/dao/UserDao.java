@@ -54,6 +54,14 @@ public interface UserDao {
 	 *             if fail
 	 */
 	public boolean exist(String username) throws Exception;
+	
+	/**
+	 * Check if there is any user in the DB.
+	 * 
+	 * @return true if there are no users, else false
+	 * @throws Exception
+	 */
+	public boolean isEmpty() throws Exception;
 
 	/**
 	 * Create a new user

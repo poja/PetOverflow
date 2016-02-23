@@ -1,10 +1,9 @@
 package petoverflow;
 
-import java.sql.SQLException;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import petoverflow.dao.UserDao;
 import petoverflow.dao.derby.DaoManagerDerby;
 import petoverflow.dao.derby.DerbyUtils;
 
@@ -25,8 +24,11 @@ public class Main implements ServletContextListener {
 		System.out.println("Initializing server");
 		try {
 			DaoManagerDerby.init();
+			UserDao userDao = DaoManagerDerby.getInstance().getUserDao();
+			if (Config.CREATE_INITIAL_DB && userDao.isEmpty())
+				SampleDbInitiator.run();
 
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
