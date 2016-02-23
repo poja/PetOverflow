@@ -215,8 +215,8 @@ public class User extends DaoObject implements Rated {
 		user.description = getDescription();
 		user.photoUrl = getPhotoUrl();
 		user.rating = getRating();
-		user.phone = getPhoneNum();
-		user.wantSms = getWantsSms();
+		user.phoneNumber = getPhoneNum();
+		user.wantsSms = getWantsSms();
 
 		List<Topic> bestTopics = getBestTopics();
 		List<TopicDto> bestTopicsDto = new ArrayList<TopicDto>();

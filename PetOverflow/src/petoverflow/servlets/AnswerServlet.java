@@ -89,7 +89,12 @@ public class AnswerServlet extends AuthenticatedHttpServlet {
 		int questionId = ((Double) params.get(ParametersConfig.QUESTION_ID)).intValue();
 
 		try {
-			m_daoManager.getAnswerDao().createAnswer(text, user.getId(), questionId);
+			Answer ans = m_daoManager.getAnswerDao().createAnswer(text, user.getId(), questionId);
+			response.setContentType("application/json");
+			PrintWriter out = response.getWriter();
+			Gson gson = new Gson();
+			out.append(gson.toJson(ans.toAnswerDto(user.getId())));
+			
 			notifyAsker(questionId);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -691,7 +691,32 @@ $c-hot: #DC0202;
 		textarea {
 			margin-bottom: 2rem;
 		}
+
+		label {
+			font-size: 2rem;
+		}
 	}
 
 }
 
+/**************/
+/** Settings **/
+/**************/
+
+.SettingsPage {
+	h2 {
+		font-size: 3rem;
+		margin: 4rem 0 2rem 0;
+	}
+	h3 {
+		margin: 3rem 0;
+		padding: 1rem;
+		background-color: $c-bg-navbar;
+		color: white;
+	}
+
+	img {
+		width: 100px;
+		height: 100px;
+	}
+}

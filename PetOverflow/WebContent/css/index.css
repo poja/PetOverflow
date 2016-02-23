@@ -486,5 +486,22 @@ input[type="tel"] {
   margin-top: 5rem; }
   .QuestionView form textarea {
     margin-bottom: 2rem; }
+  .QuestionView form label {
+    font-size: 2rem; }
+
+/**************/
+/** Settings **/
+/**************/
+.SettingsPage h2 {
+  font-size: 3rem;
+  margin: 4rem 0 2rem 0; }
+.SettingsPage h3 {
+  margin: 3rem 0;
+  padding: 1rem;
+  background-color: #3D3961;
+  color: white; }
+.SettingsPage img {
+  width: 100px;
+  height: 100px; }
 
 /*# sourceMappingURL=index.css.map */

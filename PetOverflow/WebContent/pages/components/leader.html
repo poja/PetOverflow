@@ -13,8 +13,9 @@
 			<p class="u-bold">Expertise:</p>
 			<ol class="ExpertiseList">
 				<li ng-repeat="topic in leader.expertise">
-					<a ng-href="#/topics/{{topic.id}}">{{ topic.name }}</a>
+					<a ng-href="#/topics/{{topic.name}}">{{ topic.name }}</a>
 				</li>
+				<li ng-if="!leader.expertise || leader.expertise.length == 0">( No expertise yet )</li>
 			</ol>
 		</div>
 	</div>

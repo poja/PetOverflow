@@ -9,5 +9,9 @@
 				<question question-id="question.id"></question>
 			</li>
 		</ul>
+		<page-turner 
+			text="'Viewing Questions ' + (tpCtrl.firstIndex() + 1) + '-' + (tpCtrl.lastIndex() + 1)"
+			ng-if="tpCtrl.questions.length > 0">
+		</page-turner>
 	</div>
 </main>

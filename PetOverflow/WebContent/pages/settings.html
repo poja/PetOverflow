@@ -1,0 +1,56 @@
+<main class="SettingsPage" ng-controller="SettingsController as stngCtrl">
+	<pet-nav></pet-nav>
+
+	<div class="container">
+		<h2>Settings</h2>
+
+		<form ng-submit="stngCtrl.submit()">
+			<div class="form-group">
+				<h3>Notifications</h3>
+				<label for="phone" class="control-label">Phone number: </label>
+				<p>Your phone number will not be displayed to anyone using PetOverflow. It is only for security purposes and for recieving optional <span class="u-bold">SMS notifications</span>.</p>
+				<input type="tel" 
+					id="phone" 
+					class="form-control" 
+					pattern="(\+)?[0-9]+"
+					placeholder="+972527567813" 
+					ng-model="stngCtrl.userInfo.phoneNumber" 
+					required />
+				<div class="checkbox">
+					<label>
+						<input 
+							type="checkbox" 
+							ng-model="stngCtrl.userInfo.wantsSms" /> 
+						I would like to recieve an SMS when someone answers my question.
+					</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<h3>Public Info</h3>
+				<label for="description">Description:</label>
+				<p>Tell us about yourself! Use up to 50 characters to describe who you are. It will appear on your profile to anyone who is curious about you.</p>
+				<textarea 
+					id="description" 
+					class="form-control" 
+					ng-model="stngCtrl.userInfo.description" 
+					maxlength="50"
+					rows="3"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="photoUrl" class="control-label">Photo:</label>
+				<p>A URL to a photo of you. The photo should be 50x50 pixels.</p>
+				<input 
+					id="photoUrl"
+					class="form-control" 
+					type="text" 
+					ng-model="stngCtrl.userInfo.photoUrl" 
+					placeholder="http://tinyurl.com/rapmonkey" />
+				<p>Preview:</p>
+				<img 
+					ng-src="{{ stngCtrl.userInfo.photoUrl || 'http://tinyurl.com/rapmonkey' }}" 
+					alt="The photo cannot be shown" />
+			</div>
+			<input class="form-control LargeButton" type="submit" value="Save Settings"></input>
+		</form>
+	</div>
+</main>

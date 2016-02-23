@@ -19,6 +19,7 @@
 			.when('/users/:uId', { templateUrl: 'pages/profile.html' })
 			.when('/topics/hot', { templateUrl: 'pages/hotTopics.html'})
 			.when('/topics/:tName', { templateUrl: 'pages/topic.html' })
+			.when('/settings', { templateUrl: 'pages/settings.html' })
 			.otherwise({ templateUrl: 'pages/404.html' });
 
 	}]);
@@ -32,6 +33,9 @@
 			$location.url('/');
 		});
 		$rootScope.$on('questionPosted', function () {
+			$location.url('/questions/browse/newest');
+		});
+		$rootScope.$on('settingsSaved', function () {
 			$location.url('/questions/browse/newest');
 		});
 
@@ -123,13 +127,6 @@
 			questCtrl.updateQuestions();
 		}
 
-		questCtrl.firstIndex = function () {
-			return questCtrl.currentPage * questCtrl.PAGE_SIZE;
-		}
-		questCtrl.lastIndex = function () {
-			return questCtrl.firstIndex() + questCtrl.questions.length - 1;
-		}
-
 		questCtrl.updateQuestions = function () {
 			var getQuestions;
 			if (questCtrl.type === 'existing') getQuestions = PetData.getQuestionsExisting;
@@ -147,6 +144,13 @@
 				HttpFailHandler
 			);
 		};
+
+		questCtrl.firstIndex = function () {
+			return questCtrl.currentPage * questCtrl.PAGE_SIZE;
+		}
+		questCtrl.lastIndex = function () {
+			return questCtrl.firstIndex() + questCtrl.questions.length - 1;
+		}
 
 		questCtrl.previousPage = function () {
 			if (questCtrl.currentPage > 0) {
@@ -238,6 +242,7 @@
 		else userId = $routeParams.uId;		
 		
 		PetData.getUser(userId).then(function (response) {
+			console.dir(response.data);
 			prCtrl.user = response.data;
 		}, HttpFailHandler);
 
@@ -274,18 +279,42 @@
 		}, HttpFailHandler);
 	}]);
 
-	app.controller('TopicController', ['PetData', 'HttpFailHandler', '$routeParams', function (PetData, HttpFailHandler, $routeParams) {
+	app.controller('TopicController', ['$scope', 'PetData', 'HttpFailHandler', '$routeParams', function ($scope, PetData, HttpFailHandler, $routeParams) {
 		var tpCtrl = this;
 		tpCtrl.name = $routeParams.tName;
 		tpCtrl.questions = [];
+		tpCtrl.currentPage = 0;
+		tpCtrl.PAGE_SIZE = 20;
 
-		// TODO add paging
+		tpCtrl.updateQuestions = function () {
+			PetData.getTopicQuestions(tpCtrl.name, 20, 0).then(function (response) {
+				tpCtrl.questions = response.data;
+			}, HttpFailHandler);
+		};
 
-		PetData.getTopicQuestions(tpCtrl.name, 20, 0).then(function (response) {
-			tpCtrl.questions = response.data;
-			console.dir(tpCtrl.questions);
-		}, HttpFailHandler);
+		tpCtrl.firstIndex = function () {
+			return tpCtrl.currentPage * tpCtrl.PAGE_SIZE;
+		}
+		tpCtrl.lastIndex = function () {
+			return tpCtrl.firstIndex() + tpCtrl.questions.length - 1;
+		}
 
+		tpCtrl.previousPage = function () {
+			if (tpCtrl.currentPage > 0) {
+				tpCtrl.currentPage -= 1;
+				tpCtrl.updateQuestions();
+			}
+		};
+		tpCtrl.nextPage = function () {
+			if (tpCtrl.questions.length >= tpCtrl.PAGE_SIZE) {
+				tpCtrl.currentPage += 1;
+				tpCtrl.updateQuestions();
+			}
+		};
+		$scope.$on('previousPage', tpCtrl.previousPage);
+		$scope.$on('nextPage', tpCtrl.nextPage);
+		
+		tpCtrl.updateQuestions();
 	}]);
 
 	app.controller('LeaderboardController', ['$scope', 'PetData', 'HttpFailHandler', function ($scope, PetData, HttpFailHandler) {		
@@ -374,8 +403,9 @@
 	app.controller('QuestionController', ['$timeout', '$scope', '$routeParams', 'PetData', 'HttpFailHandler', function ($timeout, $scope, $routeParams, PetData, HttpFailHandler) {
 		var qCtrl = this;
 		qCtrl.qId = $routeParams.qId;
-
-		// TODO add a page turner
+		qCtrl.currentPage = 0;
+		qCtrl.PAGE_SIZE = 20;
+		qCtrl.answers = [];
 
 		function init() {
 			qCtrl.updateAnswers();
@@ -387,21 +417,76 @@
 		}
 
 		qCtrl.updateAnswers = function () {
-			PetData.getQuestionAnswers(qCtrl.qId, 0, 19).then(function (response) {
+			PetData.getQuestionAnswers(qCtrl.qId, qCtrl.PAGE_SIZE, qCtrl.firstIndex()).then(function (response) {
+				if (response.data.length === 0 && qCtrl.currentPage > 0) {
+					qCtrl.previousPage();
+					return;
+				}
 				qCtrl.answers = response.data;
 			}, HttpFailHandler);	
 		}
 
 		qCtrl.postAnswer = function () {
-			PetData.postAnswer(qCtrl.newAnswer, Number(qCtrl.qId)).then(function () {
-				qCtrl.updateAnswers();
+			PetData.postAnswer(qCtrl.newAnswer, Number(qCtrl.qId)).then(function (response) {
+				qCtrl.answers.push(response.data);
 				qCtrl.newAnswer = '';
 			});
 		};
 
+		qCtrl.firstIndex = function () {
+			return qCtrl.currentPage * qCtrl.PAGE_SIZE;
+		}
+		qCtrl.lastIndex = function () {
+			return qCtrl.firstIndex() + qCtrl.answers.length - 1;
+		}
+		qCtrl.previousPage = function () {
+			if (qCtrl.currentPage > 0) {
+				qCtrl.currentPage -= 1;
+				qCtrl.updateData();
+			}
+		};
+		qCtrl.nextPage = function () {
+			if (qCtrl.answers.length >= qCtrl.PAGE_SIZE) {
+				qCtrl.currentPage += 1;
+				qCtrl.updateData();
+			}
+		};
+		$scope.$on('previousPage', qCtrl.previousPage);
+		$scope.$on('nextPage', qCtrl.nextPage);
+
 		init();
+	}]);
+
+	app.controller('SettingsController', ['$scope', 'PetData', 'Session', 'HttpFailHandler', function ($scope, PetData, Session, HttpFailHandler) {
+		var stngCtrl = this;
+
+		PetData.getUser(Session.getUserId()).then(function (response) {
+			stngCtrl.userInfo = response.data;
+		}, HttpFailHandler);
+
+		stngCtrl.submit = function () {
+			var userInfo = stngCtrl.userInfo;
+			var unfinished = 4;
+			PetData.putUserDescription(userInfo).then(function () {
+				unfinished -= 1;
+				if (!unfinished) $scope.$emit('settingsSaved');
+			});
+			PetData.putUserWantsSms(userInfo).then(function () {
+				unfinished -= 1;
+				if (!unfinished) $scope.$emit('settingsSaved');
+			});
+			PetData.putUserPhoto(userInfo).then(function () {
+				unfinished -= 1;
+				if (!unfinished) $scope.$emit('settingsSaved');
+			});
+			PetData.putUserPhone(userInfo).then(function () {
+				unfinished -= 1;
+				if (!unfinished) $scope.$emit('settingsSaved');
+			});
+		};
 
 	}]);
+
 
 	app.directive('userBox', ['PetData', 'HttpFailHandler', 'DEFAULT_PROFILE', function (PetData, HttpFailHandler, DEFAULT_PROFILE) {
 		return {

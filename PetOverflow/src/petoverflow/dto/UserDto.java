@@ -15,14 +15,14 @@ public class UserDto {
 	public String nickname;
 
 	public String description;
-
+	
 	public String photoUrl;
 
 	public double rating;
 	
-	public String phone;
+	public String phoneNumber;
 	
-	public boolean wantSms;
+	public boolean wantsSms;
 	
 	public List<TopicDto> expertise;
 

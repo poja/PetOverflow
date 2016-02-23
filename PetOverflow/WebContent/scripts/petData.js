@@ -22,10 +22,7 @@
 			});
 		}
 
-		function getQuestionAnswers(id, beginIndex, endIndex) {
-			var size = endIndex - beginIndex + 1,
-				offset = beginIndex;
-
+		function getQuestionAnswers(id, size, offset) {
 			return $http({
 				method: 'GET',
 				url: '/PetOverflow/question/' + id + '/answers',
@@ -187,6 +184,52 @@
 			});
 		}
 
+		function putUserDescription(userInfo) {
+			return $http({
+				method: 'PUT',
+				url: '/PetOverflow/user/me/description',
+				data: {
+					username: userInfo.username,
+					id: userInfo.id,
+					description: userInfo.description
+				}
+			})
+		};
+		function putUserWantsSms(userInfo) {
+			return $http({
+				method: 'PUT',
+				url: '/PetOverflow/user/me/wantsSms',
+				data: {
+					username: userInfo.username,
+					id: userInfo.id,
+					wantsSms: userInfo.wantsSms
+				}
+			})
+		};
+		function putUserPhoto(userInfo) {
+			return $http({
+				method: 'PUT',
+				url: '/PetOverflow/user/me/photo',
+				data: {
+					username: userInfo.username,
+					id: userInfo.id,
+					photoUrl: userInfo.photoUrl
+				}
+			})
+		};
+		function putUserPhone(userInfo) {
+			return $http({
+				method: 'PUT',
+				url: '/PetOverflow/user/me/phone',
+				data: {
+					username: userInfo.username,
+					id: userInfo.id,
+					phoneNumber: userInfo.phoneNumber
+				}
+			})
+		};
+
+
 		return {
 			// Questions
 			postQuestion: postQuestion,
@@ -207,6 +250,10 @@
 			getUserAnswers: getUserAnswers,
 			getUserQuestions: getUserQuestions,
 			getUsersLeaders: getUsersLeaders,
+			putUserDescription: putUserDescription,
+			putUserWantsSms: putUserWantsSms,
+			putUserPhoto: putUserPhoto,
+			putUserPhone: putUserPhone,
 
 			// Topics
 			getTopicsPopular: getTopicsPopular,

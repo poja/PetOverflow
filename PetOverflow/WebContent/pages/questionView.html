@@ -8,8 +8,12 @@
 			</div>
 		</div>
 		<answer ng-repeat="answer in qCtrl.answers" answer-id="answer.id"></answer>
+		<page-turner 
+			text="'Viewing Answers ' + (qCtrl.firstIndex() + 1) + '-' + (qCtrl.lastIndex() + 1)"
+			ng-if="qCtrl.answers.length > 0">
+		</page-turner>
 		<form ng-submit="qCtrl.postAnswer()">
-			<label for="new-answer"> Submit an answer to this question:</label> 
+			<label for="new-answer">Answer this question:</label> 
 			<textarea id="new-answer" 
 				class="form-control" 
 				ng-model="qCtrl.newAnswer"
