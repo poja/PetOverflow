@@ -3,7 +3,6 @@ package petoverflow.servlets;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -254,20 +253,7 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 	 *             if DAO fails
 	 */
 	protected User getCurrentUser(HttpServletRequest request) throws Exception {
-		Cookie[] cookies = request.getCookies();
-		if (cookies == null) {
-			return null;
-		}
-
-		String username = null;
-		for (Cookie c : cookies) {
-			if (c.getName().equals("username")) {
-				username = c.getValue().toLowerCase();
-			}
-		}
-		if (username == null) {
-			return null;
-		}
+		String username = request.getSession().getAttribute("username").toString();
 		return m_daoManager.getUserDao().getUser(username);
 	}
 
@@ -281,20 +267,8 @@ public class AuthenticatedHttpServlet extends HttpServlet {
 	 */
 	private int authenticate(HttpServletRequest request) {
 		// Get username and password from the cookies
-		Cookie[] cookies = request.getCookies();
-		String username = null, password = null;
-
-		if (cookies == null) {
-			return HttpServletResponse.SC_UNAUTHORIZED;
-		}
-
-		for (Cookie c : cookies) {
-			if (c.getName().equals(ParametersConfig.USERNAME)) {
-				username = c.getValue();
-			} else if (c.getName().equals(ParametersConfig.PASSWORD)) {
-				password = c.getValue();
-			}
-		}
+		String username = (String) request.getSession().getAttribute("username");
+		String password = (String) request.getSession().getAttribute("password");
 
 		// Check if the username and password are valid, and if so, if they
 		// match

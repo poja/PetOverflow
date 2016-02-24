@@ -8,9 +8,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.google.gson.Gson;
 
@@ -60,6 +60,7 @@ public class UserServlet extends AuthenticatedHttpServlet {
 
 		Gson gson = new Gson();
 		PrintWriter out = response.getWriter();
+		HttpSession session = request.getSession();
 
 		User newUser = null;
 		try {
@@ -76,12 +77,9 @@ public class UserServlet extends AuthenticatedHttpServlet {
 			e.printStackTrace();
 		}
 
-		Cookie usernameCookie = new Cookie("username", username);
-		Cookie passwordCookie = new Cookie("password", password);
-		Cookie idCookie = new Cookie("userId", Integer.toString(newUser.getId()));
-		response.addCookie(usernameCookie);
-		response.addCookie(passwordCookie);
-		response.addCookie(idCookie);
+		session.setAttribute("username", username);
+		session.setAttribute("password", password);
+		session.setAttribute("userId", newUser.getId());
 		response.setContentType("application/json");
 
 		if (newUser != null) {

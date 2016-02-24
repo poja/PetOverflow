@@ -2,7 +2,7 @@
 
 (function (angular, $) {
 
-	var app = angular.module('petOverflow', ['ngRoute', 'ngCookies', 'petd3', 'petData']);
+	var app = angular.module('petOverflow', ['petd3', 'ngRoute', 'petData']);
 
 	app.config(['$routeProvider', function($routeProvider) {
 
@@ -46,10 +46,11 @@
 
 	}]);
 
+	app.factory('$localStorage', ['$window', function ($window) {
+		return $window.localStorage;
+	}]);
 
-	app.factory('Session', ['$rootScope', '$http', '$cookies', function ($rootScope, $http, $cookies) {
-
-		var session = this;
+	app.factory('Session', ['$rootScope', '$http', '$localStorage', function ($rootScope, $http, $localStorage) {
 
 		/**
 			POSTS to the server. Emits 'login' on success.
@@ -64,12 +65,11 @@
 			$http({
 				method: 'POST',
 				url: './login',
-				data: data,
-				headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+				data: data
 			}).success(function (data) {
 				if (data.success) {
-					session.username = username;
-					session.userId = data.id;
+					$localStorage.setItem('username', data.username);
+					$localStorage.setItem('userId', data.id);
 					$rootScope.$emit('login');
 				}
 				else {
@@ -80,20 +80,28 @@
 			});
 		}
 
+		function getUsername() {
+			return $localStorage.getItem('username');
+		}
+		function getUserId() {
+			return $localStorage.getItem('userId');
+		}
+
 		function logout() {
-			$cookies.remove('username');
-			$cookies.remove('password');
-			$rootScope.$emit('logout');
+			$http({
+				method: 'POST',
+				url: './logout'
+			}).then(function (response) {
+				$localStorage.removeItem('username');
+				$localStorage.removeItem('userId');
+				$rootScope.$emit('logout');
+			});
 		}
 
 		return {
 			'authenticate': authenticate,
-			'getUsername': function () {
-				return session.username;
-			},
-			'getUserId': function () {
-				return $cookies.get('userId');
-			},
+			'getUsername': getUsername,
+			'getUserId': getUserId,
 			'logout': logout
 		};
 
@@ -172,7 +180,7 @@
 	}]);
 
 
-	app.controller('SignUpController', ['$scope', 'PetData', '$rootScope', function ($scope, PetData, $rootScope) {
+	app.controller('SignUpController', ['$scope', '$localStorage', 'PetData', '$rootScope', function ($scope, $localStorage, PetData, $rootScope) {
 
 		this.wantsSms = false;
 		this.photoUrl = '';
@@ -192,8 +200,11 @@
 			PetData.postUser(userInfo).then(function (response) {
 				if (response.data.errorMessage)
 					alert(response.data.errorMessage);
-				else
+				else {
+					$localStorage.setItem('username', response.data.username);
+					$localStorage.setItem('userId', response.data.id);
 					$rootScope.$emit('login');	
+				}
 			});
 		};
 	}]);
@@ -213,11 +224,17 @@
 				this.topicError = 'The name of the topic should be less than 50 characters';
 			else if (!this.newTopic.match(TOPIC_REGEX))
 				this.topicError = 'Topic name should only have digits and letters';
+			else if (this.topics.includes(this.newTopic))
+				this.topicError = 'You have already added this topic';
 			else {
 				this.topics.push(this.newTopic);
 				this.newTopic = '';
 				$scope.$broadcast('topicAdded');
 			}
+		};
+
+		this.removeTopic = function (topicIndex) {
+			this.topics.splice(topicIndex, 1);
 		};
 
 		this.submitQuestion = function () {

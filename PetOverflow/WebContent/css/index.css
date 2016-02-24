@@ -338,6 +338,21 @@ input[type="tel"] {
   margin-top: 5rem; }
 .QuestionCreateForm label {
   font-size: 1.3em; }
+.QuestionCreateForm .TopicAction {
+  margin-top: 1rem; }
+
+.TopicList {
+  display: inline-block; }
+  .TopicList span {
+    display: inline-block;
+    vertical-align: sub;
+    margin-left: .5rem;
+    padding: 3px;
+    border: 1px solid gray;
+    border-radius: 2px;
+    background-color: white; }
+  .TopicList i.glyphicon {
+    cursor: pointer; }
 
 .TopicError {
   display: inline-block;
