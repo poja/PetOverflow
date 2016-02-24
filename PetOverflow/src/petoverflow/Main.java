@@ -29,8 +29,9 @@ public class Main implements ServletContextListener {
 		try {
 			DaoManagerDerby.init();
 			UserDao userDao = DaoManagerDerby.getInstance().getUserDao();
-			if (Config.CREATE_INITIAL_DB && userDao.isEmpty())
+			if (Config.CREATE_INITIAL_DB && userDao.isEmpty()) {
 				SampleDbInitiator.run();
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();

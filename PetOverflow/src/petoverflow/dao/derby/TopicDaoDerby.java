@@ -71,6 +71,11 @@ public class TopicDaoDerby extends DaoObject implements TopicDao {
 		return Utility.cutList(questions, size, offset);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see petoverflow.dao.TopicDao#getQuestionsByTopicAll(java.lang.String)
+	 */
 	public List<Question> getQuestionsByTopicAll(String topic) throws SQLException {
 		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
@@ -153,6 +158,11 @@ public class TopicDaoDerby extends DaoObject implements TopicDao {
 		return rating;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see petoverflow.dao.TopicDao#setQuestionTopics(int, java.util.List)
+	 */
 	public void setQuestionTopics(int questionId, List<String> topics) throws SQLException {
 		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
@@ -212,6 +222,11 @@ public class TopicDaoDerby extends DaoObject implements TopicDao {
 		return topics;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see petoverflow.dao.TopicDao#getPopularTopics(int, int)
+	 */
 	@Override
 	public List<Topic> getPopularTopics(int size, int offset) throws SQLException {
 		List<Topic> allTopics = getAllTopics();
@@ -219,11 +234,39 @@ public class TopicDaoDerby extends DaoObject implements TopicDao {
 		return Utility.cutList(allTopics, size, offset);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see petoverflow.dao.TopicDao#getBestQuestionsByTopic(java.lang.String,
+	 * int, int)
+	 */
 	@Override
 	public List<Question> getBestQuestionsByTopic(String topic, int size, int offset) throws Exception {
 		List<Question> questions = getQuestionsByTopicAll(topic);
 		Utility.sortByRating(questions);
 		return Utility.cutList(questions, size, offset);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see petoverflow.dao.TopicDao#searchTopics(java.lang.String, int, int)
+	 */
+	public List<Topic> searchTopics(String text, int size, int offset) throws SQLException {
+		List<String> words = Utility.breakToWords(text);
+		List<Topic> topics = getAllTopics();
+		List<Topic> relevantTopics = new ArrayList<Topic>();
+		topicsLoop: for (Topic topic : topics) {
+			String topicName = topic.getName();
+			for (String word : words) {
+				if (!topicName.contains(word)) {
+					continue topicsLoop;
+				}
+			}
+			relevantTopics.add(topic);
+		}
+		Utility.sortByName(relevantTopics);
+		return Utility.cutList(relevantTopics, size, offset);
 	}
 
 }

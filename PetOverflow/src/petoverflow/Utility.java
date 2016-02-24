@@ -13,6 +13,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import petoverflow.dao.items.Topic;
 import petoverflow.dao.utility.Rated;
 import petoverflow.dao.utility.Timestampable;
 
@@ -123,6 +124,41 @@ public class Utility {
 				}
 			}
 		});
+	}
+
+	public static void sortByName(List<Topic> topics) {
+		Collections.sort(topics, new Comparator<Topic>() {
+
+			@Override
+			public int compare(Topic o1, Topic o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+	}
+
+	public static List<String> breakToWords(String text) {
+		if (text == null) {
+			throw new IllegalArgumentException("text can't be null");
+		}
+
+		List<String> words = new ArrayList<String>();
+		int spaceIndex = text.indexOf(' ');
+		while (spaceIndex >= 0) {
+			int nextSpaceIndex = text.substring(spaceIndex + 1).indexOf(' ');
+
+			if (nextSpaceIndex > 0) {
+				String word = text.substring(spaceIndex + 1, spaceIndex + nextSpaceIndex + 1);
+				words.add(word);
+			}
+
+			text = text.substring(spaceIndex + 1);
+			spaceIndex = text.indexOf(' ');
+		}
+		if (text.length() > 0) {
+			words.add(text);
+		}
+
+		return words;
 	}
 
 	/**

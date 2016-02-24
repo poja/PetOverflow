@@ -230,6 +230,7 @@
 				url: '/PetOverflow/question/search',
 				params: {
 					data: JSON.stringify({
+						text: text,
 						size: size,
 						offset: offset
 					})
@@ -243,6 +244,7 @@
 				url: '/PetOverflow/topic/search',
 				params: {
 					data: JSON.stringify({
+						text: text,
 						size: size,
 						offset: offset
 					})

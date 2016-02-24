@@ -125,24 +125,30 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 		// Map this request to:
 		// - /question/newest
 		// - /question/best
+		// - /question/search
 		// - /question/<question#>
 		// - /question/<question#>/answers
 		Pattern p1 = Pattern.compile("/question/best");
 		Pattern p2 = Pattern.compile("/question/newest");
-		Pattern p3 = Pattern.compile("/question/([0-9]+)");
-		Pattern p4 = Pattern.compile("/question/([0-9]+)/answers");
+		Pattern p3 = Pattern.compile("/question/search");
+		Pattern p4 = Pattern.compile("/question/([0-9]+)");
+		Pattern p5 = Pattern.compile("/question/([0-9]+)/answers");
 
 		String path = ServletUtility.getPath(request);
 		Matcher m1 = p1.matcher(path);
 		Matcher m2 = p2.matcher(path);
 		Matcher m3 = p3.matcher(path);
 		Matcher m4 = p4.matcher(path);
-		if (m4.find()) {
-			int questionId = Integer.parseInt(m4.group(1));
+		Matcher m5 = p5.matcher(path);
+
+		if (m5.find()) {
+			int questionId = Integer.parseInt(m5.group(1));
 			getBestAnswers(request, response, user, questionId);
-		} else if (m3.find()) {
-			int questionId = Integer.parseInt(m3.group(1));
+		} else if (m4.find()) {
+			int questionId = Integer.parseInt(m4.group(1));
 			getAQuestion(request, response, user, questionId);
+		} else if (m3.find()) {
+			searchQuestion(request, response, user);
 		} else if (m2.find()) {
 			getNewestQuestions(request, response, user);
 		} else if (m1.find()) {
@@ -247,8 +253,7 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 			List<Question> newestQuestions = m_daoManager.getQuestionDao().getNewestQuestions(size, offset);
 			questionsDto = QuestionDto.listToDto(newestQuestions, user.getId());
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new ServletException(e.getMessage());
+			throw new ServletException(e);
 		}
 
 		response.setContentType("application/json");
@@ -269,6 +274,27 @@ public class QuestionServlet extends AuthenticatedHttpServlet {
 			questionsDto = QuestionDto.listToDto(bestQuestions, user.getId());
 		} catch (Exception e1) {
 			throw new ServletException(e1.getMessage());
+		}
+
+		response.setContentType("application/json");
+		PrintWriter out = response.getWriter();
+		Gson gson = new Gson();
+		out.append(gson.toJson(questionsDto));
+	}
+
+	private void searchQuestion(HttpServletRequest request, HttpServletResponse response, User user)
+			throws ServletException, IOException {
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		String text = (String) params.get(ParametersConfig.TEXT);
+		int size = ((Double) params.get(ParametersConfig.SIZE)).intValue();
+		int offset = ((Double) params.get(ParametersConfig.OFFSET)).intValue();
+
+		List<QuestionDto> questionsDto;
+		try {
+			List<Question> searchedQuestions = m_daoManager.getQuestionDao().searchQuestion(text, size, offset);
+			questionsDto = QuestionDto.listToDto(searchedQuestions, user.getId());
+		} catch (Exception e) {
+			throw new ServletException(e);
 		}
 
 		response.setContentType("application/json");

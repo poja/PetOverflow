@@ -106,4 +106,6 @@ public interface TopicDao {
 	 */
 	public List<Question> getBestQuestionsByTopic(String topic, int size, int offset) throws Exception;
 
+	public List<Topic> searchTopics(String text, int size, int offset) throws Exception;
+
 }

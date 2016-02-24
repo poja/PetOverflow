@@ -31,17 +31,22 @@ public class TopicServlet extends AuthenticatedHttpServlet {
 			throws ServletException, IOException {
 		// Map this request to:
 		// - /topic/popular
+		// - /topic/search
 		// - /topic/<#topic>/questions
 		Pattern p1 = Pattern.compile("/topic/popular");
-		Pattern p2 = Pattern.compile("/topic/([[a-z][A-Z]]*)/questions");
+		Pattern p2 = Pattern.compile("/topic/search");
+		Pattern p3 = Pattern.compile("/topic/([[a-z][A-Z]]*)/questions");
 
 		String path = ServletUtility.getPath(request);
 		Matcher m1 = p1.matcher(path);
 		Matcher m2 = p2.matcher(path);
+		Matcher m3 = p3.matcher(path);
 		if (m1.find()) {
 			getPopularTopics(request, response, user);
 		} else if (m2.find()) {
-			String topic = m2.group(1);
+			searchTopics(request, response, user);
+		} else if (m3.find()) {
+			String topic = m3.group(1);
 			getBestQuestionInTopic(request, response, user, topic);
 		} else {
 			throw new ServletException("Invalid URI");
@@ -75,6 +80,27 @@ public class TopicServlet extends AuthenticatedHttpServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
+		}
+
+		response.setContentType("application/json");
+		PrintWriter out = response.getWriter();
+		Gson gson = new Gson();
+		out.append(gson.toJson(topicsDto));
+	}
+
+	private void searchTopics(HttpServletRequest request, HttpServletResponse response, User user)
+			throws ServletException, IOException {
+		HashMap<String, Object> params = ServletUtility.getRequestParameters(request);
+		String text = (String) params.get(ParametersConfig.TEXT);
+		int size = ((Double) params.get(ParametersConfig.SIZE)).intValue();
+		int offset = ((Double) params.get(ParametersConfig.OFFSET)).intValue();
+
+		List<TopicDto> topicsDto;
+		try {
+			List<Topic> searchedTopics = m_daoManager.getTopicDao().searchTopics(text, size, offset);
+			topicsDto = TopicDto.listToDto(searchedTopics, user.getId());
+		} catch (Exception e) {
+			throw new ServletException(e);
 		}
 
 		response.setContentType("application/json");

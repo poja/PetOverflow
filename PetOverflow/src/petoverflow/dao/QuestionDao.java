@@ -134,4 +134,6 @@ public interface QuestionDao {
 	 */
 	public List<Question> getBestQuestions(int size, int offset) throws Exception;
 
+	public List<Question> searchQuestion(String text, int size, int offset) throws Exception;
+
 }
