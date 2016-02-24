@@ -2,19 +2,16 @@
 
 (function (angular, $) {
 
-	var app = angular.module('petOverflow', ['petd3', 'ngRoute', 'petData']);
+	var app = angular.module('petOverflow', ['petd3', 'petRoute', 'petData']);
 
 	app.config(['$routeProvider', function($routeProvider) {
-
 		$routeProvider
 			.when('/', { templateUrl: 'pages/login.html' })
-			.when('/questions/browse/:type', { 
-				templateUrl: 'pages/browseQuestions.html' , 
-				controller: 'BrowseQuestionsController as questCtrl'})
+			.when('/questions/browse/:type', { templateUrl: 'pages/browseQuestions.html' })
 			.when('/questions/search', { templateUrl: 'pages/questionSearch.html' })
 			.when('/questions/ask', { templateUrl: 'pages/askQuestion.html'})
-			.when('/questions/:qId', { templateUrl: 'pages/questionView.html' })
 			.when('/questions/:qId/:mode', { templateUrl: 'pages/questionView.html' })
+			.when('/questions/:qId', { templateUrl: 'pages/questionView.html' })
 			.when('/users/new', { templateUrl: 'pages/signUp.html' })
 			.when('/users/leading', { templateUrl: 'pages/leaderboard.html' })
 			.when('/users/:uId', { templateUrl: 'pages/profile.html' })
