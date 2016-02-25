@@ -295,8 +295,10 @@
 		}, HttpFailHandler);
 
 		htpCtrl.search = function () {
-			PetData.getTopicsByText(htpCtrl.query, MAX_SEARCH_SIZE, 0).then(function (reponse) {
-				this.searchedTopics = response.data;
+			htpCtrl.searchedTopics = [];
+			if (!htpCtrl.query) return;
+			PetData.getTopicsByText(htpCtrl.query, MAX_SEARCH_SIZE, 0).then(function (response) {
+				htpCtrl.searchedTopics = response.data;
 			});
 		};
 	}]);
@@ -515,6 +517,8 @@
 		srchCtrl.MAX_SIZE = 20;
 
 		srchCtrl.search = function () {
+			srchCtrl.questions = [];
+			if (!srchCtrl.query) return;
 			PetData.getQuestionsByText(srchCtrl.query, srchCtrl.MAX_SIZE, 0).then(function (response) {
 				srchCtrl.questions = response.data;
 			});

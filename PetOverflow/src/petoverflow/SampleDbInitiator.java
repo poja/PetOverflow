@@ -36,7 +36,7 @@ public class SampleDbInitiator {
 				"+972527567813", false);
 		yishai = m_userDao.createUser("yishai", "43201", "yishai", "I am Yishai!", "http://tinyurl.com/h33ctz3",
 				"+972527567813", false);
-		haggai = m_userDao.createUser("haggaiRoi", "50678", "haggaiTeacher", "I am Haggai, the teacher!",
+		haggai = m_userDao.createUser("haggaiRoi5", "50678", "haggaiTeacher", "I am Haggai, the teacher!",
 				"http://tinyurl.com/pet-professor", "+972527567813", false);
 		patrick = m_userDao.createUser("patrick", "66666", "patrickStar", "Umm....",
 				"http://www.unitedspongebob.com/patrickbio.jpg", "+972527567813", false);
