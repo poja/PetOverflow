@@ -12,6 +12,14 @@
   * 
   * Notice the 'phoneNum' and 'wantsSms' columns, that are used 
   * for the extended notification service.
+  *
+  * Assumptions:
+  *   - Username is english characters, digits, underscores and periods. 2 <= Length <= 10
+  *   - Password: 4 <= Length <= 8
+  *   - nickname 0 < Length <= 20
+  *   - description Length <= 50
+  *   - Phone number in international format, i.e. +972527567813
+  *   - photoUrl is a valid url to a 50px * 50px picture
   */
  CREATE TABLE PetOwner (
 
@@ -29,6 +37,9 @@
 /* Question Table Creation 
  * 
  * Each question has a foreign key of its asker
+ * 
+ * Assumptions:
+ *   - text: Length <= 300
  */
 CREATE TABLE Question (
 
@@ -45,6 +56,9 @@ CREATE TABLE Question (
 /* Answer Table Creation
  * 
  * Each answer has two foreign keys - the asker and the question
+ * 
+ * Assumptions:
+ *   - text: Length <= 300
  */
 CREATE TABLE Answer (
 
@@ -96,6 +110,9 @@ CREATE TABLE AnswerVote (
 /* QuestionTopic Table Creation
  * 
  * Describes a many-to-many relationship between questions and topics
+ * 
+ * Assumptions:
+ *   - topic: Length <= 50
  */
 CREATE TABLE QuestionTopic (
 

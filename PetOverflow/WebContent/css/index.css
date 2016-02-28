@@ -11,49 +11,61 @@ a.u-cleanLinks, a.NavBar, a.QuestionsNav, a.u-cleanLinks:hover, a.NavBar:hover, 
 .u-cleanLinks a:focus,
 .NavBar a:focus,
 .QuestionsNav a:focus {
-  text-decoration: none; }
+  text-decoration: none;
+}
 
 .u-center {
-  text-align: center; }
+  text-align: center;
+}
 
 .u-bold {
-  font-weight: bold; }
+  font-weight: bold;
+}
 
 html, body {
   min-height: 100%;
-  height: 100%; }
+  height: 100%;
+}
 
 div[ng-view], main {
-  min-height: 100vh; }
+  min-height: 100vh;
+}
 
 main {
   padding: 0;
-  background-color: #E0E0E0; }
+  background-color: #E0E0E0;
+}
 
 h2 {
-  font-size: 2rem; }
+  font-size: 2rem;
+}
 
 ul {
   padding: 0;
   margin: 0;
-  list-style: none; }
+  list-style: none;
+}
 
 li {
   padding: 0;
-  margin: 0; }
+  margin: 0;
+}
 
 textarea {
   display: block;
   width: 100%;
-  resize: none; }
+  resize: none;
+}
 
 input[type="text"],
 input[type="password"],
 input[type="tel"] {
-  max-width: 20rem; }
+  max-width: 20rem;
+}
 
 .btn {
-  white-space: normal; }
+  white-space: normal;
+}
 
 /***************************/
 /**** Shared Components ****/
@@ -62,36 +74,45 @@ input[type="tel"] {
   padding: 1rem;
   background-color: #3D3961;
   font-size: 2rem;
-  border-bottom: 3px solid white; }
+  border-bottom: 3px solid white;
+}
 
 .NavBar-brand {
   font-size: 1.2em;
   margin: 0;
-  padding: 0; }
-  .NavBar-brand a {
-    color: white; }
+  padding: 0;
+}
+.NavBar-brand a {
+  color: white;
+}
 
 .NavBar-dropdown {
   display: inline;
-  position: relative; }
-  .NavBar-dropdown .Menu {
-    position: absolute;
-    z-index: 1;
-    left: -7rem;
-    top: 2rem;
-    width: 20rem;
-    padding-top: 1rem;
-    visibility: hidden; }
-  .NavBar-dropdown:hover .Menu,
-  .NavBar-dropdown .Menu:hover {
-    visibility: visible; }
+  position: relative;
+}
+.NavBar-dropdown .Menu {
+  position: absolute;
+  z-index: 1;
+  left: -7rem;
+  top: 2rem;
+  width: 20rem;
+  padding-top: 1rem;
+  visibility: hidden;
+}
+.NavBar-dropdown:hover .Menu,
+.NavBar-dropdown .Menu:hover {
+  visibility: visible;
+}
 
 .NavBar-option {
-  margin-left: 2.5rem; }
-  .NavBar-option, .NavBar-option:focus {
-    color: #C0C0C0; }
-  .NavBar-option:hover {
-    color: white; }
+  margin-left: 2.5rem;
+}
+.NavBar-option, .NavBar-option:focus {
+  color: #C0C0C0;
+}
+.NavBar-option:hover {
+  color: white;
+}
 
 .Menu ul {
   list-style: none;
@@ -101,34 +122,44 @@ input[type="tel"] {
   border: 2px solid #C0C0C0;
   border-top: 0;
   background-color: #3D3961;
-  font-size: 1.3rem; }
-  .Menu ul a {
-    display: inline-block;
-    height: 100%;
-    width: 100%;
-    padding: .7rem 0;
-    border-bottom: 1px solid #C0C0C0; }
-    .Menu ul a, .Menu ul a:visited {
-      color: #C0C0C0; }
-    .Menu ul a:hover {
-      color: white; }
-  .Menu ul li {
-    padding: 0 .7rem; }
-    .Menu ul li:last-child a {
-      border: 0; }
+  font-size: 1.3rem;
+}
+.Menu ul a {
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  padding: .7rem 0;
+  border-bottom: 1px solid #C0C0C0;
+}
+.Menu ul a, .Menu ul a:visited {
+  color: #C0C0C0;
+}
+.Menu ul a:hover {
+  color: white;
+}
+.Menu ul li {
+  padding: 0 .7rem;
+}
+.Menu ul li:last-child a {
+  border: 0;
+}
 
 .SmallButton {
-  background-color: #3D3961; }
-  .SmallButton, .SmallButton:hover, .SmallButton:focus {
-    color: white; }
+  background-color: #3D3961;
+}
+.SmallButton, .SmallButton:hover, .SmallButton:focus {
+  color: white;
+}
 
 .LargeButton {
   width: 50%;
   background: #3D3961;
   margin: 1rem auto;
-  display: block; }
-  .LargeButton, .LargeButton:hover, .LargeButton:focus {
-    color: white; }
+  display: block;
+}
+.LargeButton, .LargeButton:hover, .LargeButton:focus {
+  color: white;
+}
 
 .PageTurner {
   width: 60%;
@@ -137,77 +168,97 @@ input[type="tel"] {
   border-radius: 5px;
   overflow: hidden;
   background-color: white;
-  text-align: center; }
-  .PageTurner > div, .PageTurner > button {
-    padding: 1.2rem; }
+  text-align: center;
+}
+.PageTurner > div, .PageTurner > button {
+  padding: 1.2rem;
+}
 
 .PageTurner-button {
   background-color: #3D3961;
-  border-radius: 0; }
-  .PageTurner-button, .PageTurner-button:focus {
-    color: #C0C0C0; }
-  .PageTurner-button:hover {
-    color: white; }
+  border-radius: 0;
+}
+.PageTurner-button, .PageTurner-button:focus {
+  color: #C0C0C0;
+}
+.PageTurner-button:hover {
+  color: white;
+}
 
 /*******************************/
 /******** Login + SignUp *******/
 /*******************************/
 .LoginPage, .SignUpPage {
   background-image: url("../img/bg-dog.jpg");
-  background-size: cover; }
+  background-size: cover;
+}
 
 .LoginForm, .SignUpForm {
   background-color: rgba(245, 255, 192, 0.9);
   padding: 3rem;
-  border-radius: 5px; }
+  border-radius: 5px;
+}
 
 .LoginForm {
   width: 40%;
   height: 80vh;
-  margin-top: 5rem; }
-  .LoginForm input[type="text"],
-  .LoginForm input[type="password"] {
-    width: 100%;
-    max-width: none; }
-  .LoginForm input[type="submit"] {
-    margin-top: 2rem;
-    margin-bottom: 1.5rem;
-    background-color: #3D3961;
-    color: white;
-    width: 100%; }
-  .LoginForm h1 {
-    margin-bottom: 3rem;
-    text-align: center; }
-    .LoginForm h1 img {
-      max-height: 8rem;
-      max-width: 100%;
-      margin-left: -10%; }
-  .LoginForm .LoginForm-error {
-    color: red; }
+  margin-top: 5rem;
+}
+.LoginForm input[type="text"],
+.LoginForm input[type="password"] {
+  width: 100%;
+  max-width: none;
+}
+.LoginForm input[type="submit"] {
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  background-color: #3D3961;
+  color: white;
+  width: 100%;
+}
+.LoginForm h1 {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+.LoginForm h1 img {
+  max-height: 8rem;
+  max-width: 100%;
+  margin-left: -10%;
+}
+.LoginForm .LoginForm-error {
+  color: red;
+}
 
 .SignUpForm {
   width: 80%;
-  margin: 3rem auto; }
-  .SignUpForm h2 {
-    padding: 1rem;
-    font-size: 3rem;
-    background-color: #3D3961;
-    color: white;
-    border-radius: 5px; }
-  .SignUpForm h2 ~ p {
-    font-size: 2rem; }
-  .SignUpForm h2, .SignUpForm h2 ~ p {
-    text-align: center; }
-  .SignUpForm .form-group {
-    margin: 5rem 0; }
-  .SignUpForm input[type="submit"] {
-    width: 70%;
-    margin: 0 auto;
-    background-color: #3D3961;
-    color: white; }
-  .SignUpForm img {
-    width: 100px;
-    height: 100px; }
+  margin: 3rem auto;
+}
+.SignUpForm h2 {
+  padding: 1rem;
+  font-size: 3rem;
+  background-color: #3D3961;
+  color: white;
+  border-radius: 5px;
+}
+.SignUpForm h2 ~ p {
+  font-size: 2rem;
+}
+.SignUpForm h2, .SignUpForm h2 ~ p {
+  text-align: center;
+}
+.SignUpForm .form-group {
+  margin: 5rem 0;
+}
+.SignUpForm input[type="submit"] {
+  width: 70%;
+  margin: 0 auto;
+  background-color: #3D3961;
+  color: white;
+}
+.SignUpForm img {
+  width: 100px;
+  height: 100px;
+}
 
 /************************/
 /** Browsing Questions **/
@@ -215,7 +266,8 @@ input[type="tel"] {
 .QuestionsNav {
   margin: 4rem 0;
   border-radius: 5px;
-  overflow: hidden; }
+  overflow: hidden;
+}
 
 .QuestionsNav a {
   font-size: 2.3rem;
@@ -224,23 +276,28 @@ input[type="tel"] {
   padding: 2rem;
   background-color: #0C612E;
   transition: .5s background-color ease;
-  border-right: 1px solid white; }
-  .QuestionsNav a:last-child {
-    border-right: 0; }
-  .QuestionsNav a:hover, .QuestionsNav a.active {
-    color: white;
-    text-shadow: 1px 1px 1px black;
-    background-color: #128e44; }
+  border-right: 1px solid white;
+}
+.QuestionsNav a:last-child {
+  border-right: 0;
+}
+.QuestionsNav a:hover, .QuestionsNav a.active {
+  color: white;
+  text-shadow: 1px 1px 1px black;
+  background-color: #128e44;
+}
 
 .QuestionList {
   width: 100%;
   margin: 0;
-  list-style: none; }
+  list-style: none;
+}
 
 .BigMessage {
   text-align: center;
   font-size: 3rem;
-  margin-top: 3rem; }
+  margin-top: 3rem;
+}
 
 /*****************************/
 /*** Questions And Answers ***/
@@ -251,65 +308,84 @@ input[type="tel"] {
   padding: 2.5rem 0;
   border-radius: 5px;
   font-size: 1.7rem;
-  background-color: white; }
-  .Question .UserBox {
-    border-left: 1px solid #C0C0C0; }
-  .Question .PointerToAnswer {
-    display: none; }
+  background-color: white;
+}
+.Question .UserBox {
+  border-left: 1px solid #C0C0C0;
+}
+.Question .PointerToAnswer {
+  display: none;
+}
 
 .Question--withAnswer {
   margin-bottom: 0;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   border: 1px solid #505050;
-  border-bottom: 0; }
-  .Question--withAnswer .PointerToAnswer {
-    display: block;
-    font-size: 4rem;
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    top: auto; }
+  border-bottom: 0;
+}
+.Question--withAnswer .PointerToAnswer {
+  display: block;
+  font-size: 4rem;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  top: auto;
+}
 
 .Question-button {
   margin-top: .5rem;
-  background-color: #3D3961; }
-  .Question-button, .Question-button:hover {
-    color: white; }
+  background-color: #3D3961;
+}
+.Question-button, .Question-button:hover {
+  color: white;
+}
 
 .Question-info, .Answer-info {
-  font-size: .9em; }
-  .Question-info a, .Answer-info a {
-    margin-right: .5rem; }
+  font-size: .9em;
+}
+.Question-info a, .Answer-info a {
+  margin-right: .5rem;
+}
 
 .Question-info {
-  margin-top: 3.5rem; }
+  margin-top: 3.5rem;
+}
 
 .Answer-info {
-  margin-top: 5rem; }
+  margin-top: 5rem;
+}
 
 .VoteArea {
   text-align: center;
   color: #505050;
-  font-size: 2.5rem; }
+  font-size: 2.5rem;
+}
 
 .Vote {
-  cursor: pointer; }
-  .Vote.selected {
-    color: orange; }
+  cursor: pointer;
+}
+.Vote.selected {
+  color: orange;
+}
 
 .Vote.disabled {
-  cursor: not-allowed; }
+  cursor: not-allowed;
+}
 
 .UserBox {
-  text-align: center; }
-  .UserBox img, .UserBox p, .UserBox a {
-    display: block; }
-  .UserBox img {
-    width: 50%;
-    margin: 0 auto; }
-  .UserBox a {
-    margin-top: .5rem; }
+  text-align: center;
+}
+.UserBox img, .UserBox p, .UserBox a {
+  display: block;
+}
+.UserBox img {
+  width: 50%;
+  margin: 0 auto;
+}
+.UserBox a {
+  margin-top: .5rem;
+}
 
 .Answer {
   margin-top: 2rem;
@@ -318,41 +394,51 @@ input[type="tel"] {
   color: #D4D4D4;
   border-radius: 5px;
   border: 1px solid #D4D4D4;
-  background-color: #252525; }
-  .Answer .VoteArea {
-    color: #D4D4D4; }
+  background-color: #252525;
+}
+.Answer .VoteArea {
+  color: #D4D4D4;
+}
 
 .Answer--withQuestion {
   margin-top: 0;
   border-top: none;
   border-top-left-radius: 0;
-  border-top-right-radius: 0; }
+  border-top-right-radius: 0;
+}
 
 /***********************/
 /*** Question Asking ***/
 /***********************/
 .QuestionCreateForm .TopicsInput {
   margin-left: 5rem;
-  display: inline-block; }
+  display: inline-block;
+}
 .QuestionCreateForm .LargeButton {
-  margin-top: 5rem; }
+  margin-top: 5rem;
+}
 .QuestionCreateForm label {
-  font-size: 1.3em; }
+  font-size: 1.3em;
+}
 .QuestionCreateForm .TopicAction {
-  margin-top: 1rem; }
+  margin-top: 1rem;
+}
 
 .TopicList {
-  display: inline-block; }
-  .TopicList span {
-    display: inline-block;
-    vertical-align: sub;
-    margin-left: .5rem;
-    padding: 3px;
-    border: 1px solid gray;
-    border-radius: 2px;
-    background-color: white; }
-  .TopicList i.glyphicon {
-    cursor: pointer; }
+  display: inline-block;
+}
+.TopicList span {
+  display: inline-block;
+  vertical-align: sub;
+  margin-left: .5rem;
+  padding: 3px;
+  border: 1px solid gray;
+  border-radius: 2px;
+  background-color: white;
+}
+.TopicList i.glyphicon {
+  cursor: pointer;
+}
 
 .TopicError {
   display: inline-block;
@@ -361,44 +447,56 @@ input[type="tel"] {
   border-radius: 5px;
   border: 1px solid red;
   opacity: 0;
-  transition: none; }
-  .TopicError.visible {
-    transition: opacity .5s ease;
-    opacity: 1; }
+  transition: none;
+}
+.TopicError.visible {
+  transition: opacity .5s ease;
+  opacity: 1;
+}
 
 /***************/
 /*** Profile ***/
 /***************/
 .Profile .Info {
   margin-top: 4rem;
-  margin-bottom: 4rem; }
-  .Profile .Info h2 {
-    font-size: 3rem; }
-  .Profile .Info q {
-    background-color: white;
-    padding: 1rem;
-    border-radius: 5px;
-    display: block;
-    margin-bottom: 1rem; }
-  .Profile .Info img {
-    width: 60%;
-    margin: 0 auto;
-    display: block; }
+  margin-bottom: 4rem;
+}
+.Profile .Info h2 {
+  font-size: 3rem;
+}
+.Profile .Info q {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 5px;
+  display: block;
+  margin-bottom: 1rem;
+}
+.Profile .Info img {
+  width: 60%;
+  margin: 0 auto;
+  display: block;
+}
 
 .ExpertiseList {
-  list-style: none; }
-  .ExpertiseList li {
-    display: inline; }
-    .ExpertiseList li::after {
-      content: ", "; }
-    .ExpertiseList li:last-child::after {
-      content: ""; }
+  list-style: none;
+}
+.ExpertiseList li {
+  display: inline;
+}
+.ExpertiseList li::after {
+  content: ", ";
+}
+.ExpertiseList li:last-child::after {
+  content: "";
+}
 
 .Profile hr {
-  border-color: #505050; }
+  border-color: #505050;
+}
 
 .UserActivity ul {
-  margin-bottom: 8rem; }
+  margin-bottom: 8rem;
+}
 
 /******************/
 /*** Hot Topics ***/
@@ -409,38 +507,50 @@ input[type="tel"] {
   color: #3D3961;
   font-weight: 700;
   text-align: center;
-  padding: 1rem 0; }
+  padding: 1rem 0;
+}
 .HotTopics .QueryRow {
-  margin-top: 3rem; }
+  margin-top: 3rem;
+}
 .HotTopics .SearchArea {
   min-height: 12rem;
-  margin-bottom: 5rem; }
-  .HotTopics .SearchArea, .HotTopics .SearchArea h4 {
-    font-size: 2.5rem; }
-  .HotTopics .SearchArea ul {
-    display: block;
-    margin: 0 auto; }
+  margin-bottom: 5rem;
+}
+.HotTopics .SearchArea, .HotTopics .SearchArea h4 {
+  font-size: 2.5rem;
+}
+.HotTopics .SearchArea ul {
+  display: block;
+  margin: 0 auto;
+}
 
 .TagCloud {
   width: 100%;
   padding-top: 4rem;
   padding-bottom: 4rem;
-  border-radius: 5px; }
-  .TagCloud svg {
-    margin: 2rem auto 0 auto;
-    display: block; }
-    .TagCloud svg a, .TagCloud svg a:hover {
-      text-decoration: none; }
-    .TagCloud svg text {
-      fill: #665fa1;
-      transition: .5s fill ease; }
-      .TagCloud svg text:hover {
-        fill: #c2bfda; }
-  .TagCloud, .TagCloud svg {
-    background-color: black;
-    transition: 1s background-color ease; }
-  .TagCloud:hover, .TagCloud:hover svg {
-    background-color: #141414; }
+  border-radius: 5px;
+}
+.TagCloud svg {
+  margin: 2rem auto 0 auto;
+  display: block;
+}
+.TagCloud svg a, .TagCloud svg a:hover {
+  text-decoration: none;
+}
+.TagCloud svg text {
+  fill: #665fa1;
+  transition: .5s fill ease;
+}
+.TagCloud svg text:hover {
+  fill: #c2bfda;
+}
+.TagCloud, .TagCloud svg {
+  background-color: black;
+  transition: 1s background-color ease;
+}
+.TagCloud:hover, .TagCloud:hover svg {
+  background-color: #141414;
+}
 
 /******************/
 /** Leaderboards **/
@@ -449,103 +559,125 @@ input[type="tel"] {
   font-size: 2.7rem;
   font-weight: 700;
   margin-top: 4rem;
-  margin-bottom: 3rem; }
+  margin-bottom: 3rem;
+}
 .Leaderboard .Leaderboard-list {
   list-style: none;
   padding: 0;
-  margin: 0; }
-  .Leaderboard .Leaderboard-list li {
-    margin-bottom: 4rem;
-    position: relative; }
+  margin: 0;
+}
+.Leaderboard .Leaderboard-list li {
+  margin-bottom: 4rem;
+  position: relative;
+}
 .Leaderboard .LeaderIndex {
   position: absolute;
   width: 15%;
   left: 0;
   top: 0;
-  bottom: 0; }
+  bottom: 0;
+}
 .Leaderboard div[leader] {
   position: relative;
   left: 15%;
   width: 85%;
-  font-size: 1.5rem; }
+  font-size: 1.5rem;
+}
 
 .LeaderIndex {
   font-size: 5rem;
   text-align: center;
-  height: 100%; }
-  .LeaderIndex p {
-    margin-top: 25%; }
+  height: 100%;
+}
+.LeaderIndex p {
+  margin-top: 25%;
+}
 
 .Leader {
   background-color: white;
   border-radius: 5px;
   padding-top: 2rem;
-  padding-bottom: 2rem; }
-  .Leader img {
-    display: block;
-    width: 70%;
-    margin: 0 auto; }
+  padding-bottom: 2rem;
+}
+.Leader img {
+  display: block;
+  width: 70%;
+  margin: 0 auto;
+}
 
 .BarGraph svg {
   margin-bottom: 3.5rem;
   border-radius: 5px;
-  background-color: black; }
-  .BarGraph svg text {
-    fill: white; }
+  background-color: black;
+}
+.BarGraph svg text {
+  fill: white;
+}
 .BarGraph .nv-groups g {
-  fill: #3D3961 !important; }
+  fill: #3D3961 !important;
+}
 
 /******************/
 /*** Topic Page ***/
 /******************/
 .TopicPage h2 {
   font-size: 3rem;
-  margin: 4rem 0; }
+  margin: 4rem 0;
+}
 
 /***********************/
 /**** Question View ****/
 /***********************/
 .QuestionView .Question {
-  margin-top: 3rem; }
+  margin-top: 3rem;
+}
 .QuestionView form {
-  margin-top: 5rem; }
-  .QuestionView form textarea {
-    margin-bottom: 2rem; }
-  .QuestionView form label {
-    font-size: 2rem; }
+  margin-top: 5rem;
+}
+.QuestionView form textarea {
+  margin-bottom: 2rem;
+}
+.QuestionView form label {
+  font-size: 2rem;
+}
 
 /**************/
 /** Settings **/
 /**************/
 .SettingsPage h2 {
   font-size: 3rem;
-  margin: 4rem 0 2rem 0; }
+  margin: 4rem 0 2rem 0;
+}
 .SettingsPage h3 {
   margin: 3rem 0;
   padding: 1rem;
   background-color: #3D3961;
-  color: white; }
+  color: white;
+}
 .SettingsPage img {
   width: 100px;
-  height: 100px; }
+  height: 100px;
+}
 
 /*********************/
 /** Question Search **/
 /*********************/
 .QuestionSearchPage ul {
-  list-style: none; }
+  list-style: none;
+}
 
 .QueryRow {
-  margin-bottom: 3rem; }
-  .QueryRow label {
-    display: inline-block;
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #3D3961; }
-  .QueryRow input {
-    display: inline-block;
-    margin-left: 1.5rem;
-    font-size: 1.7rem;
-    line-height: 2.5rem; }
-
-/*# sourceMappingURL=index.css.map */
+  margin-bottom: 3rem;
+}
+.QueryRow label {
+  display: inline-block;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #3D3961;
+}
+.QueryRow input {
+  display: inline-block;
+  margin-left: 1.5rem;
+  font-size: 1.7rem;
+  line-height: 2.5rem;
+}

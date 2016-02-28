@@ -19,8 +19,8 @@ import petoverflow.dao.items.Vote.VoteType;
 /**
  * An optional initiator for the database.
  * 
- * Inserts example information - a few users, questions, answers and votes.
- * The feature can be turned on and off using {@link petoverflow.Config}
+ * Inserts example information - a few users, questions, answers and votes. The
+ * feature can be turned on and off using {@link petoverflow.Config}
  */
 public class SampleDbInitiator {
 
@@ -68,8 +68,8 @@ public class SampleDbInitiator {
 				patrick.getId(), q1.getId());
 		Answer a2 = m_answerDao.createAnswer("Turtles don't need to be out, they just love the cozy house!",
 				yishai.getId(), q1.getId());
-		Answer a3 = m_answerDao.createAnswer("I have a few cats and they just live outside so I don't "
-				+ "really take them out for walks.",
+		Answer a3 = m_answerDao.createAnswer(
+				"I have a few cats and they just live outside so I don't " + "really take them out for walks.",
 				barak.getId(), q1.getId());
 		m_answerVoteDao.addVote(a1.getId(), new Vote(barak.getId(), VoteType.Up));
 		m_answerVoteDao.addVote(a2.getId(), new Vote(haggai.getId(), VoteType.Up));
@@ -97,15 +97,6 @@ public class SampleDbInitiator {
 
 	private static void initiateQuestion3() throws Exception {
 		List<String> topics = new ArrayList<String>();
-		topics.add("turtles");
-		topics.add("names");
-		m_questionDao.createQuestion("Today I bought a pet turtle. I don't know what I should name it."
-				+ " Can you help me find a good name?", yishai.getId(), topics);
-
-	}
-
-	private static void initiateQuestion4() throws Exception {
-		List<String> topics = new ArrayList<String>();
 		topics.add("cats");
 		topics.add("sickness");
 		Question q4 = m_questionDao.createQuestion("Our family has a few cats. About a month ago, I started noticing"
@@ -123,6 +114,39 @@ public class SampleDbInitiator {
 		m_answerVoteDao.addVote(a2.getId(), new Vote(barak.getId(), VoteType.Up));
 	}
 
+	private static void initiateUnanswered() throws Exception {
+		List<String> topics = new ArrayList<String>();
+		topics.add("turtles");
+		topics.add("names");
+		m_questionDao.createQuestion("Today I bought a pet turtle. I don't know what I should name it."
+				+ " Can you help me find a good name?", yishai.getId(), topics);
+
+		topics.clear();
+		topics.add("trips");
+		topics.add("walks");
+		topics.add("dogs");
+		topics.add("sun");
+		topics.add("sunny");
+		topics.add("shephard");
+		topics.add("haifa");
+		Question q1 = m_questionDao.createQuestion(
+				"My German Shephard and I love to go on small trips. The problem is, we don't know many nice places in Haifa, "
+						+ "because we are new here. We like sunny places, and we have already been at the beach. "
+						+ "Do you have any recommandations, or a reference to a site I can search in?",
+				vet.getId(), topics);
+		m_questionVoteDao.addVote(q1.getId(), new Vote(haggai.getId(), VoteType.Up));
+
+		topics.clear();
+		topics.add("birds");
+		topics.add("parrots");
+		topics.add("AfricanGrey");
+		topics.add("food");
+		topics.add("timing");
+		m_questionDao.createQuestion("I have two African Grey parrots (Jaco). I know I should feed"
+				+ " them twice a day. What are the best times and why?", barak.getId(), topics);
+
+	}
+
 	public static void run() {
 		try {
 			DaoManager m_daoManager = DaoManagerDerby.getInstance();
@@ -136,7 +160,7 @@ public class SampleDbInitiator {
 			initiateQuestion1();
 			initiateQuestion2();
 			initiateQuestion3();
-			initiateQuestion4();
+			initiateUnanswered();
 
 		} catch (Exception e) {
 			e.printStackTrace();
