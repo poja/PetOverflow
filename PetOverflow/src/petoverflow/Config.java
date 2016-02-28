@@ -12,7 +12,7 @@ public class Config {
 	 * users. Enabling CREATE_INITIAL_DB, causes the server to inject sample
 	 * data, using the class SampleDbInitiaor.
 	 * 
-	 * @see SampleDbInitiaor
+	 * @see petoverflow.SampleDbInitiaor
 	 */
 	public static final boolean CREATE_INITIAL_DB = true;
 

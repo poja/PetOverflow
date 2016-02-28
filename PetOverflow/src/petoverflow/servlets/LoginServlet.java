@@ -15,6 +15,10 @@ import petoverflow.dao.UserDao;
 import petoverflow.dao.derby.UserDaoDerby;
 import petoverflow.dto.AuthenticationDto;
 
+/**
+ * This servlet allows logging in to the system.
+ * Uses HttpSession to save user credentials
+ */
 public class LoginServlet extends HttpServlet {
 
 	private UserDao m_userDao;

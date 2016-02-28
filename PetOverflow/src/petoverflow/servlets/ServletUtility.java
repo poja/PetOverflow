@@ -11,8 +11,19 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.gson.Gson;
 
+/**
+ * Utilities used when communication with the client side
+ */
 public class ServletUtility {
 
+	/**
+	 * Returns a hashmap of the request parameters
+	 * 
+	 * @param request
+	 *            The request object
+	 * @return Hashmap of the request parameters
+	 * @throws IOException
+	 */
 	public static HashMap<String, Object> getRequestParameters(HttpServletRequest request) throws IOException {
 		String data = getRequestData(request);
 		Gson gson = new Gson();
@@ -21,6 +32,12 @@ public class ServletUtility {
 		return params;
 	}
 
+	/**
+	 * Takes a JSON list of strings, and returns their matching Java object
+	 * 
+	 * @param arrayStr JSON list of strings
+	 * @return Matching Java object
+	 */
 	public static List<String> convertListFromJson(String arrayStr) {
 		Gson gson = new Gson();
 		String[] array = gson.fromJson(arrayStr, String[].class);
@@ -42,6 +59,13 @@ public class ServletUtility {
 		}
 	}
 
+	/**
+	 * Returns the requested path of the user
+	 * 
+	 * @param request The user request
+	 * @return The path that the user requested
+	 * @throws ServletException
+	 */
 	public static String getPath(HttpServletRequest request) throws ServletException {
 		String fullPath = request.getRequestURI();
 		String contexPath = request.getContextPath();

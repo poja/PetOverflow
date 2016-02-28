@@ -99,6 +99,12 @@ public class Question extends DaoObject implements Rated, Timestampable {
 		return 0.2 * ownQuestionRating + 0.8 * averageAnswerRating;
 	}
 
+	/**
+	 * Gets the vote count of this question
+	 * 
+	 * @return this question's vote count
+	 * @throws Exception
+	 */
 	public double getVoteCount() throws Exception {
 		List<Vote> questionVotes = getDaoManager().getQuestionVoteDao().getQuestionVotes(m_id);
 
@@ -140,12 +146,20 @@ public class Question extends DaoObject implements Rated, Timestampable {
 	public List<Topic> getTopics() throws Exception {
 		return getDaoManager().getTopicDao().getQuestionTopics(m_id);
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return m_id;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if (o == null) {

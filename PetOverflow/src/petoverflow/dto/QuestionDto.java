@@ -33,7 +33,7 @@ public class QuestionDto {
 		List<Vote> votes = question.getDaoManager().getQuestionVoteDao().getQuestionVotes(id);
 		for (Vote vote : votes) {
 			if (vote.getVoterId() == userId) {
-				voteStatus = vote.getType() == VoteType.Up ? 1 : -1;
+				voteStatusValue = vote.getType() == VoteType.Up ? 1 : -1;
 				break;
 			}
 		}
@@ -58,6 +58,16 @@ public class QuestionDto {
 
 	public Integer bestAnswerId;
 
+	/**
+	 * Creates QuestionDto objects from Question objects, given a user ID
+	 * 
+	 * @param question
+	 *            The questions
+	 * @param userId
+	 *            The user of these questions
+	 * @return QuestionDto objects to be sent back to the user
+	 * @throws Exception
+	 */
 	public static List<QuestionDto> listToDto(List<Question> questions, int userId) throws Exception {
 		List<QuestionDto> listDto = new ArrayList<QuestionDto>();
 		for (Question question : questions) {

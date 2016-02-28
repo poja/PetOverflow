@@ -566,6 +566,7 @@
 			link: function (scope, element, attrs, controller) {
 				function updateInfo() {
 					PetData.getQuestion(scope.id).then(function (response) {
+						console.dir(response.data);
 						scope.questionInfo = response.data;
 						if (scope.questionInfo.authorId == Session.getUserId())
 							scope.isMyQuestion = true;

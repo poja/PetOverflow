@@ -126,6 +126,11 @@ public class Utility {
 		});
 	}
 
+	/**
+	 * Sorts a list of topics in alphabetical order
+	 * 
+	 * @param topics A list of {@link petoverflow.dao.items.Topic} elements
+	 */
 	public static void sortByName(List<Topic> topics) {
 		Collections.sort(topics, new Comparator<Topic>() {
 
@@ -136,6 +141,12 @@ public class Utility {
 		});
 	}
 
+	/**
+	 * Divides the given text into words, using the space character.
+	 * 
+	 * @param text The text to divide
+	 * @return All the different words in the text
+	 */
 	public static List<String> breakToWords(String text) {
 		if (text == null) {
 			throw new IllegalArgumentException("text can't be null");

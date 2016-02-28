@@ -25,7 +25,7 @@ public class AnswerDto {
 		List<Vote> votes = answer.getDaoManager().getAnswerVoteDao().getAnswerVotes(id);
 		for (Vote vote : votes) {
 			if (vote.getVoterId() == userId) {
-				voteStatus = vote.getType() == VoteType.Up ? 1 : -1;
+				voteStatusValue = vote.getType() == VoteType.Up ? 1 : -1;
 				break;
 			}
 		}
@@ -47,6 +47,16 @@ public class AnswerDto {
 
 	public int voteStatus;
 
+	/**
+	 * Creates AnswerDto objects from Answer objects, given a user ID
+	 * 
+	 * @param answers
+	 *            The answers
+	 * @param userId
+	 *            The user of these answers
+	 * @return AnswerDto objects to be sent back to the user
+	 * @throws Exception
+	 */
 	public static List<AnswerDto> listToDto(List<Answer> answers, int userId) throws Exception {
 		List<AnswerDto> listDto = new ArrayList<AnswerDto>();
 		for (Answer answer : answers) {

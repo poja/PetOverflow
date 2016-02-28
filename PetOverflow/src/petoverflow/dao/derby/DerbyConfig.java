@@ -1,5 +1,8 @@
 package petoverflow.dao.derby;
 
+/**
+ * All the naming configurations of the Derby database.
+ */
 public class DerbyConfig {
 
 	public static final String ID = "ID";

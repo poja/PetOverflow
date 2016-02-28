@@ -49,6 +49,14 @@ public class UserDto {
 
 	public List<TopicDto> expertise;
 
+
+	/**
+	 * Creates UserDto objects from User objects
+	 * 
+	 * @param users The users
+	 * @return UserDto objects
+	 * @throws Exception
+	 */
 	public static List<UserDto> listToDto(List<User> users) throws Exception {
 		List<UserDto> listDto = new ArrayList<UserDto>();
 		for (User user : users) {

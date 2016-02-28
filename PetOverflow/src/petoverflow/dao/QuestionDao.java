@@ -133,7 +133,16 @@ public interface QuestionDao {
 	 *             if fail
 	 */
 	public List<Question> getBestQuestions(int size, int offset) throws Exception;
-
+	
+	/**
+	 * Find questions with the given text
+	 * 
+	 * @param text To search inside questions
+	 * @param size The number of questions to return
+	 * @param offset An offset, if the first ones are not needed
+	 * @return Questions that have the given text, maximum `size` questions, with the optional offset 
+	 * @throws Exception
+	 */
 	public List<Question> searchQuestion(String text, int size, int offset) throws Exception;
 
 }

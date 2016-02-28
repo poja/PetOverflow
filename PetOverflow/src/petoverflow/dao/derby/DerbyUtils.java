@@ -8,6 +8,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Tools for manipulation Derby DB
+ *
+ */
 public class DerbyUtils {
 
 	/**
@@ -189,7 +193,7 @@ public class DerbyUtils {
 			return DriverManager.getConnection("jdbc:derby:" + dbName + ";create=true");
 		} catch (SQLException e) {
 			// printSQLException(e);
-			//throw e;
+			// throw e;
 			e.printStackTrace();
 			return null;
 		}

@@ -4,6 +4,11 @@ import java.sql.SQLException;
 
 import petoverflow.dao.DaoManager;
 
+/**
+ * Manager for Derby DAO objects
+ * 
+ * @see petoverflow.dao.DaoManager
+ */
 public class DaoManagerDerby extends DaoManager {
 
 	public static void init() throws ClassNotFoundException, SQLException {

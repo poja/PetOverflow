@@ -109,6 +109,12 @@ public class AnswerDaoDerby extends DaoObject implements AnswerDao {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see petoverflow.dao.AnswerDao#createAnswer(String, int, int)
+	 */
+	@Override
 	public Answer createAnswer(String text, int authorId, int questionId) throws SQLException {
 		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();
@@ -333,6 +339,12 @@ public class AnswerDaoDerby extends DaoObject implements AnswerDao {
 		return Utility.cutList(questionAnswers, size, offset);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see petoverflow.dao.AnswerDao#getQuestionAnswersAll(int)
+	 */
+	@Override
 	public List<Answer> getQuestionAnswersAll(int questionId) throws SQLException {
 		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();

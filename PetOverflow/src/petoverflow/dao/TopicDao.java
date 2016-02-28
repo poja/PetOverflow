@@ -106,6 +106,15 @@ public interface TopicDao {
 	 */
 	public List<Question> getBestQuestionsByTopic(String topic, int size, int offset) throws Exception;
 
+	/**
+	 * Find topics with the given text
+	 * 
+	 * @param text To search inside topics
+	 * @param size The number of topics to return
+	 * @param offset An offset, if the first ones are not needed
+	 * @return Topics that have the given text, maximum `size` topics, with the optional offset 
+	 * @throws Exception
+	 */
 	public List<Topic> searchTopics(String text, int size, int offset) throws Exception;
 
 }

@@ -348,7 +348,7 @@ public class QuestionDaoDerby extends DaoObject implements QuestionDao {
 		Utility.sortByRating(relevantQuestions);
 		return Utility.cutList(relevantQuestions, size, offset);
 	}
-
+	
 	private List<Question> getAllQuestion() throws SQLException {
 		Connection conn = null;
 		ArrayList<Statement> statements = new ArrayList<Statement>();

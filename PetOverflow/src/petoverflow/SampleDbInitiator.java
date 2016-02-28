@@ -16,6 +16,12 @@ import petoverflow.dao.items.User;
 import petoverflow.dao.items.Vote;
 import petoverflow.dao.items.Vote.VoteType;
 
+/**
+ * An optional initiator for the database.
+ * 
+ * Inserts example information - a few users, questions, answers and votes.
+ * The feature can be turned on and off using {@link petoverflow.Config}
+ */
 public class SampleDbInitiator {
 
 	private static UserDao m_userDao;
@@ -44,7 +50,7 @@ public class SampleDbInitiator {
 				"http://tinyurl.com/oougk57", "+972527567813", false);
 	}
 
-	public static void initiateQuestion1() throws Exception {
+	private static void initiateQuestion1() throws Exception {
 		List<String> topics = new ArrayList<String>();
 		topics.add("walks");
 		topics.add("statistics");
@@ -70,7 +76,7 @@ public class SampleDbInitiator {
 		m_answerVoteDao.addVote(a3.getId(), new Vote(yishai.getId(), VoteType.Up));
 	}
 
-	public static void initiateQuestion2() throws Exception {
+	private static void initiateQuestion2() throws Exception {
 		List<String> topics = new ArrayList<String>();
 		topics.add("food");
 		topics.add("fish");
@@ -89,7 +95,7 @@ public class SampleDbInitiator {
 		m_answerVoteDao.addVote(a1.getId(), new Vote(haggai.getId(), VoteType.Up));
 	}
 
-	public static void initiateQuestion3() throws Exception {
+	private static void initiateQuestion3() throws Exception {
 		List<String> topics = new ArrayList<String>();
 		topics.add("turtles");
 		topics.add("names");
@@ -98,7 +104,7 @@ public class SampleDbInitiator {
 
 	}
 
-	public static void initiateQuestion4() throws Exception {
+	private static void initiateQuestion4() throws Exception {
 		List<String> topics = new ArrayList<String>();
 		topics.add("cats");
 		topics.add("sickness");
