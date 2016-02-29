@@ -15,7 +15,9 @@
 					id="topics-search"
 					ng-model="htpCtrl.query" 
 					class="form-control" 
-					on-enter-key="htpCtrl.search()" />
+					on-enter-key="htpCtrl.search()"
+					focus-on="searchResponded"
+					scroll-time="1000" />
 				<button class="SmallButton btn" ng-click="htpCtrl.search()">Search</button>	
 			</div>	
 

@@ -10,7 +10,6 @@ import java.util.List;
 
 /**
  * Tools for manipulation Derby DB
- *
  */
 public class DerbyUtils {
 
@@ -139,7 +138,7 @@ public class DerbyUtils {
 	 * 
 	 * @param rs
 	 *            ResultSet
-	 * @param s
+	 * @param statements
 	 *            Derby statements
 	 * @param conn
 	 *            The connection to the database

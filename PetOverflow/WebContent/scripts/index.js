@@ -273,7 +273,7 @@
 		this.logout = Session.logout;
 	}]);
 
-	app.controller('HotTopicsController', ['PetData', 'HttpFailHandler', function (PetData, HttpFailHandler) {
+	app.controller('HotTopicsController', ['PetData', 'HttpFailHandler', '$scope', function (PetData, HttpFailHandler, $scope) {
 		var htpCtrl = this;
 		htpCtrl.hotTopics = [];
 		htpCtrl.searchedTopics = [];
@@ -299,7 +299,8 @@
 			if (!htpCtrl.query) return;
 			PetData.getTopicsByText(htpCtrl.query, MAX_SEARCH_SIZE, 0).then(function (response) {
 				htpCtrl.searchedTopics = response.data;
-			});
+				$scope.$emit('searchResponded');
+			}, HttpFailHandler);
 		};
 	}]);
 
@@ -454,7 +455,7 @@
 			PetData.postAnswer(qCtrl.newAnswer, Number(qCtrl.qId)).then(function (response) {
 				qCtrl.answers.push(response.data);
 				qCtrl.newAnswer = '';
-			});
+			}, HttpFailHandler);
 		};
 
 		qCtrl.firstIndex = function () {
@@ -511,7 +512,7 @@
 
 	}]);
 
-	app.controller('QuestionSearchController', ['PetData', function (PetData) {
+	app.controller('QuestionSearchController', ['PetData', 'HttpFailHandler', function (PetData, HttpFailHandler) {
 		var srchCtrl = this;
 		srchCtrl.questions = [];
 		srchCtrl.MAX_SIZE = 20;
@@ -521,7 +522,7 @@
 			if (!srchCtrl.query) return;
 			PetData.getQuestionsByText(srchCtrl.query, srchCtrl.MAX_SIZE, 0).then(function (response) {
 				srchCtrl.questions = response.data;
-			});
+			}, HttpFailHandler);
 		};
 	}]);
 
@@ -578,7 +579,7 @@
 					else
 						PetData.putQuestionVote(scope.id, newStatus).then(function (data) {
 							updateInfo();
-						});	
+						}, HttpFailHandler);	
 				};
 				
 				scope.isMyQuestion = false;
@@ -609,7 +610,7 @@
 					else 
 						PetData.putAnswerVote(scope.id, newStatus).then(function () {
 							updateInfo();
-						});
+						}, HttpFailHandler);
 				}
 				
 				scope.isMyAnswer = false;

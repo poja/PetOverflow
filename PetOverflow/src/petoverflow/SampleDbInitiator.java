@@ -132,7 +132,7 @@ public class SampleDbInitiator {
 		Question q1 = m_questionDao.createQuestion(
 				"My German Shephard and I love to go on small trips. The problem is, we don't know many nice places in Haifa, "
 						+ "because we are new here. We like sunny places, and we have already been at the beach. "
-						+ "Do you have any recommandations, or a reference to a site I can search in?",
+						+ "Do you have any recommendations, or a reference to a site I can search in?",
 				vet.getId(), topics);
 		m_questionVoteDao.addVote(q1.getId(), new Vote(haggai.getId(), VoteType.Up));
 

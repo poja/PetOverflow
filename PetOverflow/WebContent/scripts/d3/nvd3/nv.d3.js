@@ -6659,7 +6659,7 @@ nv.models.linePlusBarChart = function() {
 
                 if ( margin.top != legend.height()) {
                     margin.top = legend.height();
-                    // FIXME: shouldn't this be "- (focusEnabled ? focusHeight : 0)"?
+                    // FIX: shouldn't this be "- (focusEnabled ? focusHeight : 0)"?
                     availableHeight1 = nv.utils.availableHeight(height, container, margin) - focusHeight;
                 }
 

@@ -1,7 +1,7 @@
 <div>	
 	<div class="Question row" ng-class="{'Question--withAnswer': withAnswer}">
 		<!-- Voting -->
-		<div class="col-sm-1 VoteArea">
+		<div class="col-xs-3 col-sm-1 VoteArea">
 			<i 
 				class="Vote glyphicon glyphicon-triangle-top" 
 				ng-class="{selected: questionInfo.voteStatus > 0, disabled: isMyQuestion}" 
@@ -14,7 +14,7 @@
 		</div>
 
 		<!-- Text -->
-		<div class="col-sm-7">
+		<div class="col-xs-9 col-sm-7">
 			<p class="Question-text">
 				{{ questionInfo.text }}
 			</p>
@@ -26,25 +26,29 @@
 				<br />
 				Topics: 
 				<span ng-hide="questionInfo.topics && questionInfo.topics.length > 0">(none)</span>
-				<a ng-href="#/topics/{{ topic }}" ng-repeat="topic in questionInfo.topics">{{ topic }}</a>
+				<a ng-href="#/topics/{{ topic }}"
+					ng-repeat="topic in questionInfo.topics"
+					class="Question-topic">
+					{{ topic }}
+				</a>
 			</p>
 		</div>
 
 		<!-- Buttons -->
-		<div class="col-sm-2" ng-hide="fullPageMode">
+		<div class="col-xs-3 col-sm-2" ng-hide="fullPageMode">
 			<a class="Question-button btn" ng-href="#/questions/{{ questionInfo.id }}">View Answers</a>
 			<a class="Question-button btn" 
 				ng-href="#/questions/{{ questionInfo.id }}/answer">
 				Answer this Question</a>
 		</div>
-		<div class="col-sm-2" ng-show="fullPageMode">
+		<div class="col-xs-3 col-sm-2" ng-show="fullPageMode">
 			<a class="Question-button btn"
 				ng-click="$emit('answerRequest')">
 				Answer this Question</a>
 		</div>
 
 		<!-- Asker -->
-		<div class="col-sm-2" ng-if="questionInfo">
+		<div class="col-xs-9 col-sm-2" ng-if="questionInfo">
 			<user-box user-id="questionInfo.authorId"></user-box>	
 		</div>
 

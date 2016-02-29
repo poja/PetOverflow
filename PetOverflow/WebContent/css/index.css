@@ -200,9 +200,8 @@ input[type="tel"] {
 }
 
 .LoginForm {
-  width: 40%;
-  height: 80vh;
   margin-top: 5rem;
+  padding-bottom: 4rem;
 }
 .LoginForm input[type="text"],
 .LoginForm input[type="password"] {
@@ -286,6 +285,11 @@ input[type="tel"] {
   text-shadow: 1px 1px 1px black;
   background-color: #128e44;
 }
+@media (max-width: 768px) {
+  .QuestionsNav a, .QuestionsNav a:last-child {
+    border: 1px solid white;
+  }
+}
 
 .QuestionList {
   width: 100%;
@@ -310,8 +314,10 @@ input[type="tel"] {
   font-size: 1.7rem;
   background-color: white;
 }
-.Question .UserBox {
-  border-left: 1px solid #C0C0C0;
+@media (min-width: 768px) {
+  .Question .UserBox {
+    border-left: 1px solid #C0C0C0;
+  }
 }
 .Question .PointerToAnswer {
   display: none;
@@ -339,6 +345,14 @@ input[type="tel"] {
 }
 .Question-button, .Question-button:hover {
   color: white;
+}
+
+.Question-topic {
+  display: inline-block;
+}
+
+.Question-text {
+  min-height: 3rem;
 }
 
 .Question-info, .Answer-info {
@@ -672,8 +686,8 @@ input[type="tel"] {
 .QueryRow label {
   display: inline-block;
   font-size: 2.5rem;
-  font-weight: bold;
-  color: #3D3961;
+  font-weight: normal;
+  color: black;
 }
 .QueryRow input {
   display: inline-block;

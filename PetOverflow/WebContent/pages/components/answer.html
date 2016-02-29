@@ -1,5 +1,5 @@
 <div class="Answer row" ng-class="{'Answer--withQuestion': withQuestion}">
-	<div class="col-sm-1 VoteArea">
+	<div class="col-xs-3 col-sm-1 VoteArea">
 		<i 
 			class="Vote glyphicon glyphicon-triangle-top" 
 			ng-class="{selected: answerInfo.voteStatus > 0, disabled: isMyAnswer}" 
@@ -10,7 +10,7 @@
 			ng-class="{selected: answerInfo.voteStatus < 0, disabled: isMyAnswer}" 
 			ng-click="setVote(-1)"></i>
 	</div>
-	<div class="col-sm-9">
+	<div class="col-xs-9 col-sm-9">
 		<p class="Answer-text">
 			{{ answerInfo.text }}
 		</p>
@@ -19,7 +19,7 @@
 			{{ answerInfo.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}
 		</p>
 	</div>
-	<div class="col-sm-2" ng-if="answerInfo">
+	<div class="col-xs-offset-3 col-xs-9 col-sm-offset-0 col-sm-2" ng-if="answerInfo">
 		<user-box user-id="answerInfo.authorId"></user-box>
 	</div>
 </div>
